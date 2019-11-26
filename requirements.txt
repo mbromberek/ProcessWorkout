@@ -14,7 +14,7 @@ py-applescript==1.0.1
 pyobjc==4.2.2
 pyperclip==1.6.0
 pytz==2018.3
-requests==2.5.0
+requests==2.20.0
 rsa==3.4.2
 six==1.11.0
 uritemplate==3.0.0
