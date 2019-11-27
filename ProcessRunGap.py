@@ -1,11 +1,6 @@
 #! /Users/mikeyb/Applications/python3
 # -*- coding: utf-8 -*-
 
-'''
-Had to run the install certificates in the install directory for Pything to get the HTTPS connections to work
-cd /Applications/Python\ 3.6/
-TurnA:/Applications/Python 3.6 mikeyb$ ./Install\ Certificates.command 
-'''
 
 import zipfile
 import json

@@ -23,12 +23,14 @@ Based on the day of the week the script predicts what category the exercise shou
 - Heart Rate
 - Calories
 
+### Setup Environment
+
 '''
 Had to run the install certificates in the install directory for Pything to get the HTTPS connections to work
 cd /Applications/Python\ 3.6/
 TurnA:/Applications/Python 3.6 mikeyb$ ./Install\ Certificates.command 
 '''
 
-### Setup Environment
+
 % mkvirtualenv ProcessWorkout
 
