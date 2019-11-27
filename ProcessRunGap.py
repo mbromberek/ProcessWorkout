@@ -97,7 +97,7 @@ def main():
 	# Get config details
 	progDir = os.path.dirname(os.path.abspath(__file__))	
 # 	config = configparser.ConfigParser()
-	config.read(progDir + "/../configs/newExerciseConfig.txt")
+	config.read(progDir + "/config.txt")
 	
 	pathToAppleScript = config['applescript']['script_path']
 	appleScriptName = config['applescript']['sheet_name']
