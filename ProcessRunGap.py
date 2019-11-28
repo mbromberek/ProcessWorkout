@@ -8,14 +8,20 @@ import os,glob,shutil
 import re
 import datetime
 import math
-from ExerciseInfo_Class import ExerciseInfo
-from Weather_Class import WeatherInfo
 import applescript
 import configparser
 
 
 #For API call
 import requests
+
+# Add to sys.path the directory with custom classes
+import sys
+sys.path.insert(1, 'models')
+# Import customer classes that are in models directory
+from ExerciseInfo_Class import ExerciseInfo
+from Weather_Class import WeatherInfo
+
 
 config = configparser.ConfigParser()
 
@@ -109,7 +115,6 @@ def main():
 	print('tempDir: ' + tempDir)
 # 	dateTimeSheetFormat = runGapConfigs['date_time_sheet_format']
 	dateTimeSheetFormat = '%m/%d/%Y %H:%M:%S'
-# 	extraDetailsDir = runGapConfigs['extra_details_dir']
 
 	compressFileRegex = re.compile(r'(.zip|.gz)$')
 	jsonFileRegex = re.compile(r'(metadata.json)$')
