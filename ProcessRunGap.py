@@ -102,11 +102,11 @@ def getWeather(lat, lon, tm):
 def main():
 	# Get config details
 	progDir = os.path.dirname(os.path.abspath(__file__))	
-# 	config = configparser.ConfigParser()
 	config.read(progDir + "/config.txt")
 	
 	pathToAppleScript = config['applescript']['script_path']
-	appleScriptName = config['applescript']['sheet_name']
+	appleScriptName = config['applescript']['script_name']
+	sheetName = config['applescript']['sheet_name']
 
 	runGapConfigs = config['rungap']
 	monitorDir = runGapConfigs['monitor_dir']
@@ -121,11 +121,10 @@ def main():
 	jsonExtRegex = re.compile(r'(.json)$')
 
 	# ) Read applescript file for reading and updating exercise spreadseeht
-# 	scptFile = open(pathToAppleScript + 'AddExercise.txt')
-	scptFile = open('./' + 'AddExercise.txt')
+	scptFile = open(pathToAppleScript + appleScriptName)
 	scptTxt = scptFile.read()
 	scpt = applescript.AppleScript(scptTxt)
-	scpt.call('initialize',appleScriptName)
+	scpt.call('initialize',sheetName)
 
 	print(os.listdir(monitorDir))
 	zipFiles = [] 

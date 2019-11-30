@@ -8,6 +8,7 @@ Based on the day of the week the script predicts what category the exercise shou
 ### Technolgies
 - Uses API calls to DarkSky gets the weather conditions for the start and end of the exercise.
 - Uses AppleScript to update the Apple Numbers spreadsheet.
+- Run_ProcessRunGap.applescript will setup the environment and run run the Python script. 
 
 
 ### Details saved in sheet
@@ -25,12 +26,18 @@ Based on the day of the week the script predicts what category the exercise shou
 
 ### Setup Environment
 
-'''
-Had to run the install certificates in the install directory for Pything to get the HTTPS connections to work
-cd /Applications/Python\ 3.6/
-TurnA:/Applications/Python 3.6 mikeyb$ ./Install\ Certificates.command 
-'''
 
+Had to run the install certificates in the install directory for Pything to get the HTTPS connections to DarkSkies work
+```
+cd /Applications/Python\ 3.8/
+./Install\ Certificates.command
+```
 
-% mkvirtualenv ProcessWorkout
+Need to specify the path to the ProcessRunGap.py script in the `Run_ProcessRunGap.applescript script. ``
+
+Create Virtual Environment and install libraries
+```
+mkvirtualenv ProcessWorkout
+pip install -r requirements.txt
+```
 
