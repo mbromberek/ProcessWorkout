@@ -39,5 +39,8 @@ Create Virtual Environment and install libraries
 ```
 mkvirtualenv ProcessWorkout
 pip install -r requirements.txt
+deactivate
+workon ProcessWorkout #Activate ProcessWorkout Virtual Environment
+workon #See all projects
 ```
 

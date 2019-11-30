@@ -263,8 +263,9 @@ def main():
 
 		# Remove files from temp folder then monitor folder
 		fileNameChunks = ex.originLoc.split('.')
-		fileNameStart = fileNameChunks[0]
-		for fl in glob.glob(fileNameStart + '*'):
+		filePathStart = fileNameChunks[0]
+		print ('filePathStart:' + filePathStart)
+		for fl in glob.glob(filePathStart + '*'):
 			os.remove(fl)
 		for filename in listdir_fullpath(tempDir):
 			if (os.path.isfile(filename) == False):
@@ -272,6 +273,8 @@ def main():
 			else:
 				os.remove(filename)
 
+		fileNameStart = filePathStart.split('/')[-1]
+		print ('fileNameStart:' + fileNameStart)
 		if (runGapConfigs['backup_files'] == 'Y'):
 			for fl in glob.glob(monitorDir + fileNameStart + '*'):
 				shutil.copy(fl, runGapConfigs['backup_dir'])
