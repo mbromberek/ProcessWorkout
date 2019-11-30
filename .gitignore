@@ -1,4 +1,8 @@
 config.txt
 .DS_Store
 __pycache__/
+Run_ProcessRunGap_TEST.app
+Run_ProcessRunGap.app
+AppleScript/Run_ProcessRunGap_TEST.app
+AppleScript/Run_ProcessRunGap.app
 
