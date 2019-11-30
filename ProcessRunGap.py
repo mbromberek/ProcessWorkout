@@ -227,7 +227,7 @@ def main():
 					ex.endWeather = getWeather(ex.endLat, ex.endLon, ex.endTime)
 				
 					ex.userNotes = 'Start: {0:.{1}f}'.format(ex.startWeather.temp,0) + ' degrees ' + '{0:.{1}f}'.format(ex.startWeather.humidity*100,0) + ' percent humidity feels like ' + '{0:.{1}f}'.format(ex.startWeather.apparentTemp,0) + ' degrees. '
-					ex.userNotes = ex.userNotes + 'End: {0:.{1}f}'.format(ex.endWeather.temp,0) + ' degrees ' + '{0:.{1}f}'.format(ex.endWeather.humidity*100,0) + ' percent humidity feels like ' + '{0:.{1}f}'.format(ex.startWeather.apparentTemp,0) + ' degrees.\n'
+					ex.userNotes = ex.userNotes + 'End: {0:.{1}f}'.format(ex.endWeather.temp,0) + ' degrees ' + '{0:.{1}f}'.format(ex.endWeather.humidity*100,0) + ' percent humidity feels like ' + '{0:.{1}f}'.format(ex.endWeather.apparentTemp,0) + ' degrees.\n'
 				
 				if (runGapConfigs['print_data'] == 'Y'):
 # 					print("Start Date Time: " + 
