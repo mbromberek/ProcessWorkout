@@ -217,12 +217,6 @@ def main():
 					ex.endLat = exPath[-1]['lat']
 					ex.endLon = exPath[-1]['lon']
 				
-					# Get lat and long from start and end of first and last miles, does not work if using Segments in run
-	# 				ex.startLat = laps[0]['startLocation']['lat']
-	# 				ex.startLon = laps[0]['startLocation']['lon']				
-	# 				ex.endLat = laps[-1]['endLocation']['lat']
-	# 				ex.endLon = laps[-1]['endLocation']['lon']
-				
 					ex.startWeather = getWeather(ex.startLat, ex.startLon, ex.startTime)
 					ex.endWeather = getWeather(ex.endLat, ex.endLon, ex.endTime)
 				
