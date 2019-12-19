@@ -15,6 +15,9 @@ Use Launch Agent plist file to schedule the job to run when a file is put in the
 ### Unload launch agent
 `launchctl unload ~/Dropbox/code/python/ProcessWorkout/scheduling/local.mdb.ProcessWorkout.plist`
 
+### Manually run the Agent
+`launchctl start local.mdb.ProcessWorkout`
+
 ### To load agent on boot u put the plist file in this directory
 `~/Library/LaunchAgents`
 
