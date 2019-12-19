@@ -87,13 +87,41 @@ def getWeather(lat, lon, tm):
 	darkSkyUrl = darkSkyBaseURL + darkSkyKey + '/' + str(lat) + ',' + str(lon) + ',' + tm.strftime('%Y-%m-%dT%H:%M:%S')
 	
 	w = WeatherInfo()
-				
 	weatherData = apiCall(darkSkyUrl)
 	w.temp = weatherData['currently']['temperature']
 	w.apparentTemp = weatherData['currently']['apparentTemperature']
 	w.humidity = weatherData['currently']['humidity']
+	w.windSpeed = weatherData['currently']['windSpeed']
+	w.summary = weatherData['currently']['summary']
+	w.windGust = weatherData['currently']['windGust']
+	
+	if (config['dark_sky']['save_weather'] == 'Y'):
+		with open('/tmp/weatherData' + tm.strftime('%Y%m%dT%H%M%S') + '.txt', 'w') as outfile:
+			json.dump(weatherData, outfile)
 	
 	return w
+
+def generateUserNotes(w):
+	"""
+	Generates notes for User Notes field of Exercise spreadsheet.
+	Puts all the text into an array that is joined into the returned string. 
+	"""
+	txtLst = []
+	txtLst.append(w.position)
+	txtLst.append(': {0:.{1}f}'.format(w.temp,0))
+	txtLst.append(' degrees ') 
+	txtLst.append(w.summary)
+	txtLst.append(', ')
+	txtLst.append('{0:.{1}f}'.format(w.humidity*100,0))
+	txtLst.append(' percent humidity, wind speed ')
+	txtLst.append('{0:.{1}f}'.format(w.windSpeed,2)) 
+	txtLst.append(' mph, wind gust ')
+	txtLst.append('{0:.{1}f}'.format(w.windGust,2))
+	txtLst.append('mph, feels like ')
+	txtLst.append('{0:.{1}f}'.format(w.apparentTemp,0))
+	txtLst.append(' degrees. ')
+	txtLst.append('\n')
+	return ''.join(txtLst)
 
 
 #######################################################
@@ -218,14 +246,14 @@ def main():
 					ex.endLon = exPath[-1]['lon']
 				
 					ex.startWeather = getWeather(ex.startLat, ex.startLon, ex.startTime)
+					ex.startWeather.position = 'Start'
 					ex.endWeather = getWeather(ex.endLat, ex.endLon, ex.endTime)
+					ex.endWeather.position = 'End'
 				
-					ex.userNotes = 'Start: {0:.{1}f}'.format(ex.startWeather.temp,0) + ' degrees ' + '{0:.{1}f}'.format(ex.startWeather.humidity*100,0) + ' percent humidity feels like ' + '{0:.{1}f}'.format(ex.startWeather.apparentTemp,0) + ' degrees. '
-					ex.userNotes = ex.userNotes + 'End: {0:.{1}f}'.format(ex.endWeather.temp,0) + ' degrees ' + '{0:.{1}f}'.format(ex.endWeather.humidity*100,0) + ' percent humidity feels like ' + '{0:.{1}f}'.format(ex.endWeather.apparentTemp,0) + ' degrees.\n'
-				
+					ex.userNotes = generateUserNotes(ex.startWeather)
+					ex.userNotes = ex.userNotes + generateUserNotes(ex.endWeather)
+	
 				if (runGapConfigs['print_data'] == 'Y'):
-# 					print("Start Date Time: " + 
-# 						ex.startTime.strftime('%Y-%m-%d %H:%M:%S %Z'))
 					print("Start Date Time: " + 
 						ex.startTime.strftime('%Y-%m-%dT%H:%M:%S'))
 					print("Start Unix Time: " + str(ex.startTime.timestamp()))
