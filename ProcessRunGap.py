@@ -55,9 +55,9 @@ def determineGear(ex):
 		if ex.type == 'Running':
 			primaryDays = config['running']['primary_days'].split(',')
 			if ex.startTime.strftime('%A') in primaryDays:
-				gear = appleScriptName = gearConfigs['default_shoe_primary']
+				gear = gearConfigs['default_shoe_primary']
 			else:
-				gear = appleScriptName = gearConfigs['default_shoe_secondary']
+				gear = gearConfigs['default_shoe_secondary']
 		else:
 			gear = gearConfigs['default_' + ex.type]
 	except:
@@ -85,7 +85,7 @@ def getWeather(lat, lon, tm):
 	darkSkyKey = config['dark_sky']['key']
 	
 	darkSkyUrl = darkSkyBaseURL + darkSkyKey + '/' + str(lat) + ',' + str(lon) + ',' + tm.strftime('%Y-%m-%dT%H:%M:%S')
-	
+
 	w = WeatherInfo()
 	weatherData = apiCall(darkSkyUrl)
 	w.temp = weatherData['currently']['temperature']
