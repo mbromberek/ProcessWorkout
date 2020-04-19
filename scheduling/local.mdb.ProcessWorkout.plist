@@ -5,8 +5,13 @@
 		<key>Label</key>
 		<string>local.mdb.ProcessWorkout</string>
 		
-		<key>Program</key>		
-<string>/Users/mikeyb/Dropbox/code/python/ProcessWorkout/scheduling/Run_ProcessRunGap.zsh</string>
+		<key>Program</key>
+		<string>/usr/bin/osascript</string>
+		<key>ProgramArguments</key>		
+		<array>
+			<string>osascript</string>
+			<string>/Users/mikeyb/Dropbox/code/python/ProcessWorkout/scheduling/Run_ProcessRunGap_TEST.scpt</string>
+		</array>
 
 		<key>WatchPaths</key>
 		<array>

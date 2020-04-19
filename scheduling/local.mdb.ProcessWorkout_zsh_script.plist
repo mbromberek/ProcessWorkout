@@ -6,13 +6,8 @@
 		<string>local.mdb.ProcessWorkout</string>
 		
 		<key>Program</key>		
-			<!--string>/usr/bin/osascript</string-->
-				<string>/Users/mikeyb/Dropbox/code/python/ProcessWorkout/AppleScript/Run_ProcessRunGap.zsh</string>
-			<!--string>/Users/mikeyb/Library/Scripts/Run_ProcessRunGap.app</string-->
-		<!--key>ProgramArguments</key>
-			<array>
-					<string>/Users/mikeyb/Dropbox/code/python/ProcessWorkout/AppleScript/Run_ProcessRunGap.app</string>
-			</array-->
+<string>/Users/mikeyb/Dropbox/code/python/ProcessWorkout/scheduling/Run_ProcessRunGap.zsh</string>
+
 		<key>WatchPaths</key>
 		<array>
 			<string>/Users/mikeyb/Library/Mobile Documents/iCloud~com~rungap~RunGap/Documents/Export_test/</string>

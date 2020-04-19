@@ -128,6 +128,8 @@ def generateUserNotes(w):
 # MAIN
 #######################################################
 def main():
+	print('Start Python')
+	
 	# Get config details
 	progDir = os.path.dirname(os.path.abspath(__file__))	
 	config.read(progDir + "/config.txt")
@@ -271,6 +273,7 @@ def main():
 
 					print('Start Lat, Lon: ' + str(ex.startLat) + ',' + str(ex.startLon) )
 					print('End Lat, Lon: ' + str(ex.endLat) + ',' + str(ex.endLon) )
+					print('\n')
 # 					print(darkSkyUrlStart)
 # 					print(darkSkyUrlEnd)
 
@@ -281,7 +284,13 @@ def main():
 		startDateTime = ex.startTime.strftime(dateTimeSheetFormat)
 		distance = "%.2f" % ex.distTot
 		duration = formatNumbersTime(ex.hourTot, ex.minTot, ex.secTot)
-		scpt.call('addExercise',ex.eDate, ex.type, duration, distance, ex.distUnit, ex.avgHeartRate, ex.calTot, ex.userNotes, startDateTime, ex.gear, ex.category, ex.elevationChange())
+		
+		try:
+			scpt.call('addExercise',ex.eDate, ex.type, duration, distance, ex.distUnit, ex.avgHeartRate, ex.calTot, ex.userNotes, startDateTime, ex.gear, ex.category, ex.elevationChange())
+		except:
+			print('addExercise Unexpected Error')
+			print(sys.exc_info())
+			raise
 
 		# Remove files from temp folder then monitor folder
 		fileNameChunks = ex.originLoc.split('.')
