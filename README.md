@@ -27,7 +27,7 @@ Based on the day of the week the script predicts what category the exercise shou
 ### Setup Environment
 
 
-Had to run the install certificates in the install directory for Pything to get the HTTPS connections to DarkSkies work
+Had to run the install certificates in the install directory for Python to get the HTTPS connections to DarkSkies work
 ```
 cd /Applications/Python\ 3.8/
 ./Install\ Certificates.command
@@ -43,3 +43,18 @@ deactivate
 workon ProcessWorkout #Activate ProcessWorkout Virtual Environment
 workon #See all projects
 ```
+
+# WorkoutAnalyze
+Reads workout details of an exercise from the app RunGap.
+The workout data is stored in two files *.rungap.json and *.metadata.json. The rungap file has the GPS locations and updates for the workout stats each second of the workout.
+Both files store the data in JSON format.
+
+The program WorkoutAnalyze can be run to process a specific file or the rungap/normWrkt function normalize_activity can be called passing it the rungap data to be normalized into a summary of the activity to export to a CSV or group by splits like mile or pauses.
+
+## Arguments
+print ('WorkoutAnalyze.py -i <inputfile> -o <outputdir>')
+print ("-i, --ifile arg  : Input filename to process")
+print ("-idir arg        : Input directory with file name")
+print ("-o, --odir arg   : Output directory for results")
+print ("--osplit arg     : Segments to generate in file, default is all (CURRENTLY NOT SETUP)")
+print ("                    options are mile, segment, kilometer, pause, all")
