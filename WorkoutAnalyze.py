@@ -42,10 +42,10 @@ def main(argv):
     progDir = os.path.abspath('')
     config.read(progDir + "/wrktAnalyzeConfig.txt")
 
-    filename = config['inputs']['file_name']
-    analyzeDir = config['inputs']['analyze_dir']
-    tempDir = config['inputs']['temp_dir']
-    outDir = config['outputs']['dir']
+    filename = config['analyze_inputs']['file_name']
+    analyzeDir = config['analyze_inputs']['analyze_dir']
+    tempDir = config['analyze_inputs']['temp_dir']
+    outDir = config['analyze_outputs']['dir']
 
     try:
         opts, args = getopt.getopt(argv,"hi:o:",["ifile=", "idir=", "odir="])
