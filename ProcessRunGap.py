@@ -21,22 +21,9 @@ sys.path.insert(1, 'models') # Add to sys.path the directory with custom classes
 # Import customer classes that are in models directory
 from ExerciseInfo_Class import ExerciseInfo
 from Weather_Class import WeatherInfo
-
+import util.timeConv as tc
 
 config = configparser.ConfigParser()
-
-def breakTimeFromSeconds(totTimeSec):
-	hourTot = math.floor(totTimeSec/60/60)
-	minTot = math.floor((totTimeSec/60/60 - hourTot) * 60)
-	secTot = math.floor(((totTimeSec/60/60 - hourTot) * 60 - minTot) *60)
-	return hourTot, minTot, secTot
-def formatNumbersTime(h, m, s):
-	durTotNumbers = str(h) + 'h ' + str(m) + 'm ' + str(s) + 's'
-	return durTotNumbers
-def formatSheetsTime(h, m, s):
-	durTotSheets = str(h) + ':' + str(m) + ':' + str(s)
-	return durTotSheets
-
 
 #######################################################
 # get full directory path for files in passed directory
@@ -205,9 +192,9 @@ def main():
 				eDistanceTotMeters = data['distance']
 				ex.distTot = eDistanceTotMeters / METERS_IN_KILOMETERS * MILES_IN_KILOMETERS
 
-				ex.hourTot, ex.minTot, ex.secTot = breakTimeFromSeconds(data['duration'])
-				durTotNumbers = formatNumbersTime(ex.hourTot, ex.minTot, ex.secTot)
-				durTotSheets = formatSheetsTime(ex.hourTot, ex.minTot, ex.secTot)
+				ex.hourTot, ex.minTot, ex.secTot = tc.breakTimeFromSeconds(data['duration'])
+				durTotNumbers = tc.formatNumbersTime(ex.hourTot, ex.minTot, ex.secTot)
+				durTotSheets = tc.formatSheetsTime(ex.hourTot, ex.minTot, ex.secTot)
 
 				ex.durTot = durTotSheets
 
@@ -283,7 +270,7 @@ def main():
 	for ex in exLst:
 		startDateTime = ex.startTime.strftime(dateTimeSheetFormat)
 		distance = "%.2f" % ex.distTot
-		duration = formatNumbersTime(ex.hourTot, ex.minTot, ex.secTot)
+		duration = tc.formatNumbersTime(ex.hourTot, ex.minTot, ex.secTot)
 
 		try:
 			scpt.call('addExercise',ex.eDate, ex.type, duration, distance, ex.distUnit, ex.avgHeartRate, ex.calTot, ex.userNotes, startDateTime, ex.gear, ex.category, ex.elevationChange())

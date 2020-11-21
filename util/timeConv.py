@@ -7,6 +7,7 @@ Functions for converting time in seconds
 # First party classes
 import re
 import datetime, time
+import math
 
 # 3rd party classes
 import numpy as np
@@ -58,3 +59,15 @@ def seconds_to_time_str(actv, time_field, time_format = ':'):
 
 
     return time_str
+
+def breakTimeFromSeconds(totTimeSec):
+	hourTot = math.floor(totTimeSec/60/60)
+	minTot = math.floor((totTimeSec/60/60 - hourTot) * 60)
+	secTot = math.floor(((totTimeSec/60/60 - hourTot) * 60 - minTot) *60)
+	return hourTot, minTot, secTot
+def formatNumbersTime(h, m, s):
+	durTotNumbers = str(h) + 'h ' + str(m) + 'm ' + str(s) + 's'
+	return durTotNumbers
+def formatSheetsTime(h, m, s):
+	durTotSheets = str(h) + ':' + str(m) + ':' + str(s)
+	return durTotSheets

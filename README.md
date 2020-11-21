@@ -55,7 +55,7 @@ The program WorkoutAnalyze can be run to process a specific file or the rungap/n
 ```
 WorkoutAnalyze.py -i <inputfile> -o <outputdir>
 -i, --ifile arg  : Input filename to process
---idir arg        : Input directory with file name
+--idir arg       : Input directory with file name
 -o, --odir arg   : Output directory for results
 --osplit arg     : Segments to generate in file, default is all (CURRENTLY NOT SETUP)
                     options are mile, segment, kilometer, pause, all
