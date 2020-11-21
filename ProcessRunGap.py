@@ -1,23 +1,23 @@
 #! /Users/mikeyb/Applications/python3
 # -*- coding: utf-8 -*-
 
-
-import zipfile
-import json
+# First party classes
 import os,glob,shutil
+import sys
 import re
 import datetime
 import math
-import applescript
 import configparser
+import requests # For API call
 
+import zipfile
+import json
 
-#For API call
-import requests
+# 3rd party classes
+import applescript
 
-# Add to sys.path the directory with custom classes
-import sys
-sys.path.insert(1, 'models')
+# Custom Classes
+sys.path.insert(1, 'models') # Add to sys.path the directory with custom classes
 # Import customer classes that are in models directory
 from ExerciseInfo_Class import ExerciseInfo
 from Weather_Class import WeatherInfo
@@ -62,7 +62,7 @@ def determineGear(ex):
 			gear = gearConfigs['default_' + ex.type]
 	except:
 		gear = ''
-	
+
 	return gear
 
 #######################################################
@@ -76,14 +76,14 @@ def apiCall(url):
 
 #######################################################
 # Get Weather from dark sky for the passed latitude,
-# longitude, and time. 
+# longitude, and time.
 # Creates a weather object with returned data and returns
-# it. 
+# it.
 #######################################################
 def getWeather(lat, lon, tm):
 	darkSkyBaseURL = config['dark_sky']['base_url']
 	darkSkyKey = config['dark_sky']['key']
-	
+
 	darkSkyUrl = darkSkyBaseURL + darkSkyKey + '/' + str(lat) + ',' + str(lon) + ',' + tm.strftime('%Y-%m-%dT%H:%M:%S')
 
 	w = WeatherInfo()
@@ -94,27 +94,27 @@ def getWeather(lat, lon, tm):
 	w.windSpeed = weatherData['currently']['windSpeed']
 	w.summary = weatherData['currently']['summary']
 	w.windGust = weatherData['currently']['windGust']
-	
+
 	if (config['dark_sky']['save_weather'] == 'Y'):
 		with open('/tmp/weatherData' + tm.strftime('%Y%m%dT%H%M%S') + '.txt', 'w') as outfile:
 			json.dump(weatherData, outfile)
-	
+
 	return w
 
 def generateUserNotes(w):
 	"""
 	Generates notes for User Notes field of Exercise spreadsheet.
-	Puts all the text into an array that is joined into the returned string. 
+	Puts all the text into an array that is joined into the returned string.
 	"""
 	txtLst = []
 	txtLst.append(w.position)
 	txtLst.append(': {0:.{1}f}'.format(w.temp,0))
-	txtLst.append(' degrees ') 
+	txtLst.append(' degrees ')
 	txtLst.append(w.summary)
 	txtLst.append(', ')
 	txtLst.append('{0:.{1}f}'.format(w.humidity*100,0))
 	txtLst.append(' percent humidity, wind speed ')
-	txtLst.append('{0:.{1}f}'.format(w.windSpeed,2)) 
+	txtLst.append('{0:.{1}f}'.format(w.windSpeed,2))
 	txtLst.append(' mph, wind gust ')
 	txtLst.append('{0:.{1}f}'.format(w.windGust,2))
 	txtLst.append('mph, feels like ')
@@ -129,11 +129,11 @@ def generateUserNotes(w):
 #######################################################
 def main():
 	print('Start Python')
-	
+
 	# Get config details
-	progDir = os.path.dirname(os.path.abspath(__file__))	
+	progDir = os.path.dirname(os.path.abspath(__file__))
 	config.read(progDir + "/config.txt")
-	
+
 	pathToAppleScript = config['applescript']['script_path']
 	appleScriptName = config['applescript']['script_name']
 	sheetName = config['applescript']['sheet_name']
@@ -157,7 +157,7 @@ def main():
 	scpt.call('initialize',sheetName)
 
 	print(os.listdir(monitorDir))
-	zipFiles = [] 
+	zipFiles = []
 	# Uncompress files from monitor directory into temp directory
 	for filename in os.listdir(monitorDir):
 		# Checks if compressed file
@@ -179,8 +179,8 @@ def main():
 			print('file')
 			filesToProcess.append(filename)
 
-	print(filesToProcess)	
-	for filename in filesToProcess:		
+	print(filesToProcess)
+	for filename in filesToProcess:
 		print(filename)
 		if jsonFileRegex.search(filename):
 			print('\nProcess ' + filename)
@@ -190,38 +190,38 @@ def main():
 				data = json.load(data_file)
 				ex.source = data['source']
 				ex.originLoc = filename
-				
+
 				ex.type = data['activityType']['sourceName']
-			
+
 				# Get the start time from file in UTC
 				d = datetime.datetime.strptime(data['startTime']['time'],'%Y-%m-%dT%H:%M:%SZ')
 				# Convert start time to current time zone
 				sTime = d.replace(tzinfo=datetime.timezone.utc).astimezone(tz=None)
 				ex.startTime = sTime
-	
+
 				MILES_IN_KILOMETERS = 0.621371
 				METERS_IN_KILOMETERS = 1000
-	
+
 				eDistanceTotMeters = data['distance']
 				ex.distTot = eDistanceTotMeters / METERS_IN_KILOMETERS * MILES_IN_KILOMETERS
 
 				ex.hourTot, ex.minTot, ex.secTot = breakTimeFromSeconds(data['duration'])
 				durTotNumbers = formatNumbersTime(ex.hourTot, ex.minTot, ex.secTot)
 				durTotSheets = formatSheetsTime(ex.hourTot, ex.minTot, ex.secTot)
-			
-				ex.durTot = durTotSheets	
-			
+
+				ex.durTot = durTotSheets
+
 				ex.avgHeartRate = data['avgHeartrate']
-	
+
 				ex.calTot = data['calories']
-				
+
 				if 'elevationGain' in data:
 					ex.elevationGain = data['elevationGain']
 					ex.elevationLoss = data['elevationLoss']
-				
+
 				if ex.gear == '':
 					ex.gear = determineGear(ex)
-				
+
 				categoryConfigs = ''
 				if ex.type == 'Running':
 					categoryConfigs = config['run_category']
@@ -230,7 +230,7 @@ def main():
 						ex.category = categoryConfigs[ex.startTime.strftime('%A')]
 				else:
 					ex.category = 'Easy'
-				
+
 				# Pull data for getting weather
 				laps = data['laps']
 				if 'displayPath' in data:
@@ -241,30 +241,30 @@ def main():
 					lastLapEnd = lastLapStart + datetime.timedelta(seconds=lastLapDuration)
 					ex.endTime = lastLapEnd
 
-					# Get lat and long from path details				
+					# Get lat and long from path details
 					ex.startLat = exPath[0]['lat']
-					ex.startLon = exPath[0]['lon']				
+					ex.startLon = exPath[0]['lon']
 					ex.endLat = exPath[-1]['lat']
 					ex.endLon = exPath[-1]['lon']
-				
+
 					ex.startWeather = getWeather(ex.startLat, ex.startLon, ex.startTime)
 					ex.startWeather.position = 'Start'
 					ex.endWeather = getWeather(ex.endLat, ex.endLon, ex.endTime)
 					ex.endWeather.position = 'End'
-				
+
 					ex.userNotes = generateUserNotes(ex.startWeather)
 					ex.userNotes = ex.userNotes + generateUserNotes(ex.endWeather)
-	
+
 				if (runGapConfigs['print_data'] == 'Y'):
-					print("Start Date Time: " + 
+					print("Start Date Time: " +
 						ex.startTime.strftime('%Y-%m-%dT%H:%M:%S'))
 					print("Start Unix Time: " + str(ex.startTime.timestamp()))
 					if ex.endTime == '':
 						print("End Date Time: Unknown")
 					else:
-						print('End Date Time: ' + 
+						print('End Date Time: ' +
 							ex.endTime.strftime('%Y-%m-%dT%H:%M:%S'))
-					
+
 					print("Distance: " + str(ex.distTot))
 					print("Duration: " + ex.durTot)
 					print('Avg Heartrate: ' + str(ex.avgHeartRate))
@@ -284,7 +284,7 @@ def main():
 		startDateTime = ex.startTime.strftime(dateTimeSheetFormat)
 		distance = "%.2f" % ex.distTot
 		duration = formatNumbersTime(ex.hourTot, ex.minTot, ex.secTot)
-		
+
 		try:
 			scpt.call('addExercise',ex.eDate, ex.type, duration, distance, ex.distUnit, ex.avgHeartRate, ex.calTot, ex.userNotes, startDateTime, ex.gear, ex.category, ex.elevationChange())
 		except:
@@ -315,7 +315,6 @@ def main():
 
 	if (config['applescript']['close_sheet'] == 'Y'):
 		scpt.call('closeSheet')
-	
+
 if __name__ == '__main__':
 	main()
-
