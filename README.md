@@ -52,9 +52,11 @@ Both files store the data in JSON format.
 The program WorkoutAnalyze can be run to process a specific file or the rungap/normWrkt function normalize_activity can be called passing it the rungap data to be normalized into a summary of the activity to export to a CSV or group by splits like mile or pauses.
 
 ## Arguments
-print ('WorkoutAnalyze.py -i <inputfile> -o <outputdir>')
-print ("-i, --ifile arg  : Input filename to process")
-print ("-idir arg        : Input directory with file name")
-print ("-o, --odir arg   : Output directory for results")
-print ("--osplit arg     : Segments to generate in file, default is all (CURRENTLY NOT SETUP)")
-print ("                    options are mile, segment, kilometer, pause, all")
+```
+WorkoutAnalyze.py -i <inputfile> -o <outputdir>
+-i, --ifile arg  : Input filename to process
+--idir arg        : Input directory with file name
+-o, --odir arg   : Output directory for results
+--osplit arg     : Segments to generate in file, default is all (CURRENTLY NOT SETUP)
+                    options are mile, segment, kilometer, pause, all
+```
