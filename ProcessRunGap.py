@@ -37,29 +37,29 @@ def listdir_fullpath(d):
 # determineGear(exercise details)
 #######################################################
 def determineGear(ex):
-	gearConfigs = config['gear']
-	gear = ''
-	try:
-		if ex.type == 'Running':
-			primaryDays = config['running']['primary_days'].split(',')
-			if ex.startTime.strftime('%A') in primaryDays:
-				gear = gearConfigs['default_shoe_primary']
-			else:
-				gear = gearConfigs['default_shoe_secondary']
-		else:
-			gear = gearConfigs['default_' + ex.type]
-	except:
-		gear = ''
+    gearConfigs = config['gear']
+    gear = ''
+    try:
+        if ex.type == 'Running':
+            primaryDays = config['running']['primary_days'].split(',')
+            if ex.startTime.strftime('%A') in primaryDays:
+                gear = gearConfigs['default_shoe_primary']
+            else:
+                gear = gearConfigs['default_shoe_secondary']
+        else:
+            gear = gearConfigs['default_' + ex.type]
+    except:
+        gear = ''
 
-	return gear
+    return gear
 
 #######################################################
 # API call
 #######################################################
 def apiCall(url):
-	r = requests.get(url)
-	data = r.json()
-	return data
+    r = requests.get(url)
+    data = r.json()
+    return data
 
 
 #######################################################
@@ -69,47 +69,47 @@ def apiCall(url):
 # it.
 #######################################################
 def getWeather(lat, lon, tm):
-	darkSkyBaseURL = config['dark_sky']['base_url']
-	darkSkyKey = config['dark_sky']['key']
+    darkSkyBaseURL = config['dark_sky']['base_url']
+    darkSkyKey = config['dark_sky']['key']
 
-	darkSkyUrl = darkSkyBaseURL + darkSkyKey + '/' + str(lat) + ',' + str(lon) + ',' + tm.strftime('%Y-%m-%dT%H:%M:%S')
+    darkSkyUrl = darkSkyBaseURL + darkSkyKey + '/' + str(lat) + ',' + str(lon) + ',' + tm.strftime('%Y-%m-%dT%H:%M:%S')
 
-	w = WeatherInfo()
-	weatherData = apiCall(darkSkyUrl)
-	w.temp = weatherData['currently']['temperature']
-	w.apparentTemp = weatherData['currently']['apparentTemperature']
-	w.humidity = weatherData['currently']['humidity']
-	w.windSpeed = weatherData['currently']['windSpeed']
-	w.summary = weatherData['currently']['summary']
-	w.windGust = weatherData['currently']['windGust']
+    w = WeatherInfo()
+    weatherData = apiCall(darkSkyUrl)
+    w.temp = weatherData['currently']['temperature']
+    w.apparentTemp = weatherData['currently']['apparentTemperature']
+    w.humidity = weatherData['currently']['humidity']
+    w.windSpeed = weatherData['currently']['windSpeed']
+    w.summary = weatherData['currently']['summary']
+    w.windGust = weatherData['currently']['windGust']
 
-	if (config['dark_sky']['save_weather'] == 'Y'):
-		with open('/tmp/weatherData' + tm.strftime('%Y%m%dT%H%M%S') + '.txt', 'w') as outfile:
-			json.dump(weatherData, outfile)
+    if (config['dark_sky']['save_weather'] == 'Y'):
+        with open('/tmp/weatherData' + tm.strftime('%Y%m%dT%H%M%S') + '.txt', 'w') as outfile:
+            json.dump(weatherData, outfile)
 
-	return w
+    return w
 
 def generateUserNotes(w):
-	"""
-	Generates notes for User Notes field of Exercise spreadsheet.
-	Puts all the text into an array that is joined into the returned string.
-	"""
-	txtLst = []
-	txtLst.append(w.position)
-	txtLst.append(': {0:.{1}f}'.format(w.temp,0))
-	txtLst.append(' degrees ')
-	txtLst.append(w.summary)
-	txtLst.append(', ')
-	txtLst.append('{0:.{1}f}'.format(w.humidity*100,0))
-	txtLst.append(' percent humidity, wind speed ')
-	txtLst.append('{0:.{1}f}'.format(w.windSpeed,2))
-	txtLst.append(' mph, wind gust ')
-	txtLst.append('{0:.{1}f}'.format(w.windGust,2))
-	txtLst.append('mph, feels like ')
-	txtLst.append('{0:.{1}f}'.format(w.apparentTemp,0))
-	txtLst.append(' degrees. ')
-	txtLst.append('\n')
-	return ''.join(txtLst)
+    """
+    Generates notes for User Notes field of Exercise spreadsheet.
+    Puts all the text into an array that is joined into the returned string.
+    """
+    txtLst = []
+    txtLst.append(w.position)
+    txtLst.append(': {0:.{1}f}'.format(w.temp,0))
+    txtLst.append(' degrees ')
+    txtLst.append(w.summary)
+    txtLst.append(', ')
+    txtLst.append('{0:.{1}f}'.format(w.humidity*100,0))
+    txtLst.append(' percent humidity, wind speed ')
+    txtLst.append('{0:.{1}f}'.format(w.windSpeed,2))
+    txtLst.append(' mph, wind gust ')
+    txtLst.append('{0:.{1}f}'.format(w.windGust,2))
+    txtLst.append('mph, feels like ')
+    txtLst.append('{0:.{1}f}'.format(w.apparentTemp,0))
+    txtLst.append(' degrees. ')
+    txtLst.append('\n')
+    return ''.join(txtLst)
 
 
 #######################################################
