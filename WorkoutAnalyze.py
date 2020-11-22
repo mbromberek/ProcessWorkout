@@ -88,6 +88,8 @@ def main(argv):
     fao.save_df(actv_df, outDir+'activity.csv')
     actv_df.to_pickle(os.path.join(outDir, "activity.pickle"))
     print(actv_df.info())
+    miles_df.to_pickle(os.path.join(outDir, "miles.pickle"))
+    # miles_df = pd.read_pickle(os.path.join("/Users/mikeyb/Library/Mobile Documents/com~apple~CloudDocs/_Runs/analyze/results/", "miles.pickle"))
 
     fao.clean_dir(tempDir)
 

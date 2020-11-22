@@ -22,6 +22,7 @@ sys.path.insert(1, 'models') # Add to sys.path the directory with custom classes
 from ExerciseInfo_Class import ExerciseInfo
 from Weather_Class import WeatherInfo
 import util.timeConv as tc
+import models.WrktSplits
 
 config = configparser.ConfigParser()
 
@@ -279,6 +280,16 @@ def main():
 			print(sys.exc_info())
 			raise
 
+        # TODO Call New function in normWrkt to get workout breakdown
+        # Will return a List of Dictionaries containing run details to put in a spreadsheet.
+        # Need to determine inputs to use, might have a function in WorkoutAnalyze to do most of the work.
+        # if ex.category == 'Training':
+        #     wrktSegments = WrktSplits.breakDownWrkt(tempDir, 'segment')
+        #     print('****Workout Segments****')
+        #     print(wrktSegments)
+
+        # if ex.category == 'Long Run':
+
 		# Remove files from temp folder then monitor folder
 		fileNameChunks = ex.originLoc.split('.')
 		filePathStart = fileNameChunks[0]
@@ -299,6 +310,7 @@ def main():
 		if (runGapConfigs['remove_files'] == 'Y'):
 			for fl in glob.glob(monitorDir + fileNameStart + '*'):
 				os.remove(fl)
+
 
 	if (config['applescript']['close_sheet'] == 'Y'):
 		scpt.call('closeSheet')
