@@ -22,7 +22,7 @@ sys.path.insert(1, 'models') # Add to sys.path the directory with custom classes
 from ExerciseInfo_Class import ExerciseInfo
 from Weather_Class import WeatherInfo
 import util.timeConv as tc
-import models.WrktSplits
+import models.WrktSplits as wrktSplits
 
 config = configparser.ConfigParser()
 
@@ -283,10 +283,11 @@ def main():
         # TODO Call New function in normWrkt to get workout breakdown
         # Will return a List of Dictionaries containing run details to put in a spreadsheet.
         # Need to determine inputs to use, might have a function in WorkoutAnalyze to do most of the work.
-        # if ex.category == 'Training':
-        #     wrktSegments = WrktSplits.breakDownWrkt(tempDir, 'segment')
-        #     print('****Workout Segments****')
-        #     print(wrktSegments)
+        if ex.category == 'Training':
+            wrktSegments = wrktSplits.breakDownWrkt(tempDir, 'segment')
+            print('****Workout Segments****')
+            for seg in wrktSegments:
+                print(seg)
 
         # if ex.category == 'Long Run':
 
