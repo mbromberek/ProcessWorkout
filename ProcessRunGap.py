@@ -116,169 +116,169 @@ def generateUserNotes(w):
 # MAIN
 #######################################################
 def main():
-	print('Start Python')
+    print('Start Python')
 
-	# Get config details
-	progDir = os.path.dirname(os.path.abspath(__file__))
-	config.read(progDir + "/config.txt")
+    # Get config details
+    progDir = os.path.dirname(os.path.abspath(__file__))
+    config.read(progDir + "/config.txt")
 
-	pathToAppleScript = config['applescript']['script_path']
-	appleScriptName = config['applescript']['script_name']
-	sheetName = config['applescript']['sheet_name']
+    pathToAppleScript = config['applescript']['script_path']
+    appleScriptName = config['applescript']['script_name']
+    sheetName = config['applescript']['sheet_name']
 
-	runGapConfigs = config['rungap']
-	monitorDir = runGapConfigs['monitor_dir']
-	print('monitorDir:' + monitorDir)
-	tempDir = runGapConfigs['temp_dir']
-	print('tempDir: ' + tempDir)
-# 	dateTimeSheetFormat = runGapConfigs['date_time_sheet_format']
-	dateTimeSheetFormat = '%m/%d/%Y %H:%M:%S'
+    runGapConfigs = config['rungap']
+    monitorDir = runGapConfigs['monitor_dir']
+    print('monitorDir:' + monitorDir)
+    tempDir = runGapConfigs['temp_dir']
+    print('tempDir: ' + tempDir)
+#     dateTimeSheetFormat = runGapConfigs['date_time_sheet_format']
+    dateTimeSheetFormat = '%m/%d/%Y %H:%M:%S'
 
-	compressFileRegex = re.compile(r'(.zip|.gz)$')
-	jsonFileRegex = re.compile(r'(metadata.json)$')
-	jsonExtRegex = re.compile(r'(.json)$')
+    compressFileRegex = re.compile(r'(.zip|.gz)$')
+    jsonFileRegex = re.compile(r'(metadata.json)$')
+    jsonExtRegex = re.compile(r'(.json)$')
 
-	# ) Read applescript file for reading and updating exercise spreadseeht
-	scptFile = open(pathToAppleScript + appleScriptName)
-	scptTxt = scptFile.read()
-	scpt = applescript.AppleScript(scptTxt)
-	scpt.call('initialize',sheetName)
+    # ) Read applescript file for reading and updating exercise spreadseeht
+    scptFile = open(pathToAppleScript + appleScriptName)
+    scptTxt = scptFile.read()
+    scpt = applescript.AppleScript(scptTxt)
+    scpt.call('initialize',sheetName)
 
-	print(os.listdir(monitorDir))
-	zipFiles = []
-	# Uncompress files from monitor directory into temp directory
-	for filename in os.listdir(monitorDir):
-		# Checks if compressed file
-		if compressFileRegex.search(filename):
-			z = zipfile.ZipFile(monitorDir + filename,mode='r')
-			z.extractall(path=tempDir)
-			zipFiles.append(monitorDir + filename)
+    print(os.listdir(monitorDir))
+    zipFiles = []
+    # Uncompress files from monitor directory into temp directory
+    for filename in os.listdir(monitorDir):
+        # Checks if compressed file
+        if compressFileRegex.search(filename):
+            z = zipfile.ZipFile(monitorDir + filename,mode='r')
+            z.extractall(path=tempDir)
+            zipFiles.append(monitorDir + filename)
 
-	exLst = []
-	# Loop through files and load exercise data to a list
-	print(listdir_fullpath(tempDir))
-	filesToProcess = []
-	print(filesToProcess)
-	for filename in listdir_fullpath(tempDir):
-		if (os.path.isfile(filename) == False and filename != '__MACOSX'):
-			print('directory')
-			filesToProcess.extend(listdir_fullpath(filename))
-		else:
-			print('file')
-			filesToProcess.append(filename)
+    exLst = []
+    # Loop through files and load exercise data to a list
+    print(listdir_fullpath(tempDir))
+    filesToProcess = []
+    print(filesToProcess)
+    for filename in listdir_fullpath(tempDir):
+        if (os.path.isfile(filename) == False and filename != '__MACOSX'):
+            print('directory')
+            filesToProcess.extend(listdir_fullpath(filename))
+        else:
+            print('file')
+            filesToProcess.append(filename)
 
-	print(filesToProcess)
-	for filename in filesToProcess:
-		print(filename)
-		if jsonFileRegex.search(filename):
-			print('\nProcess ' + filename)
-			ex = ExerciseInfo()
-			ex.type = 'Running'
-			with open(filename) as data_file:
-				data = json.load(data_file)
-				ex.source = data['source']
-				ex.originLoc = filename
+    print(filesToProcess)
+    for filename in filesToProcess:
+        print(filename)
+        if jsonFileRegex.search(filename):
+            print('\nProcess ' + filename)
+            ex = ExerciseInfo()
+            ex.type = 'Running'
+            with open(filename) as data_file:
+                data = json.load(data_file)
+                ex.source = data['source']
+                ex.originLoc = filename
 
-				ex.type = data['activityType']['sourceName']
+                ex.type = data['activityType']['sourceName']
 
-				# Get the start time from file in UTC
-				d = datetime.datetime.strptime(data['startTime']['time'],'%Y-%m-%dT%H:%M:%SZ')
-				# Convert start time to current time zone
-				sTime = d.replace(tzinfo=datetime.timezone.utc).astimezone(tz=None)
-				ex.startTime = sTime
+                # Get the start time from file in UTC
+                d = datetime.datetime.strptime(data['startTime']['time'],'%Y-%m-%dT%H:%M:%SZ')
+                # Convert start time to current time zone
+                sTime = d.replace(tzinfo=datetime.timezone.utc).astimezone(tz=None)
+                ex.startTime = sTime
 
-				MILES_IN_KILOMETERS = 0.621371
-				METERS_IN_KILOMETERS = 1000
+                MILES_IN_KILOMETERS = 0.621371
+                METERS_IN_KILOMETERS = 1000
 
-				eDistanceTotMeters = data['distance']
-				ex.distTot = eDistanceTotMeters / METERS_IN_KILOMETERS * MILES_IN_KILOMETERS
+                eDistanceTotMeters = data['distance']
+                ex.distTot = eDistanceTotMeters / METERS_IN_KILOMETERS * MILES_IN_KILOMETERS
 
-				ex.hourTot, ex.minTot, ex.secTot = tc.breakTimeFromSeconds(data['duration'])
-				durTotNumbers = tc.formatNumbersTime(ex.hourTot, ex.minTot, ex.secTot)
-				durTotSheets = tc.formatSheetsTime(ex.hourTot, ex.minTot, ex.secTot)
+                ex.hourTot, ex.minTot, ex.secTot = tc.breakTimeFromSeconds(data['duration'])
+                durTotNumbers = tc.formatNumbersTime(ex.hourTot, ex.minTot, ex.secTot)
+                durTotSheets = tc.formatSheetsTime(ex.hourTot, ex.minTot, ex.secTot)
 
-				ex.durTot = durTotSheets
+                ex.durTot = durTotSheets
 
-				ex.avgHeartRate = data['avgHeartrate']
+                ex.avgHeartRate = data['avgHeartrate']
 
-				ex.calTot = data['calories']
+                ex.calTot = data['calories']
 
-				if 'elevationGain' in data:
-					ex.elevationGain = data['elevationGain']
-					ex.elevationLoss = data['elevationLoss']
+                if 'elevationGain' in data:
+                    ex.elevationGain = data['elevationGain']
+                    ex.elevationLoss = data['elevationLoss']
 
-				if ex.gear == '':
-					ex.gear = determineGear(ex)
+                if ex.gear == '':
+                    ex.gear = determineGear(ex)
 
-				categoryConfigs = ''
-				if ex.type == 'Running':
-					categoryConfigs = config['run_category']
-					# Get day of the exercise
-					if ex.startTime.strftime('%A') in categoryConfigs:
-						ex.category = categoryConfigs[ex.startTime.strftime('%A')]
-				else:
-					ex.category = 'Easy'
+                categoryConfigs = ''
+                if ex.type == 'Running':
+                    categoryConfigs = config['run_category']
+                    # Get day of the exercise
+                    if ex.startTime.strftime('%A') in categoryConfigs:
+                        ex.category = categoryConfigs[ex.startTime.strftime('%A')]
+                else:
+                    ex.category = 'Easy'
 
-				# Pull data for getting weather
-				laps = data['laps']
-				if 'displayPath' in data:
-					exPath = data['displayPath']
+                # Pull data for getting weather
+                laps = data['laps']
+                if 'displayPath' in data:
+                    exPath = data['displayPath']
 
-					lastLapStart = datetime.datetime.strptime(laps[-1]['startTime'] ,'%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=datetime.timezone.utc).astimezone(tz=None)
-					lastLapDuration = laps[-1]['duration']
-					lastLapEnd = lastLapStart + datetime.timedelta(seconds=lastLapDuration)
-					ex.endTime = lastLapEnd
+                    lastLapStart = datetime.datetime.strptime(laps[-1]['startTime'] ,'%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=datetime.timezone.utc).astimezone(tz=None)
+                    lastLapDuration = laps[-1]['duration']
+                    lastLapEnd = lastLapStart + datetime.timedelta(seconds=lastLapDuration)
+                    ex.endTime = lastLapEnd
 
-					# Get lat and long from path details
-					ex.startLat = exPath[0]['lat']
-					ex.startLon = exPath[0]['lon']
-					ex.endLat = exPath[-1]['lat']
-					ex.endLon = exPath[-1]['lon']
+                    # Get lat and long from path details
+                    ex.startLat = exPath[0]['lat']
+                    ex.startLon = exPath[0]['lon']
+                    ex.endLat = exPath[-1]['lat']
+                    ex.endLon = exPath[-1]['lon']
 
-					ex.startWeather = getWeather(ex.startLat, ex.startLon, ex.startTime)
-					ex.startWeather.position = 'Start'
-					ex.endWeather = getWeather(ex.endLat, ex.endLon, ex.endTime)
-					ex.endWeather.position = 'End'
+                    ex.startWeather = getWeather(ex.startLat, ex.startLon, ex.startTime)
+                    ex.startWeather.position = 'Start'
+                    ex.endWeather = getWeather(ex.endLat, ex.endLon, ex.endTime)
+                    ex.endWeather.position = 'End'
 
-					ex.userNotes = generateUserNotes(ex.startWeather)
-					ex.userNotes = ex.userNotes + generateUserNotes(ex.endWeather)
+                    ex.userNotes = generateUserNotes(ex.startWeather)
+                    ex.userNotes = ex.userNotes + generateUserNotes(ex.endWeather)
 
-				if (runGapConfigs['print_data'] == 'Y'):
-					print("Start Date Time: " +
-						ex.startTime.strftime('%Y-%m-%dT%H:%M:%S'))
-					print("Start Unix Time: " + str(ex.startTime.timestamp()))
-					if ex.endTime == '':
-						print("End Date Time: Unknown")
-					else:
-						print('End Date Time: ' +
-							ex.endTime.strftime('%Y-%m-%dT%H:%M:%S'))
+                if (runGapConfigs['print_data'] == 'Y'):
+                    print("Start Date Time: " +
+                        ex.startTime.strftime('%Y-%m-%dT%H:%M:%S'))
+                    print("Start Unix Time: " + str(ex.startTime.timestamp()))
+                    if ex.endTime == '':
+                        print("End Date Time: Unknown")
+                    else:
+                        print('End Date Time: ' +
+                            ex.endTime.strftime('%Y-%m-%dT%H:%M:%S'))
 
-					print("Distance: " + str(ex.distTot))
-					print("Duration: " + ex.durTot)
-					print('Avg Heartrate: ' + str(ex.avgHeartRate))
-					print('Calories Burned: ' + str(ex.calTot))
-					print('Category: ' + ex.category)
+                    print("Distance: " + str(ex.distTot))
+                    print("Duration: " + ex.durTot)
+                    print('Avg Heartrate: ' + str(ex.avgHeartRate))
+                    print('Calories Burned: ' + str(ex.calTot))
+                    print('Category: ' + ex.category)
 
-					print('Start Lat, Lon: ' + str(ex.startLat) + ',' + str(ex.startLon) )
-					print('End Lat, Lon: ' + str(ex.endLat) + ',' + str(ex.endLon) )
-					print('\n')
-# 					print(darkSkyUrlStart)
-# 					print(darkSkyUrlEnd)
+                    print('Start Lat, Lon: ' + str(ex.startLat) + ',' + str(ex.startLon) )
+                    print('End Lat, Lon: ' + str(ex.endLat) + ',' + str(ex.endLon) )
+                    print('\n')
+#                     print(darkSkyUrlStart)
+#                     print(darkSkyUrlEnd)
 
-				exLst.append(ex)
+                exLst.append(ex)
 
-	# Save Exercise to spreadsheet then remove files
-	for ex in exLst:
-		startDateTime = ex.startTime.strftime(dateTimeSheetFormat)
-		distance = "%.2f" % ex.distTot
-		duration = tc.formatNumbersTime(ex.hourTot, ex.minTot, ex.secTot)
+    # Save Exercise to spreadsheet then remove files
+    for ex in exLst:
+        startDateTime = ex.startTime.strftime(dateTimeSheetFormat)
+        distance = "%.2f" % ex.distTot
+        duration = tc.formatNumbersTime(ex.hourTot, ex.minTot, ex.secTot)
 
-		try:
-			scpt.call('addExercise',ex.eDate, ex.type, duration, distance, ex.distUnit, ex.avgHeartRate, ex.calTot, ex.userNotes, startDateTime, ex.gear, ex.category, ex.elevationChange())
-		except:
-			print('addExercise Unexpected Error')
-			print(sys.exc_info())
-			raise
+        try:
+            scpt.call('addExercise',ex.eDate, ex.type, duration, distance, ex.distUnit, ex.avgHeartRate, ex.calTot, ex.userNotes, startDateTime, ex.gear, ex.category, ex.elevationChange())
+        except:
+            print('addExercise Unexpected Error')
+            print(sys.exc_info())
+            raise
 
         # TODO Call New function in normWrkt to get workout breakdown
         # Will return a List of Dictionaries containing run details to put in a spreadsheet.
@@ -290,30 +290,30 @@ def main():
 
         # if ex.category == 'Long Run':
 
-		# Remove files from temp folder then monitor folder
-		fileNameChunks = ex.originLoc.split('.')
-		filePathStart = fileNameChunks[0]
-		print ('filePathStart:' + filePathStart)
-		for fl in glob.glob(filePathStart + '*'):
-			os.remove(fl)
-		for filename in listdir_fullpath(tempDir):
-			if (os.path.isfile(filename) == False):
-				shutil.rmtree(filename)
-			else:
-				os.remove(filename)
+        # Remove files from temp folder then monitor folder
+        fileNameChunks = ex.originLoc.split('.')
+        filePathStart = fileNameChunks[0]
+        print ('filePathStart:' + filePathStart)
+        for fl in glob.glob(filePathStart + '*'):
+            os.remove(fl)
+        for filename in listdir_fullpath(tempDir):
+            if (os.path.isfile(filename) == False):
+                shutil.rmtree(filename)
+            else:
+                os.remove(filename)
 
-		fileNameStart = filePathStart.split('/')[-1]
-		print ('fileNameStart:' + fileNameStart)
-		if (runGapConfigs['backup_files'] == 'Y'):
-			for fl in glob.glob(monitorDir + fileNameStart + '*'):
-				shutil.copy(fl, runGapConfigs['backup_dir'])
-		if (runGapConfigs['remove_files'] == 'Y'):
-			for fl in glob.glob(monitorDir + fileNameStart + '*'):
-				os.remove(fl)
+        fileNameStart = filePathStart.split('/')[-1]
+        print ('fileNameStart:' + fileNameStart)
+        if (runGapConfigs['backup_files'] == 'Y'):
+            for fl in glob.glob(monitorDir + fileNameStart + '*'):
+                shutil.copy(fl, runGapConfigs['backup_dir'])
+        if (runGapConfigs['remove_files'] == 'Y'):
+            for fl in glob.glob(monitorDir + fileNameStart + '*'):
+                os.remove(fl)
 
 
-	if (config['applescript']['close_sheet'] == 'Y'):
-		scpt.call('closeSheet')
+    if (config['applescript']['close_sheet'] == 'Y'):
+        scpt.call('closeSheet')
 
 if __name__ == '__main__':
-	main()
+    main()
