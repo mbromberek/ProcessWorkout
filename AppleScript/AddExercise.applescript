@@ -245,7 +245,7 @@ on generateWrktTable(sheetNm, tblNm, wrktData)
 					set rowNbr to 2
 					repeat with theRecord in wrktData
 						tell row rowNbr
-							set value of cell 1 to (segment of theRecord)
+							set value of cell 1 to (interval of theRecord)
 							set value of cell 2 to (dur_str of theRecord)
 							set value of cell 3 to (dist_mi of theRecord)
 							set value of cell 4 to (pace_str of theRecord)

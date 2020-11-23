@@ -21,6 +21,7 @@ def breakDownWrkt(dirName, splitBy='segment'):
     data = fao.get_workout_data(dirName)
     actv_df = rgNorm.normalize_activity(data)
     df = rgNorm.group_actv(actv_df, splitBy)
+    df.rename(columns={splitBy: 'interval'}, inplace=True)
     return df
 
 def calcTrngType(wrktSegments):

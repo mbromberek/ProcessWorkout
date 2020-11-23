@@ -284,18 +284,23 @@ def main():
         if ex.category == 'Training':
             wrktSegments_df = wrktSplits.breakDownWrkt(tempDir, 'segment')
             newTblNm = wrktSplits.calcTrngType(wrktSegments_df) \
-                + datetime.date.today().strftime(' %Y-%m-%d')
+                + ex.startTime.strftime(' %Y-%m-%d')
             trngBrkdnSheetNm = config['workout_breakdown']['sheet_name']
             scpt.call('generateWrktTable' \
                 , trngBrkdnSheetNm, newTblNm \
                 , wrktSegments_df.to_dict(orient='records') \
             )
 
-        # if ex.category == 'Long Run':
-            # wrktSegments = wrktSplits.breakDownWrkt(tempDir, 'mile')
-            # print('****Workout Miles****')
-            # for seg in wrktSegments:
-            #     print(seg)
+        if ex.category == 'Long Run':
+            wrktSegments_df = wrktSplits.breakDownWrkt(tempDir, 'mile')
+            newTblNm = 'Long Run' \
+                + ex.startTime.strftime(' %Y-%m-%d')
+            trngBrkdnSheetNm = config['workout_breakdown']['sheet_name']
+            print('New Table Name: ' + newTblNm)
+            scpt.call('generateWrktTable' \
+                , trngBrkdnSheetNm, newTblNm \
+                , wrktSegments_df.to_dict(orient='records') \
+            )
 
         # Remove files from temp folder then monitor folder
         fileNameChunks = ex.originLoc.split('.')
