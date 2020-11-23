@@ -4,7 +4,6 @@ import pandas as pd
 
 # custom classes
 import dao.files as fao
-# import util.timeConv as tc
 import rungap.normWrkt as rgNorm
 
 def breakDownWrkt(dirName, splitBy='segment'):
@@ -22,10 +21,11 @@ def breakDownWrkt(dirName, splitBy='segment'):
     data = fao.get_workout_data(dirName)
     actv_df = rgNorm.normalize_activity(data)
     df = rgNorm.group_actv(actv_df, splitBy)
-    return df.to_dict(orient='records')
+    return df
 
 def calcTrngType(wrktSegments):
-    if len(wrktSegments) in (3, 4):
+    if wrktSegments.shape[0] in (3, 4):
+        # If number of records is 3 or 4the workout is likely a Tempo run
         return 'Tempo'
     else:
         return 'Workout'

@@ -15,6 +15,7 @@ import json
 
 # 3rd party classes
 import applescript
+import pandas
 
 # Custom Classes
 sys.path.insert(1, 'models') # Add to sys.path the directory with custom classes
@@ -281,11 +282,14 @@ def main():
             raise
 
         if ex.category == 'Training':
-            wrktSegments = wrktSplits.breakDownWrkt(tempDir, 'segment')
-            newTblNm = wrktSplits.calcTrngType(wrktSegments) \
+            wrktSegments_df = wrktSplits.breakDownWrkt(tempDir, 'segment')
+            newTblNm = wrktSplits.calcTrngType(wrktSegments_df) \
                 + datetime.date.today().strftime(' %Y-%m-%d')
             trngBrkdnSheetNm = config['workout_breakdown']['sheet_name']
-            scpt.call('generateWrktTable', trngBrkdnSheetNm, newTblNm, wrktSegments)
+            scpt.call('generateWrktTable' \
+                , trngBrkdnSheetNm, newTblNm \
+                , wrktSegments_df.to_dict(orient='records') \
+            )
 
         # if ex.category == 'Long Run':
             # wrktSegments = wrktSplits.breakDownWrkt(tempDir, 'mile')
