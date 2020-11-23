@@ -55,7 +55,7 @@ on addExercise(eDate, eType, eTime, eDistance, eDistanceUnit, eHeartRate, eCal, 
 						set value of cell NOTES_COL to eNotes
 						set value of cell GEAR_COL to eGear
 						set value of cell CATEGORY_COL to eCategory
-						set value of cell ELEVATION_COL TO eElevation
+						set value of cell ELEVATION_COL to eElevation
 					end tell
 				end tell
 			end tell
@@ -222,6 +222,63 @@ on closeSheet()
 		end tell
 	end tell
 end closeSheet
+
+on generateWrktTable(tblName, wrktData)
+	set columnCt to 4
+	set hdrRowCt to 1
+	set wrktRowCt to (count of wrktData)
+	set tblRowCt to (wrktRowCt + 3)
+	tell application "Numbers"
+		activate
+		tell document docName
+			tell sheet "2020-Fall Training"
+				set thisTable to make new table with properties {name: tblName, column count:columnCt, row count:tblRowCt, header row count:hdrRowCt, header column count:1, footer row count:2}
+				
+				tell thisTable
+					tell row 1
+						set value of cell 1 to "Interval"
+						set value of cell 2 to "Time"
+						set value of cell 3 to "Distance"
+						set value of cell 4 to "Pace"
+					end tell
+					
+					set rowNbr to 2
+					repeat with theRecord in wrktData
+						tell row rowNbr
+							set value of cell 1 to (segment of theRecord)
+							set value of cell 2 to (dur_str of theRecord)
+							set value of cell 3 to (dist_mi of theRecord)
+							set value of cell 4 to (pace_str of theRecord)
+						end tell
+						set rowNbr to rowNbr + 1
+					end repeat
+					
+					--Add summary for Total workout
+					tell row (wrktRowCt + hdrRowCt + 1)
+						set value of cell 1 to "Total"
+						--set sumWrktDistFormula to "=sum(B:B)"
+						set value of cell 2 to "=sum(B:B)"
+						set value of cell 3 to "=sum(C:C)"
+						set value of cell 4 to "=" & name of cell 2 & "/" & name of cell 3
+					end tell
+					--Add summary for workout without warm up and cooldown
+					tell row (wrktRowCt + hdrRowCt + 2)
+						set value of cell 1 to "Workout"
+						set value of cell 2 to "=sum(B3:B" & wrktRowCt - 1 + hdrRowCt & ")"
+						set value of cell 3 to "=sum(C3:C" & wrktRowCt - 1 + hdrRowCt & ")"
+						set value of cell 4 to "=" & name of cell 2 & "/" & name of cell 3
+					end tell
+				end tell
+				
+			end tell
+		end tell
+	end tell
+	
+end generateWrktTable
+
+--set wrktData to {{segment:0, dur_str:"0h 5m 1s", dist_mi:0.65, pace_str:"0h 7m 45s"}, {segment:1, dur_str:"0h 17m 47s", dist_mi:2.37, pace_str:"0h 7m 30s"}, {segment:2, dur_str:"0h 16m 27s", dist_mi:2.29, pace_str:"0h 7m 11s"}, {segment:3, dur_str:"0h 5m 53s", dist_mi:0.7, pace_str:"0h 8m 27s"}}
+--my createTable(wrktData)
+
 
 --my addExercise("06/03/2016", "Running", "0h 30m 31s", "4.01", "MI", "161", "111", "Run felt good", "4:00 PM", "")
 --my initialize("Exercise 2017 test.numbers")

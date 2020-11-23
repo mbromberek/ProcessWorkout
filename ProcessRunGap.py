@@ -285,11 +285,18 @@ def main():
         # Need to determine inputs to use, might have a function in WorkoutAnalyze to do most of the work.
         if ex.category == 'Training':
             wrktSegments = wrktSplits.breakDownWrkt(tempDir, 'segment')
-            print('****Workout Segments****')
-            for seg in wrktSegments:
-                print(seg)
+            # print('****Workout Segments****')
+            # print(wrktSegments)
+            # for seg in wrktSegments:
+            #     print(seg)
+            # TODO: Include name of table as argument
+            scpt.call('generateWrktTable', 'Tempo', wrktSegments)
 
         # if ex.category == 'Long Run':
+            # wrktSegments = wrktSplits.breakDownWrkt(tempDir, 'mile')
+            # print('****Workout Miles****')
+            # for seg in wrktSegments:
+            #     print(seg)
 
         # Remove files from temp folder then monitor folder
         fileNameChunks = ex.originLoc.split('.')
