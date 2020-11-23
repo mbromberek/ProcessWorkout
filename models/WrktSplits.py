@@ -23,3 +23,9 @@ def breakDownWrkt(dirName, splitBy='segment'):
     actv_df = rgNorm.normalize_activity(data)
     df = rgNorm.group_actv(actv_df, splitBy)
     return df.to_dict(orient='records')
+
+def calcTrngType(wrktSegments):
+    if len(wrktSegments) in (3, 4):
+        return 'Tempo'
+    else:
+        return 'Workout'

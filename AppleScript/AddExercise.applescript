@@ -223,7 +223,7 @@ on closeSheet()
 	end tell
 end closeSheet
 
-on generateWrktTable(tblName, wrktData)
+on generateWrktTable(sheetNm, tblNm, wrktData)
 	set columnCt to 4
 	set hdrRowCt to 1
 	set wrktRowCt to (count of wrktData)
@@ -231,8 +231,8 @@ on generateWrktTable(tblName, wrktData)
 	tell application "Numbers"
 		activate
 		tell document docName
-			tell sheet "2020-Fall Training"
-				set thisTable to make new table with properties {name: tblName, column count:columnCt, row count:tblRowCt, header row count:hdrRowCt, header column count:1, footer row count:2}
+			tell sheet sheetNm
+				set thisTable to make new table with properties {name:tblNm, column count:columnCt, row count:tblRowCt, header row count:hdrRowCt, header column count:1, footer row count:2}
 				
 				tell thisTable
 					tell row 1
