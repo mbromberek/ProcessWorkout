@@ -17,7 +17,7 @@ def breakDownWrkt(dirName, splitBy='segment'):
     returns a List of Dictionary values for the workout based on the splitBy
 
     Parameters: dirName: directory with workout files to process
-                splitBy: str{'segment','miles','kilometers','resume'}
+                splitBy: str{'segment','mile','kilometer','resume'}
     '''
     data = fao.get_workout_data(dirName)
     actv_df = rgNorm.normalize_activity(data)
