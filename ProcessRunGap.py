@@ -274,7 +274,7 @@ def main():
 
                 exLst.append(ex)
 
-    # 6) Save Exercise to spreadsheet then remove files
+    # 6) Save Exercise to spreadsheet
     for ex in exLst:
         startDateTime = ex.startTime.strftime(dateTimeSheetFormat)
         distance = "%.2f" % ex.distTot
@@ -287,30 +287,25 @@ def main():
             print(sys.exc_info())
             raise
 
-        if ex.category == 'Training':
+        if ex.category in config['run_category']['generate_table'].split(','):
             wrktSegments_df = wrktSplits.breakDownWrkt( \
-                tempDir, fName=ex.rungapFile, splitBy='segment' \
+                tempDir, fName=ex.rungapFile, \
+                splitBy=config['split_type'][ex.category.replace(' ','_')] \
             )
-            newTblNm = wrktSplits.calcTrngType(wrktSegments_df) \
-                + ex.startTime.strftime(' %Y-%m-%d')
-            trngBrkdnSheetNm = config['workout_breakdown']['sheet_name']
-            scpt.call('generateWrktTable' \
-                , trngBrkdnSheetNm, newTblNm \
-                , wrktSegments_df.to_dict(orient='records') \
-            )
-
-        if ex.category == 'Long Run':
-            wrktSegments_df = wrktSplits.breakDownWrkt( \
-                tempDir, fName=ex.rungapFile, splitBy='mile' \
-            )
-            newTblNm = 'Long Run' \
+            newTblNm = wrktSplits.calcTrngType(wrktSegments_df, ex.category) \
                 + ex.startTime.strftime(' %Y-%m-%d')
             trngBrkdnSheetNm = config['workout_breakdown']['sheet_name']
             print('New Table Name: ' + newTblNm)
-            scpt.call('generateWrktTable' \
-                , trngBrkdnSheetNm, newTblNm \
-                , wrktSegments_df.to_dict(orient='records') \
-            )
+            try:
+                scpt.call('generateWrktTable' \
+                    , trngBrkdnSheetNm, newTblNm \
+                    , wrktSegments_df.to_dict(orient='records') \
+                )
+            except:
+                print('generateWrktTable Unexpected Error')
+                print(sys.exc_info())
+                raise
+
 
     # 7) Clean up processed files
     for ex in exLst:

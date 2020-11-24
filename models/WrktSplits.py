@@ -22,13 +22,16 @@ def breakDownWrkt(dirName, fName = '', splitBy='segment'):
         data = fao.get_workout_data(dirName)
     else:
         data = fao.get_workout_data_from_file(dirName + '/' + fName)
-    
+
     actv_df = rgNorm.normalize_activity(data)
     df = rgNorm.group_actv(actv_df, splitBy)
     df.rename(columns={splitBy: 'interval'}, inplace=True)
     return df
 
-def calcTrngType(wrktSegments):
+def calcTrngType(wrktSegments, wrktCat):
+    if wrktCat != 'Training':
+        return wrktCat
+    
     if wrktSegments.shape[0] in (3, 4):
         # If number of records is 3 or 4the workout is likely a Tempo run
         return 'Tempo'
