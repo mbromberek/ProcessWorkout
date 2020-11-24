@@ -38,6 +38,16 @@ def get_workout_data(curr_dir):
                 break
     return data
 
+def get_workout_data_from_file(fNamePath):
+    """
+    Parses passed files and loads that json data to a Dictionary.
+    Returns the Dictionary storing the json data.
+    """
+    data = ''
+    with open(fNamePath) as data_file:
+        data = json.load(data_file)
+    return data
+
 
 def extract_files(fname, src_dir, dest_dir):
     """
