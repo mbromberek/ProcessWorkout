@@ -119,7 +119,7 @@ def generateUserNotes(w):
 def main():
     print('Start Python')
 
-    # Get config details
+    # 1) Get config details
     progDir = os.path.dirname(os.path.abspath(__file__))
     config.read(progDir + "/config.txt")
 
@@ -139,15 +139,15 @@ def main():
     jsonFileRegex = re.compile(r'(metadata.json)$')
     jsonExtRegex = re.compile(r'(.json)$')
 
-    # ) Read applescript file for reading and updating exercise spreadseeht
+    # 2) Read applescript file for reading and updating exercise spreadseeht
     scptFile = open(pathToAppleScript + appleScriptName)
     scptTxt = scptFile.read()
     scpt = applescript.AppleScript(scptTxt)
     scpt.call('initialize',sheetName)
 
     print(os.listdir(monitorDir))
+    # 3) Uncompress files from monitor directory into temp directory
     zipFiles = []
-    # Uncompress files from monitor directory into temp directory
     for filename in os.listdir(monitorDir):
         # Checks if compressed file
         if compressFileRegex.search(filename):
@@ -156,7 +156,7 @@ def main():
             zipFiles.append(monitorDir + filename)
 
     exLst = []
-    # Loop through files and load exercise data to a list
+    # 4) Loop through files and load to a list
     print(listdir_fullpath(tempDir))
     filesToProcess = []
     print(filesToProcess)
@@ -167,18 +167,24 @@ def main():
         else:
             print('file')
             filesToProcess.append(filename)
-
     print(filesToProcess)
+
+    # 5) Loop through exercise files
     for filename in filesToProcess:
         print(filename)
         if jsonFileRegex.search(filename):
             print('\nProcess ' + filename)
+            # Get just file name before first period
+            fileNameStart = filename.split('/')[-1].split('.')[0]
+
             ex = ExerciseInfo()
             ex.type = 'Running'
             with open(filename) as data_file:
                 data = json.load(data_file)
                 ex.source = data['source']
                 ex.originLoc = filename
+                ex.rungapFile = fileNameStart + '.rungap.json'
+                print('RunGap data file: ' + ex.rungapFile)
 
                 ex.type = data['activityType']['sourceName']
 
@@ -268,7 +274,7 @@ def main():
 
                 exLst.append(ex)
 
-    # Save Exercise to spreadsheet then remove files
+    # 6) Save Exercise to spreadsheet then remove files
     for ex in exLst:
         startDateTime = ex.startTime.strftime(dateTimeSheetFormat)
         distance = "%.2f" % ex.distTot
@@ -282,7 +288,9 @@ def main():
             raise
 
         if ex.category == 'Training':
-            wrktSegments_df = wrktSplits.breakDownWrkt(tempDir, 'segment')
+            wrktSegments_df = wrktSplits.breakDownWrkt( \
+                tempDir, fName=ex.rungapFile, splitBy='segment' \
+            )
             newTblNm = wrktSplits.calcTrngType(wrktSegments_df) \
                 + ex.startTime.strftime(' %Y-%m-%d')
             trngBrkdnSheetNm = config['workout_breakdown']['sheet_name']
@@ -292,7 +300,9 @@ def main():
             )
 
         if ex.category == 'Long Run':
-            wrktSegments_df = wrktSplits.breakDownWrkt(tempDir, 'mile')
+            wrktSegments_df = wrktSplits.breakDownWrkt( \
+                tempDir, fName=ex.rungapFile, splitBy='mile' \
+            )
             newTblNm = 'Long Run' \
                 + ex.startTime.strftime(' %Y-%m-%d')
             trngBrkdnSheetNm = config['workout_breakdown']['sheet_name']
@@ -302,7 +312,9 @@ def main():
                 , wrktSegments_df.to_dict(orient='records') \
             )
 
-        # Remove files from temp folder then monitor folder
+    # 7) Clean up processed files
+    for ex in exLst:
+        # Remove files from temp folder
         fileNameChunks = ex.originLoc.split('.')
         filePathStart = fileNameChunks[0]
         print ('filePathStart:' + filePathStart)
@@ -314,6 +326,7 @@ def main():
             else:
                 os.remove(filename)
 
+        # Move file from backup to monitorDir and remove from monitorDir
         fileNameStart = filePathStart.split('/')[-1]
         print ('fileNameStart:' + fileNameStart)
         if (runGapConfigs['backup_files'] == 'Y'):
