@@ -6,7 +6,7 @@ import pandas as pd
 import dao.files as fao
 import rungap.normWrkt as rgNorm
 
-def breakDownWrkt(dirName, splitBy='segment'):
+def breakDownWrkt(dirName, fName = '', splitBy='segment'):
     '''
     WrktSplits.breakDownWrkt(dirName=<class 'str'>, splitBy='segment')
 
@@ -18,7 +18,11 @@ def breakDownWrkt(dirName, splitBy='segment'):
     Parameters: dirName: directory with workout files to process
                 splitBy: str{'segment','mile','kilometer','resume'}
     '''
-    data = fao.get_workout_data(dirName)
+    if fName == '':
+        data = fao.get_workout_data(dirName)
+    else:
+        data = fao.get_workout_data_from_file(dirName + '/' + fName)
+    
     actv_df = rgNorm.normalize_activity(data)
     df = rgNorm.group_actv(actv_df, splitBy)
     df.rename(columns={splitBy: 'interval'}, inplace=True)
