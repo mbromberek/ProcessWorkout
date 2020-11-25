@@ -228,10 +228,17 @@ on generateWrktTable(sheetNm, tblNm, wrktData)
 	set hdrRowCt to 1
 	set wrktRowCt to (count of wrktData)
 	set tblRowCt to (wrktRowCt + 3)
+	
+	set {hours:h, minutes:m, seconds:s, time:t} to (current date)
+	set tm_str to (h as string) & (m as number) & s
+	
 	tell application "Numbers"
 		activate
 		tell document docName
 			tell sheet sheetNm
+				if (exists table tblNm) then set tblNm to tblNm & "_" & tm_str
+				log ("Table Name: " & tblNm)
+				
 				set thisTable to make new table with properties {name:tblNm, column count:columnCt, row count:tblRowCt, header row count:hdrRowCt, header column count:1, footer row count:2}
 				
 				tell thisTable
@@ -276,8 +283,9 @@ on generateWrktTable(sheetNm, tblNm, wrktData)
 	
 end generateWrktTable
 
---set wrktData to {{segment:0, dur_str:"0h 5m 1s", dist_mi:0.65, pace_str:"0h 7m 45s"}, {segment:1, dur_str:"0h 17m 47s", dist_mi:2.37, pace_str:"0h 7m 30s"}, {segment:2, dur_str:"0h 16m 27s", dist_mi:2.29, pace_str:"0h 7m 11s"}, {segment:3, dur_str:"0h 5m 53s", dist_mi:0.7, pace_str:"0h 8m 27s"}}
---my createTable(wrktData)
+set docName to "Exercise 2017 test.numbers"
+set wrktData to {{interval:0, dur_str:"0h 5m 1s", dist_mi:0.65, pace_str:"0h 7m 45s"}, {interval:1, dur_str:"0h 17m 47s", dist_mi:2.37, pace_str:"0h 7m 30s"}, {interval:2, dur_str:"0h 16m 27s", dist_mi:2.29, pace_str:"0h 7m 11s"}, {interval:3, dur_str:"0h 5m 53s", dist_mi:0.7, pace_str:"0h 8m 27s"}}
+my generateWrktTable("2020-Fall Training", "Tempo 2020-11-24", wrktData)
 
 
 --my addExercise("06/03/2016", "Running", "0h 30m 31s", "4.01", "MI", "161", "111", "Run felt good", "4:00 PM", "")
