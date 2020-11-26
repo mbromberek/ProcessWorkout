@@ -325,6 +325,7 @@ def add_splits(actv_orig, evnt_orig):
     ])
     activity_clean.pause_resume.replace(to_replace='0', value='resume', inplace=True)
     activity_clean['date_time'] = pd.to_datetime(activity_clean['time'], unit='s')
+    activity_clean['pause_resume_section'] = activity_clean['pause_resume_section'].astype('int64')
 
     '''
     4. Calculate additional fields
