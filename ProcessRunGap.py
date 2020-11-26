@@ -288,21 +288,26 @@ def main():
             raise
 
         if ex.category in config['run_category']['generate_table'].split(','):
-            wrktSegments_df = wrktSplits.breakDownWrkt( \
-                tempDir, fName=ex.rungapFile, \
-                splitBy=config['split_type'][ex.category.replace(' ','_')] \
-            )
-            newTblNm = wrktSplits.calcTrngType(wrktSegments_df, ex.category) \
-                + ex.startTime.strftime(' %Y-%m-%d')
-            trngBrkdnSheetNm = config['workout_breakdown']['sheet_name']
-            print('New Table Name: ' + newTblNm)
             try:
+                wrktSegments_df = wrktSplits.breakDownWrkt( \
+                    tempDir, fName=ex.rungapFile, \
+                    splitBy=config['split_type'][ex.category.replace(' ','_')] \
+                )
+                newTblNm = wrktSplits.calcTrngType(wrktSegments_df, ex.category) \
+                    + ex.startTime.strftime(' %Y-%m-%d')
+                trngBrkdnSheetNm = config['workout_breakdown']['sheet_name']
+
+                print('New Table Name: ' + newTblNm)
                 scpt.call('generateWrktTable' \
                     , trngBrkdnSheetNm, newTblNm \
                     , wrktSegments_df.to_dict(orient='records') \
                 )
+            except applescript.ScriptError:
+                print('<ERROR> generateWrktTable Unexpected Error')
+                print(sys.exc_info())
+                raise
             except:
-                print('generateWrktTable Unexpected Error')
+                print('<ERROR> Breakdown Workout Unexpected Error')
                 print(sys.exc_info())
                 raise
 
