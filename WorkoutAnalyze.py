@@ -17,6 +17,49 @@ import dao.files as fao
 import util.timeConv as tc
 import rungap.normWrkt as rgNorm
 
+def calcWrktSummary(splits_df, wrktCat='Training'):
+    '''
+    splits_df = DataFrame of workout that is grouped by mile, kilometers, pauses, or segments
+    wrktCat is the category for the workout, values can be Training or 'Long Run'
+    Calculate summary of workout based on Category of workout.
+    For Training calculate the Workout portions for Time, Distance, and avg Pace
+    For Long Run calculate First Half and Second Half Time, Distance, and avg Pace
+    '''
+    wrkt_df = splits_df[['interval','avg_hr','dur_sec','dist_mi','pace','dur_str','pace_str']].copy()
+    # wrkt_df['interval'].iloc[[0]] = 'Warm Up'
+    # wrkt_df['interval'].iloc[[wrkt_df.index[-1]]] = 'Cool Down'
+
+    # Calculate summary of total workout
+    wrkt_tot_dist = wrkt_df['dist_mi'].sum()
+    wrkt_tot_dur = wrkt_df['dur_sec'].sum()
+    wrkt_tot_pace = wrkt_tot_dur / wrkt_tot_dist
+
+    # Calculate summary of intervals portion
+    intvl_tot_dist = wrkt_df['dist_mi'].iloc[1:-1].sum()
+    intvl_tot_dur = wrkt_df['dur_sec'].iloc[1:-1].sum()
+    intvl_tot_pace = intvl_tot_dur / intvl_tot_dist
+
+    intvl_avg_dist = wrkt_df['dist_mi'].iloc[1:-1].mean()
+    intvl_avg_dur = wrkt_df['dur_sec'].iloc[1:-1].mean()
+    intvl_avg_pace = intvl_avg_dur / intvl_avg_dist
+
+    # Calculate summary of first and second halves of workout
+    
+
+    # The * is needed for tc.breakTimeFromSeconds to expland the three fields being returned
+    wrkt_dict = {\
+        'intvl_tot': \
+            {'dist_mi': intvl_tot_dist, 'dur_sec':intvl_tot_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(intvl_tot_dur)), 'pace_sec':intvl_tot_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(intvl_tot_pace))}\
+        , 'intvl_avg': \
+            {'dist_mi': intvl_avg_dist, 'dur_sec':intvl_avg_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(intvl_avg_dur)), 'pace_sec':intvl_avg_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(intvl_avg_pace))}\
+        , 'wrkt_tot':\
+            {'distance': wrkt_tot_dist, 'dur_sec':wrkt_tot_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_tot_dur)), 'pace':wrkt_tot_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_tot_pace))}\
+    }
+
+    return wrkt_dict
+
+
+
 
 def printArgumentsHelp():
     print ('WorkoutAnalyze.py -i <inputfile> -o <outputdir>')
@@ -93,6 +136,10 @@ def main(argv):
     # miles_df = pd.read_pickle(os.path.join("/Users/mikeyb/Library/Mobile Documents/com~apple~CloudDocs/_Runs/analyze/results/", "miles.pickle"))
 
     fao.clean_dir(tempDir)
+
+    # segments_df.rename(columns={splitBy: 'interval'}, inplace=False)
+    wrkt_summary = calcWrktSummary(segments_df.rename(columns={'segment': 'interval'}, inplace=False))
+    print(wrkt_summary)
 
 if __name__ == '__main__':
 	main(sys.argv[1:])
