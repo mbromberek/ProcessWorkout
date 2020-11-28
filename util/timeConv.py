@@ -61,13 +61,20 @@ def seconds_to_time_str(actv, time_field, time_format = ':'):
     return time_str
 
 def breakTimeFromSeconds(totTimeSec):
-	hourTot = math.floor(totTimeSec/60/60)
-	minTot = math.floor((totTimeSec/60/60 - hourTot) * 60)
-	secTot = math.floor(((totTimeSec/60/60 - hourTot) * 60 - minTot) *60)
-	return hourTot, minTot, secTot
-def formatNumbersTime(h, m, s):
-	durTotNumbers = str(h) + 'h ' + str(m) + 'm ' + str(s) + 's'
-	return durTotNumbers
+    hourTot = math.floor(totTimeSec/60/60)
+    minTot = math.floor((totTimeSec/60/60 - hourTot) * 60)
+    secTot = math.floor(((totTimeSec/60/60 - hourTot) * 60 - minTot) *60)
+    return hourTot, minTot, secTot
+def formatNumbersTime(h, m, s, forceHr=False):
+    '''
+    Format passed in hours, minutes, seconds into format Nh Nm Ns as a string
+    Will not include hour if the value is zero unless forceHr is set to True
+    '''
+    durTotNumbers = ''
+    if h != 0 or forceHr == True:
+        durTotNumbers = str(h) + 'h '
+    durTotNumbers = durTotNumbers + str(m) + 'm ' + str(s) + 's'
+    return durTotNumbers
 def formatSheetsTime(h, m, s):
-	durTotSheets = str(h) + ':' + str(m) + ':' + str(s)
-	return durTotSheets
+    durTotSheets = str(h) + ':' + str(m) + ':' + str(s)
+    return durTotSheets
