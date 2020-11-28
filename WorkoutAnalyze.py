@@ -44,7 +44,16 @@ def calcWrktSummary(splits_df, wrktCat='Training'):
     intvl_avg_pace = intvl_avg_dur / intvl_avg_dist
 
     # Calculate summary of first and second halves of workout
-    
+    frst_half_intrvl = round(wrkt_df.shape[0]/2)
+    wrkt_half_1_dist = wrkt_df['dist_mi'].iloc[0:frst_half_intrvl].sum()
+    wrkt_half_1_dur = wrkt_df['dur_sec'].iloc[0:frst_half_intrvl].sum()
+    wrkt_half_1_pace = wrkt_half_1_dur / wrkt_half_1_dist
+
+    wrkt_half_2_dist = \
+        wrkt_df['dist_mi'].iloc[frst_half_intrvl:wrkt_df.shape[0]].sum()
+    wrkt_half_2_dur = \
+        wrkt_df['dur_sec'].iloc[frst_half_intrvl:wrkt_df.shape[0]].sum()
+    wrkt_half_2_pace = wrkt_half_2_dur / wrkt_half_2_dist
 
     # The * is needed for tc.breakTimeFromSeconds to expland the three fields being returned
     wrkt_dict = {\
@@ -54,6 +63,11 @@ def calcWrktSummary(splits_df, wrktCat='Training'):
             {'dist_mi': intvl_avg_dist, 'dur_sec':intvl_avg_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(intvl_avg_dur)), 'pace_sec':intvl_avg_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(intvl_avg_pace))}\
         , 'wrkt_tot':\
             {'distance': wrkt_tot_dist, 'dur_sec':wrkt_tot_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_tot_dur)), 'pace':wrkt_tot_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_tot_pace))}\
+        , 'frst_half': \
+            {'dist_mi': wrkt_half_1_dist, 'dur_sec':wrkt_half_1_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_half_1_dur)), 'pace_sec':wrkt_half_1_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_half_1_pace))}\
+        , 'scnd_half': \
+            {'dist_mi': wrkt_half_2_dist, 'dur_sec':wrkt_half_2_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_half_2_dur)), 'pace_sec':wrkt_half_2_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_half_2_pace))}\
+
     }
 
     return wrkt_dict
