@@ -55,6 +55,9 @@ def calcWrktSummary(splits_df, wrktCat='Training'):
         wrkt_df['dur_sec'].iloc[frst_half_intrvl:wrkt_df.shape[0]].sum()
     wrkt_half_2_pace = wrkt_half_2_dur / wrkt_half_2_dist
 
+    # Calculate Warm Up and Cool Down summaries
+
+
     # The * is needed for tc.breakTimeFromSeconds to expland the three fields being returned
     wrkt_dict = {\
         'intvl_tot': \
@@ -154,6 +157,15 @@ def main(argv):
     # segments_df.rename(columns={splitBy: 'interval'}, inplace=False)
     wrkt_summary = calcWrktSummary(segments_df.rename(columns={'segment': 'interval'}, inplace=False))
     print(wrkt_summary)
+    print('Workout Stats:')
+    print('Warm Up: ')
+    print('Intervals: ' \
+        + wrkt_summary['intvl_tot']['dur_str'] + ' total, ' \
+        + str(wrkt_summary['intvl_tot']['dist_mi']) + ' miles, ' \
+        + wrkt_summary['intvl_tot']['pace_str']  \
+    )
+    print('Cool Down: ')
+
 
 if __name__ == '__main__':
 	main(sys.argv[1:])
