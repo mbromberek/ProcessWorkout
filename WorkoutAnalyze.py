@@ -26,13 +26,15 @@ def calcWrktSummary(splits_df, wrktCat='Training'):
     For Long Run calculate First Half and Second Half Time, Distance, and avg Pace
     '''
     wrkt_df = splits_df[['interval','avg_hr','dur_sec','dist_mi','pace','dur_str','pace_str']].copy()
-    # wrkt_df['interval'].iloc[[0]] = 'Warm Up'
-    # wrkt_df['interval'].iloc[[wrkt_df.index[-1]]] = 'Cool Down'
 
     # Calculate summary of total workout
     wrkt_tot_dist = wrkt_df['dist_mi'].sum()
     wrkt_tot_dur = wrkt_df['dur_sec'].sum()
     wrkt_tot_pace = wrkt_tot_dur / wrkt_tot_dist
+
+    # if wrktCat.replace(' ','_').lower() == 'Training':
+    # wrkt_df['interval'].iloc[[0]] = 'Warm Up'
+    # wrkt_df['interval'].iloc[[wrkt_df.index[-1]]] = 'Cool Down'
 
     # Calculate summary of intervals portion
     intvl_tot_dist = wrkt_df['dist_mi'].iloc[1:-1].sum()
@@ -43,6 +45,7 @@ def calcWrktSummary(splits_df, wrktCat='Training'):
     intvl_avg_dur = wrkt_df['dur_sec'].iloc[1:-1].mean()
     intvl_avg_pace = intvl_avg_dur / intvl_avg_dist
 
+    # if wrktCat.replace(' ','_').lower() == 'long_run':
     # Calculate summary of first and second halves of workout
     frst_half_intrvl = round(wrkt_df.shape[0]/2)
     wrkt_half_1_dist = wrkt_df['dist_mi'].iloc[0:frst_half_intrvl].sum()
@@ -54,9 +57,6 @@ def calcWrktSummary(splits_df, wrktCat='Training'):
     wrkt_half_2_dur = \
         wrkt_df['dur_sec'].iloc[frst_half_intrvl:wrkt_df.shape[0]].sum()
     wrkt_half_2_pace = wrkt_half_2_dur / wrkt_half_2_dist
-
-    # Calculate Warm Up and Cool Down summaries
-
 
     # The * is needed for tc.breakTimeFromSeconds to expland the three fields being returned
     wrkt_dict = {\
@@ -70,7 +70,10 @@ def calcWrktSummary(splits_df, wrktCat='Training'):
             {'dist_mi': wrkt_half_1_dist, 'dur_sec':wrkt_half_1_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_half_1_dur)), 'pace_sec':wrkt_half_1_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_half_1_pace))}\
         , 'scnd_half': \
             {'dist_mi': wrkt_half_2_dist, 'dur_sec':wrkt_half_2_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_half_2_dur)), 'pace_sec':wrkt_half_2_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_half_2_pace))}\
-
+        , 'warm_up': \
+            {'dist_mi': wrkt_df['dist_mi'].iloc[0], 'dur_sec':wrkt_df['dur_sec'].iloc[0], 'dur_str':wrkt_df['dur_str'].iloc[0], 'pace_sec':wrkt_df['pace'].iloc[0], 'pace_str': wrkt_df['pace_str'].iloc[0]}\
+        , 'cool_down': \
+            {'dist_mi': wrkt_df['dist_mi'].iloc[-1], 'dur_sec':wrkt_df['dur_sec'].iloc[-1], 'dur_str':wrkt_df['dur_str'].iloc[-1], 'pace_sec':wrkt_df['pace'].iloc[-1], 'pace_str': wrkt_df['pace_str'].iloc[-1]}\
     }
 
     return wrkt_dict
@@ -158,13 +161,21 @@ def main(argv):
     wrkt_summary = calcWrktSummary(segments_df.rename(columns={'segment': 'interval'}, inplace=False))
     print(wrkt_summary)
     print('Workout Stats:')
-    print('Warm Up: ')
+    print('Warm Up: ' \
+        + wrkt_summary['warm_up']['dur_str'] + ' total, ' \
+        + str(wrkt_summary['warm_up']['dist_mi']) + ' miles, ' \
+        + wrkt_summary['warm_up']['pace_str']  \
+    )
     print('Intervals: ' \
         + wrkt_summary['intvl_tot']['dur_str'] + ' total, ' \
         + str(wrkt_summary['intvl_tot']['dist_mi']) + ' miles, ' \
         + wrkt_summary['intvl_tot']['pace_str']  \
     )
-    print('Cool Down: ')
+    print('Cool Down: ' \
+        + wrkt_summary['cool_down']['dur_str'] + ' total, ' \
+        + str(wrkt_summary['cool_down']['dist_mi']) + ' miles, ' \
+        + wrkt_summary['cool_down']['pace_str']  \
+    )
 
 
 if __name__ == '__main__':
