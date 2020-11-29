@@ -24,6 +24,7 @@ from ExerciseInfo_Class import ExerciseInfo
 from Weather_Class import WeatherInfo
 import util.timeConv as tc
 import models.WrktSplits as wrktSplits
+import WorkoutAnalyze as wa
 
 config = configparser.ConfigParser()
 
@@ -297,10 +298,15 @@ def main():
                     + ex.startTime.strftime(' %Y-%m-%d')
                 trngBrkdnSheetNm = config['workout_breakdown']['sheet_name']
 
+                wrktSumFrmla = wa.calcWrktSumFrmla(wrktSegments_df)
+                print(wrktSumFrmla)
+
                 print('New Table Name: ' + newTblNm)
                 scpt.call('generateWrktTable' \
                     , trngBrkdnSheetNm, newTblNm \
                     , wrktSegments_df.to_dict(orient='records') \
+                    , wrktSumFrmla
+
                 )
             except applescript.ScriptError:
                 print('<ERROR> generateWrktTable Unexpected Error')

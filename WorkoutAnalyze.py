@@ -65,7 +65,7 @@ def calcWrktSummary(splits_df, wrktCat='Training'):
         , 'intvl_avg': \
             {'dist_mi': intvl_avg_dist, 'dur_sec':intvl_avg_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(intvl_avg_dur)), 'pace_sec':intvl_avg_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(intvl_avg_pace))}\
         , 'wrkt_tot':\
-            {'distance': wrkt_tot_dist, 'dur_sec':wrkt_tot_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_tot_dur)), 'pace':wrkt_tot_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_tot_pace))}\
+            {'dist_mi': wrkt_tot_dist, 'dur_sec':wrkt_tot_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_tot_dur)), 'pace':wrkt_tot_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_tot_pace))}\
         , 'frst_half': \
             {'dist_mi': wrkt_half_1_dist, 'dur_sec':wrkt_half_1_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_half_1_dur)), 'pace_sec':wrkt_half_1_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_half_1_pace))}\
         , 'scnd_half': \
@@ -78,7 +78,34 @@ def calcWrktSummary(splits_df, wrktCat='Training'):
 
     return wrkt_dict
 
+def calcWrktSumFrmla(splits_df, wrktCat='Training'):
+    '''
+    Create Excel/Numbers functions for calculating workout summary
+    splits_df = DataFrame of workout that is grouped by mile, kilometers, pauses, or segments
+    wrktCat is the category for the workout, values can be Training or 'Long Run'
+    Calculate summary of workout based on Category of workout.
+    For Training calculate the Workout portions for Time, Distance, and avg Pace
+    For Long Run calculate First Half and Second Half Time, Distance, and avg Pace
+    '''
+    wrkt_df = splits_df[['interval','avg_hr','dur_sec','dist_mi','pace','dur_str','pace_str']].copy()
 
+    # Calculate summary of total workout
+    intvl_tot_dist = '=sum(B3:B' + str(wrkt_df.shape[0]) + ')'
+    intvl_tot_dur = '=sum(C3:C' + str(wrkt_df.shape[0]) + ')'
+    intvl_tot_pace = '"=" & name of cell 2 & "/" & name of cell 3'
+
+    wrkt_tot_dist = '=sum(B:B)'
+    wrkt_tot_dur = '=sum(C:C)'
+    wrkt_tot_pace = '"=" & name of cell 2 & "/" & name of cell 3'
+
+    wrkt_dict = {\
+        'intvl_tot': \
+            {'dist_mi': intvl_tot_dist, 'dur_str':intvl_tot_dur, 'pace_str':intvl_tot_pace}\
+        , 'wrkt_tot':\
+            {'dist_mi': wrkt_tot_dist, 'dur_str':wrkt_tot_dur, 'pace_str':wrkt_tot_pace}\
+    }
+
+    return wrkt_dict
 
 
 def printArgumentsHelp():
@@ -176,6 +203,10 @@ def main(argv):
         + str(wrkt_summary['cool_down']['dist_mi']) + ' miles, ' \
         + wrkt_summary['cool_down']['pace_str']  \
     )
+
+    print('')
+    wrkt_sum_frmla = calcWrktSumFrmla(segments_df.rename(columns={'segment': 'interval'}, inplace=False))
+    print(wrkt_sum_frmla)
 
 
 if __name__ == '__main__':
