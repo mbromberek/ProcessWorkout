@@ -31,16 +31,6 @@ import dao.files as fao
 config = configparser.ConfigParser()
 
 #######################################################
-# get full directory path for files in passed directory
-#######################################################
-# def listdir_fullpath(d):
-#     '''
-#     get full directory path for files in passed directory
-#     '''
-#     return [os.path.join(d, f) for f in os.listdir(d)]
-
-
-#######################################################
 # determineGear(exercise details)
 #######################################################
 def determineGear(ex):
@@ -137,13 +127,12 @@ def getFiles(tempDir):
     '''
     # print(fao.listdir_fullpath(tempDir))
     filesToProcess = []
-    print(filesToProcess)
     for filename in fao.listdir_fullpath(tempDir):
         if (os.path.isfile(filename) == False and filename != '__MACOSX'):
-            print('directory')
+            # print('directory')
             filesToProcess.extend(fao.listdir_fullpath(filename))
         else:
-            print('file')
+            # print('file')
             filesToProcess.append(filename)
     return filesToProcess
 
@@ -156,13 +145,20 @@ def processExercises(filesToProcess):
     jsonFileRegex = re.compile(r'(metadata.json)$')
     jsonExtRegex = re.compile(r'(.json)$')
     for filename in filesToProcess:
-        print(filename)
         if jsonFileRegex.search(filename):
-            print('\nProcess ' + filename)
+            print('Process: ' + filename)
             exLst.append(processExercise(filename))
+        else:
+            print('Do not process: ' + filename)
     return exLst
 
 def processExercise(filename):
+    '''
+    Process Exercise in passed in filename
+    Store into ExerciseInfo object
+
+    Return: ExerciseInfo object
+    '''
 
     with open(filename) as data_file:
         data = json.load(data_file)
@@ -176,7 +172,7 @@ def processExercise(filename):
     ex.source = data['source']
     ex.originLoc = filename
     ex.rungapFile = fileNameStart + '.rungap.json'
-    print('RunGap data file: ' + ex.rungapFile)
+    ex.metadataFile = filename.split('/')[-1]
 
     ex.type = data['activityType']['sourceName']
 
@@ -255,6 +251,10 @@ def processExercise(filename):
             raise
 
     if (config['rungap']['print_data'] == 'Y'):
+        print('filename: ' + filename)
+        print('RunGap file: ' + ex.rungapFile)
+        print('Metadata file: ' + ex.metadataFile)
+
         print("Start Date Time: " +
             ex.startTime.strftime('%Y-%m-%dT%H:%M:%S'))
         print("Start Unix Time: " + str(ex.startTime.timestamp()))
@@ -272,7 +272,7 @@ def processExercise(filename):
 
         print('Start Lat, Lon: ' + str(ex.startLat) + ',' + str(ex.startLon) )
         print('End Lat, Lon: ' + str(ex.endLat) + ',' + str(ex.endLon) )
-        print('\n')
+        print('')
     return ex
 
 def saveExToSheet(exLst, scpt):
@@ -301,7 +301,7 @@ def saveExToSheet(exLst, scpt):
 
                 wrktSumFrmla = wa.calcWrktSumFrmla(ex.wrktSegments)
 
-                print('New Table Name: ' + newTblNm)
+                # print('New Table Name: ' + newTblNm)
                 scpt.call('generateWrktTable' \
                     , trngBrkdnSheetNm, newTblNm \
                     , ex.wrktSegments.to_dict(orient='records') \
@@ -320,7 +320,7 @@ def cleanProcessedFile(exLst, monitorDir, tempDir):
         # Remove files from temp folder
         fileNameChunks = ex.originLoc.split('.')
         filePathStart = fileNameChunks[0]
-        print ('filePathStart:' + filePathStart)
+        # print ('filePathStart:' + filePathStart)
         for fl in glob.glob(filePathStart + '*'):
             os.remove(fl)
         for filename in fao.listdir_fullpath(tempDir):
@@ -331,7 +331,7 @@ def cleanProcessedFile(exLst, monitorDir, tempDir):
 
         # Move file from backup to monitorDir and remove from monitorDir
         fileNameStart = filePathStart.split('/')[-1]
-        print ('fileNameStart:' + fileNameStart)
+        # print ('fileNameStart:' + fileNameStart)
         if (config['rungap']['backup_files'] == 'Y'):
             for fl in glob.glob(monitorDir + fileNameStart + '*'):
                 shutil.copy(fl, config['rungap']['backup_dir'])
@@ -339,40 +339,45 @@ def cleanProcessedFile(exLst, monitorDir, tempDir):
             for fl in glob.glob(monitorDir + fileNameStart + '*'):
                 os.remove(fl)
 
+def initializeAppleScriptFunc(appleScriptName, sheetName):
+    '''
+    Read applescript file for reading and updating exercise spreadseeht
+    After initializing it sets the sheetName to be updated.
+    Return: AppleScript file for performing function calls
+    '''
+    scptFile = open(appleScriptName)
+    scptTxt = scptFile.read()
+    scpt = applescript.AppleScript(scptTxt)
+    scpt.call('initialize',sheetName)
+    return scpt
 
 #######################################################
 # MAIN
 #######################################################
 def main():
-    print('Start Python')
+    print('Start ProcessRunGap')
 
-    # 1) Get config details
+    # Get config details
     progDir = os.path.dirname(os.path.abspath(__file__))
     config.read(progDir + "/config.txt")
 
-    pathToAppleScript = config['applescript']['script_path']
-    appleScriptName = config['applescript']['script_name']
     sheetName = config['applescript']['sheet_name']
 
     runGapConfigs = config['rungap']
     monitorDir = runGapConfigs['monitor_dir']
-    print('monitorDir:' + monitorDir)
     tempDir = runGapConfigs['temp_dir']
-    print('tempDir: ' + tempDir)
 
+    scpt = initializeAppleScriptFunc( os.path.join(config['applescript']['script_path'], config['applescript']['script_name']), sheetName)
 
-    # 2) Read applescript file for reading and updating exercise spreadseeht
-    scptFile = open(pathToAppleScript + appleScriptName)
-    scptTxt = scptFile.read()
-    scpt = applescript.AppleScript(scptTxt)
-    scpt.call('initialize',sheetName)
-
-    print(os.listdir(monitorDir))
+    if (config['rungap']['print_data'] == 'Y'):
+        print('monitorDir:' + monitorDir)
+        print('tempDir: ' + tempDir)
+        print('Monitor Directory Contents:')
+        print(os.listdir(monitorDir))
 
     uncompressMonitorToTemp(monitorDir, tempDir)
 
     filesToProcess = getFiles(tempDir)
-    print(filesToProcess)
 
     exLst = processExercises(filesToProcess)
 
