@@ -89,20 +89,42 @@ def calcWrktSumFrmla(splits_df, wrktCat='Training'):
     '''
     wrkt_df = splits_df[['interval','avg_hr','dur_sec','dist_mi','pace','dur_str','pace_str']].copy()
 
-    # Calculate summary of total workout
-    intvl_tot_dist = '=sum(B3:B' + str(wrkt_df.shape[0]) + ')'
-    intvl_tot_dur = '=sum(C3:C' + str(wrkt_df.shape[0]) + ')'
-    intvl_tot_pace = '"=" & name of cell 2 & "/" & name of cell 3'
-
     wrkt_tot_dist = '=sum(B:B)'
     wrkt_tot_dur = '=sum(C:C)'
     wrkt_tot_pace = '"=" & name of cell 2 & "/" & name of cell 3'
 
+    # Calculate summary of intervals portion
+    intvl_tot_dist = '=sum(B3:B' + str(wrkt_df.shape[0]) + ')'
+    intvl_tot_dur = '=sum(C3:C' + str(wrkt_df.shape[0]) + ')'
+    intvl_tot_pace = '"=" & name of cell 2 & "/" & name of cell 3'
+
+    # Calculate summary of total workout
+    intvl_avg_dist = '=avg(B3:B' + str(wrkt_df.shape[0]) + ')'
+    intvl_avg_dur = '=avg(C3:C' + str(wrkt_df.shape[0]) + ')'
+    intvl_avg_pace = '"=" & name of cell 2 & "/" & name of cell 3'
+
+    # Calculate summary of first and second halves of workout
+    frst_half_intrvl = round(wrkt_df.shape[0]/2)+1
+    wrkt_half_1_dist = '=sum(B2:B' + str(frst_half_intrvl) + ')'
+    wrkt_half_1_dur = '=sum(C2:C' + str(frst_half_intrvl) + ')'
+    wrkt_half_1_pace = '"=" & name of cell 2 & "/" & name of cell 3'
+
+    wrkt_half_2_dist = '=sum(B' + str(frst_half_intrvl+1) + ':B' + str(wrkt_df.shape[0]+1) + ')'
+    wrkt_half_2_dur = '=sum(C' + str(frst_half_intrvl+1) + ':C' + str(wrkt_df.shape[0]+1) + ')'
+    wrkt_half_2_pace = '"=" & name of cell 2 & "/" & name of cell 3'
+
     wrkt_dict = {\
         'intvl_tot': \
             {'dist_mi': intvl_tot_dist, 'dur_str':intvl_tot_dur, 'pace_str':intvl_tot_pace}\
+        , 'intvl_avg': \
+            {'dist_mi': intvl_avg_dist, 'dur_str':intvl_avg_dur, 'pace_str':intvl_avg_pace}\
         , 'wrkt_tot':\
             {'dist_mi': wrkt_tot_dist, 'dur_str':wrkt_tot_dur, 'pace_str':wrkt_tot_pace}\
+        , 'frst_half': \
+            {'dist_mi': wrkt_half_1_dist, 'dur_str':wrkt_half_1_dur, 'pace_str':wrkt_half_1_pace}\
+        , 'scnd_half': \
+            {'dist_mi': wrkt_half_2_dist, 'dur_str':wrkt_half_2_dur, 'pace_str':wrkt_half_2_pace}\
+
     }
 
     return wrkt_dict

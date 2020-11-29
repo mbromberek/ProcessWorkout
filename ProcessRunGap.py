@@ -299,7 +299,6 @@ def main():
                 trngBrkdnSheetNm = config['workout_breakdown']['sheet_name']
 
                 wrktSumFrmla = wa.calcWrktSumFrmla(wrktSegments_df)
-                print(wrktSumFrmla)
 
                 print('New Table Name: ' + newTblNm)
                 scpt.call('generateWrktTable' \
