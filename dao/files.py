@@ -64,3 +64,9 @@ def clean_dir(dir):
     files = glob.glob(dir + '/*')
     for f in files:
         os.remove(f)
+
+def listdir_fullpath(d):
+    '''
+    get full directory path for files in passed directory
+    '''
+    return [os.path.join(d, f) for f in os.listdir(d)]

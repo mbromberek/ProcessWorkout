@@ -43,6 +43,7 @@ class ExerciseInfo:
     startWeather = WeatherInfo()
     endWeather = WeatherInfo()
 
+    wrktSegments = None
 
 
     def __init__(self):
