@@ -147,9 +147,10 @@ def getFiles(tempDir):
             filesToProcess.append(filename)
     return filesToProcess
 
-def processExercises(filesToProcess, tempDir):
+def processExercises(filesToProcess):
     '''
     Loop through exercise files
+    filesToProcess full path to files to check for processing. Will look at files to determine if they are valid for being processed.
     '''
     exLst = []
     jsonFileRegex = re.compile(r'(metadata.json)$')
@@ -158,21 +159,20 @@ def processExercises(filesToProcess, tempDir):
         print(filename)
         if jsonFileRegex.search(filename):
             print('\nProcess ' + filename)
-
-            # ex = ExerciseInfo()
-            # ex.type = 'Running'
-            with open(filename) as data_file:
-                ex = processExercise(data_file, tempDir, filename)
-                exLst.append(ex)
+            exLst.append(processExercise(filename))
     return exLst
 
-def processExercise(data_file, tempDir, filename):
+def processExercise(filename):
+
+    with open(filename) as data_file:
+        data = json.load(data_file)
+
     ex = ExerciseInfo()
 
     # Get just file name before first period
     fileNameStart = filename.split('/')[-1].split('.')[0]
+    srcDir = '/'.join(filename.split('/')[:-1])
 
-    data = json.load(data_file)
     ex.source = data['source']
     ex.originLoc = filename
     ex.rungapFile = fileNameStart + '.rungap.json'
@@ -246,7 +246,7 @@ def processExercise(data_file, tempDir, filename):
     if ex.category in config['run_category']['generate_table'].split(','):
         try:
             ex.wrktSegments = wrktSplits.breakDownWrkt( \
-                tempDir, fName=ex.rungapFile, \
+                srcDir, fName=ex.rungapFile, \
                 splitBy=config['split_type'][ex.category.replace(' ','_')] \
             )
         except:
@@ -369,22 +369,16 @@ def main():
 
     print(os.listdir(monitorDir))
 
-    # 3
     uncompressMonitorToTemp(monitorDir, tempDir)
 
-    # 4
     filesToProcess = getFiles(tempDir)
     print(filesToProcess)
 
-    # 5
-    exLst = processExercises(filesToProcess, tempDir)
+    exLst = processExercises(filesToProcess)
 
-    # 6
     saveExToSheet(exLst, scpt)
 
-    # 7
     cleanProcessedFile(exLst, monitorDir, tempDir)
-
 
     if (config['applescript']['close_sheet'] == 'Y'):
         scpt.call('closeSheet')
