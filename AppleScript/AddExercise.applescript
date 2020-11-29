@@ -223,11 +223,11 @@ on closeSheet()
 	end tell
 end closeSheet
 
-on generateWrktTable(sheetNm, tblNm, wrktData)
+on generateWrktTable(sheetNm, tblNm, wrktData, wrktSumFrmla)
 	set columnCt to 4
 	set hdrRowCt to 1
 	set wrktRowCt to (count of wrktData)
-	set tblRowCt to (wrktRowCt + 3)
+	set tblRowCt to (wrktRowCt + 5)
 	
 	set {hours:h, minutes:m, seconds:s, time:t} to (current date)
 	set tm_str to (h as string) & (m as number) & s
@@ -239,7 +239,7 @@ on generateWrktTable(sheetNm, tblNm, wrktData)
 				if (exists table tblNm) then set tblNm to tblNm & "_" & tm_str
 				log ("Table Name: " & tblNm)
 				
-				set thisTable to make new table with properties {name:tblNm, column count:columnCt, row count:tblRowCt, header row count:hdrRowCt, header column count:1, footer row count:2}
+				set thisTable to make new table with properties {name:tblNm, column count:columnCt, row count:tblRowCt, header row count:hdrRowCt, header column count:1, footer row count:4}
 				
 				tell thisTable
 					tell row 1
@@ -260,19 +260,37 @@ on generateWrktTable(sheetNm, tblNm, wrktData)
 						set rowNbr to rowNbr + 1
 					end repeat
 					
+					
 					--Add summary for Total workout
 					tell row (wrktRowCt + hdrRowCt + 1)
 						set value of cell 1 to "Total"
 						--set sumWrktDistFormula to "=sum(B:B)"
-						set value of cell 2 to "=sum(B:B)"
-						set value of cell 3 to "=sum(C:C)"
+						set value of cell 2 to (dist_mi of (wrkt_tot of wrktSumFrmla))
+						set value of cell 3 to (dur_str of (wrkt_tot of wrktSumFrmla))
 						set value of cell 4 to "=" & name of cell 2 & "/" & name of cell 3
 					end tell
+					
 					--Add summary for workout without warm up and cooldown
 					tell row (wrktRowCt + hdrRowCt + 2)
 						set value of cell 1 to "Workout"
-						set value of cell 2 to "=sum(B3:B" & wrktRowCt - 1 + hdrRowCt & ")"
-						set value of cell 3 to "=sum(C3:C" & wrktRowCt - 1 + hdrRowCt & ")"
+						set value of cell 2 to (dist_mi of (intvl_tot of wrktSumFrmla))
+						set value of cell 3 to (dur_str of (intvl_tot of wrktSumFrmla))
+						set value of cell 4 to "=" & name of cell 2 & "/" & name of cell 3
+					end tell
+					
+					--Add summary of first half of workout
+					tell row (wrktRowCt + hdrRowCt + 3)
+						set value of cell 1 to "First Half"
+						set value of cell 2 to (dist_mi of (frst_half of wrktSumFrmla))
+						set value of cell 3 to (dur_str of (frst_half of wrktSumFrmla))
+						set value of cell 4 to "=" & name of cell 2 & "/" & name of cell 3
+					end tell
+					
+					--Add summary of second half of workout
+					tell row (wrktRowCt + hdrRowCt + 4)
+						set value of cell 1 to "Second Half"
+						set value of cell 2 to (dist_mi of (scnd_half of wrktSumFrmla))
+						set value of cell 3 to (dur_str of (scnd_half of wrktSumFrmla))
 						set value of cell 4 to "=" & name of cell 2 & "/" & name of cell 3
 					end tell
 				end tell
@@ -285,7 +303,8 @@ end generateWrktTable
 
 set docName to "Exercise 2017 test.numbers"
 set wrktData to {{interval:0, dur_str:"0h 5m 1s", dist_mi:0.65, pace_str:"0h 7m 45s"}, {interval:1, dur_str:"0h 17m 47s", dist_mi:2.37, pace_str:"0h 7m 30s"}, {interval:2, dur_str:"0h 16m 27s", dist_mi:2.29, pace_str:"0h 7m 11s"}, {interval:3, dur_str:"0h 5m 53s", dist_mi:0.7, pace_str:"0h 8m 27s"}}
-my generateWrktTable("2020-Fall Training", "Tempo 2020-11-24", wrktData)
+set wrktFrmla to {wrkt_tot:{distance:"=sum(B:B)", dur_str:"=sum(C:C)"}}
+my generateWrktTable("2020-Fall Training", "Tempo 2020-11-24", wrktData, wrktFrmla)
 
 
 --my addExercise("06/03/2016", "Running", "0h 30m 31s", "4.01", "MI", "161", "111", "Run felt good", "4:00 PM", "")
