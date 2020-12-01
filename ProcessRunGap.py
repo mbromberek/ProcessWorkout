@@ -30,21 +30,20 @@ import dao.files as fao
 
 config = configparser.ConfigParser()
 
-#######################################################
-# determineGear(exercise details)
-#######################################################
 def determineGear(ex):
-    gearConfigs = config['gear']
+    '''
+    determines gear based on the type of workout and if workout is a Run it looks at the category to determine shoes.
+    Returns the determined Gear
+    '''
     gear = ''
     try:
         if ex.type == 'Running':
-            primaryDays = config['running']['primary_days'].split(',')
-            if ex.startTime.strftime('%A') in primaryDays:
-                gear = gearConfigs['default_shoe_primary']
+            if config.has_option('gear','shoe_' + ex.category.replace(' ','_').lower()):
+                gear = config['gear']['shoe_' + ex.category.replace(' ','_').lower()]
             else:
-                gear = gearConfigs['default_shoe_secondary']
+                gear = config['gear']['shoe_default']
         else:
-            gear = gearConfigs['default_' + ex.type]
+            gear = config['gear']['default_' + ex.type]
     except:
         gear = ''
 
@@ -202,9 +201,6 @@ def processExercise(filename):
         ex.elevationGain = data['elevationGain']
         ex.elevationLoss = data['elevationLoss']
 
-    if ex.gear == '':
-        ex.gear = determineGear(ex)
-
     categoryConfigs = ''
     if ex.type == 'Running':
         categoryConfigs = config['run_category']
@@ -213,6 +209,9 @@ def processExercise(filename):
             ex.category = categoryConfigs[ex.startTime.strftime('%A')]
     else:
         ex.category = 'Easy'
+
+    if ex.gear == '':
+        ex.gear = determineGear(ex)
 
     # Pull data for getting weather
     laps = data['laps']
