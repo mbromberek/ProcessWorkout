@@ -320,7 +320,7 @@ def saveExToSheet(exLst, scpt):
             try:
                 newTblNm = wrktSplits.calcTrngType(ex.wrktSegments, ex.category) \
                     + ex.startTime.strftime(' %Y-%m-%d')
-                trngBrkdnSheetNm = config['workout_breakdown']['sheet_name']
+                trngBrkdnSheetNm = config['training_breakdown']['sheet_name']
 
                 wrktSumFrmla = wa.calcWrktSumFrmla(ex.wrktSegments)
 
