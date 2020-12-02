@@ -49,6 +49,37 @@ def determineGear(ex):
 
     return gear
 
+def determineCategory(ex):
+    '''
+    Using passed in exercise information determine the category for the exercise.
+    '''
+    cat = ''
+    categoryConfigs = ''
+    if ex.type == 'Running':
+        categoryConfigs = config['run_category']
+        # Get day of the exercise
+        if ex.startTime.strftime('%A') in categoryConfigs:
+            dayCat = categoryConfigs[ex.startTime.strftime('%A')]
+            if len(dayCat.split(',')) >1:
+                # print('Time: ' + str((ex.secTot + ex.minTot*60 + ex.hourTot*60*60)))
+                # print('Distance: ' + str(ex.distTot))
+                # print('Pace:' + str((ex.secTot + ex.minTot*60 + ex.hourTot*60*60) / ex.distTot))
+                for catOption in dayCat.split(','):
+                    if catOption.replace(' ','_').lower() + '_max_pace' in categoryConfigs:
+                        if float(categoryConfigs[catOption.replace(' ','_').lower() + '_max_pace']) > (ex.secTot + ex.minTot*60 + ex.hourTot*60*60) / ex.distTot:
+                            cat = catOption
+                            break
+                    elif catOption.replace(' ','_').lower() + '_min_dist' in categoryConfigs:
+                        if float(categoryConfigs[catOption.replace(' ','_').lower() + '_min_dist']) < ex.distTot:
+                            cat = catOption
+                            break
+            else:
+                cat = dayCat
+
+    else:
+        cat = 'Easy'
+    return cat
+
 #######################################################
 # API call
 #######################################################
@@ -201,14 +232,7 @@ def processExercise(filename):
         ex.elevationGain = data['elevationGain']
         ex.elevationLoss = data['elevationLoss']
 
-    categoryConfigs = ''
-    if ex.type == 'Running':
-        categoryConfigs = config['run_category']
-        # Get day of the exercise
-        if ex.startTime.strftime('%A') in categoryConfigs:
-            ex.category = categoryConfigs[ex.startTime.strftime('%A')]
-    else:
-        ex.category = 'Easy'
+    ex.category = determineCategory(ex)
 
     if ex.gear == '':
         ex.gear = determineGear(ex)
