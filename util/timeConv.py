@@ -61,6 +61,8 @@ def seconds_to_time_str(actv, time_field, time_format = ':'):
     return time_str
 
 def breakTimeFromSeconds(totTimeSec):
+    if totTimeSec is None or math.isnan(totTimeSec):
+        totTimeSec = 0
     hourTot = math.floor(totTimeSec/60/60)
     minTot = math.floor((totTimeSec/60/60 - hourTot) * 60)
     secTot = math.floor(((totTimeSec/60/60 - hourTot) * 60 - minTot) *60)

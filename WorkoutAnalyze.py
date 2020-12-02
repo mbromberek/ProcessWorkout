@@ -58,7 +58,7 @@ def calcWrktSummary(splits_df, wrktCat='Training'):
         wrkt_df['dur_sec'].iloc[frst_half_intrvl:wrkt_df.shape[0]].sum()
     wrkt_half_2_pace = wrkt_half_2_dur / wrkt_half_2_dist
 
-    # The * is needed for tc.breakTimeFromSeconds to expland the three fields being returned
+    # The * is needed for tc.breakTimeFromSeconds to expand the three fields being returned
     wrkt_dict = {\
         'intvl_tot': \
             {'dist_mi': intvl_tot_dist, 'dur_sec':intvl_tot_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(intvl_tot_dur)), 'pace_sec':intvl_tot_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(intvl_tot_pace))}\
