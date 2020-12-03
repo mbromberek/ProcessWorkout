@@ -136,26 +136,28 @@ def add_interval_to_activity(actv, events, new_actv_field, evnt_field, min_time 
     Add value for evnt_field from events df to actv df with field name of new_actv_field
     If events is empty return add the new_actv_field with a value of 0 and return actv with the new field
     """
+    # print('add_interval_to_activity new_actv_field:' + new_actv_field)
     max_time = 9999999999
 
     if events.size == 0:
         actv[new_actv_field] = 0
         return actv
 
-#     print(events)
+    # print(events[[evnt_field,'start','end']])
     # Add an extra row at the end to catch any actv records where time is greater than the last end event
 #     last_row_end = events.loc[events.index[-1], 'end']
     last_row_end = events['end'].max()
-#     print('last_row_end: ' + str(last_row_end))
+    # print('last_row_end: ' + str(last_row_end))
     if last_row_end < max_time:
         new_row = pd.DataFrame([[last_row_end, max_time, np.nan]],
                                columns=['start','end',evnt_field])
+        print(new_row)
         events_2 = events.append(new_row, ignore_index=True, sort=True)
-#         print('new_row')
+        # print('new_row')
     else:
         events_2 = events
-#         print('no new_row')
-#     print(events_2)
+        # print('no new_row')
+    # print(events_2[[evnt_field,'start','end']])
 
     first_row_start = events.loc[events.index[0], 'start']
     if first_row_start > min_time:
@@ -168,17 +170,13 @@ def add_interval_to_activity(actv, events, new_actv_field, evnt_field, min_time 
 
     s = pd.IntervalIndex.from_arrays(events_2.start,
                                      events_2.end , closed='left')
-#     print(s)
     actv[new_actv_field]=events_2.set_index(s).loc[actv.time][evnt_field].values
 
     if (events_2[evnt_field].dtypes == np.int64 or events_2[evnt_field].dtypes == np.float64):
-        actv[new_actv_field] = actv[new_actv_field].replace(np.nan, actv[new_actv_field].max()+1)
+        # actv[new_actv_field] = actv[new_actv_field].replace(np.nan, actv[new_actv_field].max()+1)
+        actv[new_actv_field] = actv[new_actv_field].replace(np.nan, actv[new_actv_field].max())
 
     return actv
-
-
-
-# In[9]:
 
 
 def merge_start_end_for_events(events_clean):
