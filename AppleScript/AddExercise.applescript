@@ -224,7 +224,7 @@ on closeSheet()
 end closeSheet
 
 on generateWrktTable(sheetNm, tblNm, wrktData, wrktSumFrmla)
-	set columnCt to 4
+	set columnCt to 5
 	set hdrRowCt to 1
 	set wrktRowCt to (count of wrktData)
 	set tblRowCt to (wrktRowCt + 5)
@@ -247,6 +247,7 @@ on generateWrktTable(sheetNm, tblNm, wrktData, wrktSumFrmla)
 						set value of cell 2 to "Time"
 						set value of cell 3 to "Distance"
 						set value of cell 4 to "Pace"
+						set value of cell 5 to "Avg HR"
 					end tell
 					
 					set rowNbr to 2
@@ -256,6 +257,7 @@ on generateWrktTable(sheetNm, tblNm, wrktData, wrktSumFrmla)
 							set value of cell 2 to (dur_str of theRecord)
 							set value of cell 3 to (dist_mi of theRecord)
 							set value of cell 4 to (pace_str of theRecord)
+							set value of cell 5 to (avg_hr of theRecord)
 						end tell
 						set rowNbr to rowNbr + 1
 					end repeat
