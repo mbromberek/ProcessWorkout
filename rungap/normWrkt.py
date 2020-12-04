@@ -151,7 +151,6 @@ def add_interval_to_activity(actv, events, new_actv_field, evnt_field, min_time 
     if last_row_end < max_time:
         new_row = pd.DataFrame([[last_row_end, max_time, np.nan]],
                                columns=['start','end',evnt_field])
-        print(new_row)
         events_2 = events.append(new_row, ignore_index=True, sort=True)
         # print('new_row')
     else:
