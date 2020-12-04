@@ -57,8 +57,22 @@ def extract_files(fname, src_dir, dest_dir):
     z.extractall(path=dest_dir)
 
 
-def save_df(df, out_name):
-    df.to_csv(out_name)
+def save_df(df, outDir, outName, frmt='csv'):
+    '''
+    Save passed dataframe to specified output formats
+    Output format can be passed as a list to save as multiple formats.
+    Default output format is csv. Options are csv and pickle
+    '''
+    if not (isinstance(frmt, list)):
+        frmt = [frmt]
+    for outFrmt in frmt:
+        if outFrmt == 'csv':
+            df.to_csv(os.path.join(outDir, outName) + '.csv')
+        elif outFrmt == 'pickle':
+            df.to_pickle(os.path.join(outDir, outName) + '.pickle')
+        else:
+            print('Invalid Format: ' + outFrmt)
+
 
 def clean_dir(dir):
     files = glob.glob(dir + '/*')

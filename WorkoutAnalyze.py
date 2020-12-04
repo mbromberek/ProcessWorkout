@@ -194,18 +194,16 @@ def main(argv):
     '''
     # Export data frames to CSV for review
     '''
-    fao.save_df(miles_df, outDir+'miles_split.csv')
-    fao.save_df(segments_df, outDir+'segments_split.csv')
-    fao.save_df(resume_pause_df, outDir+'pause_resume_split.csv')
-    fao.save_df(actv_df, outDir+'activity.csv')
-    actv_df.to_pickle(os.path.join(outDir, "activity.pickle"))
-    print(actv_df.info())
-    miles_df.to_pickle(os.path.join(outDir, "miles.pickle"))
-    segments_df.to_pickle(os.path.join(outDir, "segments.pickle"))
-    # miles_df = pd.read_pickle(os.path.join("/Users/mikeyb/Library/Mobile Documents/com~apple~CloudDocs/_Runs/analyze/results/", "miles.pickle"))
+    fao.save_df(miles_df, outDir,'miles_split', frmt=['csv','pickle'])
+    fao.save_df(actv_df, outDir,'activity', frmt=['csv','pickle'])
+    fao.save_df(segments_df, outDir,'segments_split', frmt=['csv','pickle'])
+    fao.save_df(resume_pause_df, outDir,'pause_split', frmt=['csv'])
 
     fao.clean_dir(tempDir)
 
+    '''
+    Get summary of Workout
+    '''
     # segments_df.rename(columns={splitBy: 'interval'}, inplace=False)
     wrkt_summary = calcWrktSummary(segments_df.rename(columns={'segment': 'interval'}, inplace=False))
     print(wrkt_summary)
