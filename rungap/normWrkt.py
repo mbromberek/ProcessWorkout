@@ -29,8 +29,9 @@ def group_actv(df, group_by_field):
              min_time=('dur_sec', 'min'),
              avg_hr = ('hr', 'mean'),
              max_dist = ('dist_mi','max'),
-             min_dist = ('dist_mi','min')
-             # sum_ele = ('ele_delta','sum') #Not sure if this works
+             min_dist = ('dist_mi','min'),
+             #TODO
+             sum_ele = ('ele_ft_delta','sum')
         )
         .reset_index()
     )
@@ -52,7 +53,8 @@ def group_actv(df, group_by_field):
 
     return grouped_df[[group_by_field,'dur_sec', 'dur_str', 'dist_mi' \
         , 'pace', 'pace_str' \
-        , 'avg_hr', 'min_time','max_time','min_dist','max_dist' \
+        , 'avg_hr', 'min_time','max_time','min_dist', 'max_dist' \
+        , 'sum_ele'
         ]]
 
 def normalize_activity(dataRaw):
@@ -361,8 +363,9 @@ def calc_values(actv_orig):
     '''
     activity_clean = actv_orig.copy()
     METERS_TO_MILES = 0.000621371
+    METERS_TO_FEET = 3.28084
     activity_clean['dist_mi'] = activity_clean['dist'] * METERS_TO_MILES
-    activity_clean.rename(columns={'dist': 'dist_meters'}, inplace=True)
+    activity_clean.rename(columns={'dist': 'dist_meters', 'ele':'ele_meters'}, inplace=True)
 
     # Get time into workout in seconds and minutes instead of times since epoch
     runStartTmSec = activity_clean.iloc[0]['time']
@@ -378,7 +381,8 @@ def calc_values(actv_orig):
 
     # TODO: Calculate ELEVATION changes, might be done
     # Get elevation change, only first record has na so replace it with zero
-    activity_clean['ele_delta'] = activity_clean['ele'].diff().fillna(0)
+    activity_clean['ele_ft'] = activity_clean['ele_meters'] * METERS_TO_FEET
+    activity_clean['ele_ft_delta'] = activity_clean['ele_ft'].diff().fillna(0)
     # actv_df[actv_df['ele_delta'].isna()] # Get all records with na for ele_delta
 
     return activity_clean
@@ -412,7 +416,7 @@ def rm_unneeded_cols(actv_orig):
     # Rearrange columns
     actv_df = actv_df[['date_time', 'dist_mi', 'dur_sec', 'dur_str'
         , 'avg_pace', 'mile','kilometer','segment','resume'
-        , 'hr', 'ele', 'ele_delta', 'runcad'
+        , 'hr', 'ele_ft', 'ele_ft_delta', 'runcad'
     ]]
     return actv_df
 
