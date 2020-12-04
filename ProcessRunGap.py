@@ -166,6 +166,16 @@ def getFiles(tempDir):
             filesToProcess.append(filename)
     return filesToProcess
 
+def getWrktBrkdnConfig(cat):
+    '''
+    Gets the breakdown details for the passed workout category
+    '''
+    if cat.replace(' ','_').lower() + '_breakdown' in config:
+        exBrkdn = config[cat.replace(' ','_').lower() + '_breakdown']
+    else:
+        exBrkdn = None
+    return exBrkdn
+
 def processExercises(filesToProcess):
     '''
     Loop through exercise files
@@ -234,6 +244,8 @@ def processExercise(filename):
 
     ex.category = determineCategory(ex)
 
+    exBrkdn = getWrktBrkdnConfig(ex.category)
+
     if ex.gear == '':
         ex.gear = determineGear(ex)
 
@@ -262,11 +274,11 @@ def processExercise(filename):
         ex.userNotes = ex.userNotes + generateUserNotes(ex.endWeather)
 
     # Break Down Workout
-    if ex.category in config['run_category']['generate_table'].split(','):
+    if exBrkdn is not None and exBrkdn['generate_table'] == 'Y':
         try:
             ex.wrktSegments = wrktSplits.breakDownWrkt( \
                 srcDir, fName=ex.rungapFile, \
-                splitBy=config['split_type'][ex.category.replace(' ','_')] \
+                splitBy=exBrkdn['split_type'] \
             )
         except:
             print('<ERROR> Breakdown Workout Unexpected Error')
@@ -308,6 +320,7 @@ def saveExToSheet(exLst, scpt):
         startDateTime = ex.startTime.strftime(dateTimeSheetFormat)
         distance = "%.2f" % ex.distTot
         duration = tc.formatNumbersTime(ex.hourTot, ex.minTot, ex.secTot)
+        exBrkdn = getWrktBrkdnConfig(ex.category)
 
         try:
             scpt.call('addExercise',ex.eDate, ex.type, duration, distance, ex.distUnit, ex.avgHeartRate, ex.calTot, ex.userNotes, startDateTime, ex.gear, ex.category, ex.elevationChange())
@@ -316,17 +329,17 @@ def saveExToSheet(exLst, scpt):
             print(sys.exc_info())
             raise
 
-        if ex.wrktSegments is not None:
+        if ex.wrktSegments is not None and exBrkdn is not None:
             try:
                 newTblNm = wrktSplits.calcTrngType(ex.wrktSegments, ex.category) \
                     + ex.startTime.strftime(' %Y-%m-%d')
-                trngBrkdnSheetNm = config['training_breakdown']['sheet_name']
+                brkdnSheetNm = exBrkdn['sheet_name']
 
                 wrktSumFrmla = wa.calcWrktSumFrmla(ex.wrktSegments)
 
                 # print('New Table Name: ' + newTblNm)
                 scpt.call('generateWrktTable' \
-                    , trngBrkdnSheetNm, newTblNm \
+                    , brkdnSheetNm, newTblNm \
                     , ex.wrktSegments.to_dict(orient='records') \
                     , wrktSumFrmla
                 )
