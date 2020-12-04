@@ -30,6 +30,7 @@ def group_actv(df, group_by_field):
              avg_hr = ('hr', 'mean'),
              max_dist = ('dist_mi','max'),
              min_dist = ('dist_mi','min')
+             # sum_ele = ('ele_delta','sum') #Not sure if this works
         )
         .reset_index()
     )
@@ -244,9 +245,6 @@ def create_pause_df(events):
 
 
 
-# In[11]:
-
-
 def merge_start_end_rows(events, left_type, right_type):
     '''
     1. Take rows with left_type and merge with rows for right_type.
@@ -378,6 +376,10 @@ def calc_values(actv_orig):
     # Forward Fill Heart Rate
     activity_clean['hr'].fillna(method='ffill', inplace=True)
 
+    # TODO: Calculate ELEVATION changes, might be done
+    # Get elevation change, only first record has na so replace it with zero
+    activity_clean['ele_delta'] = activity_clean['ele'].diff().fillna(0)
+    # actv_df[actv_df['ele_delta'].isna()] # Get all records with na for ele_delta
 
     return activity_clean
 
@@ -410,7 +412,7 @@ def rm_unneeded_cols(actv_orig):
     # Rearrange columns
     actv_df = actv_df[['date_time', 'dist_mi', 'dur_sec', 'dur_str'
         , 'avg_pace', 'mile','kilometer','segment','resume'
-        , 'hr', 'ele', 'runcad'
+        , 'hr', 'ele', 'ele_delta', 'runcad'
     ]]
     return actv_df
 
