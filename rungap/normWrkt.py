@@ -31,7 +31,6 @@ def group_actv(df, group_by_field):
         .agg(max_time=('dur_sec', 'max')
              , min_time=('dur_sec', 'min')
              , avg_hr = ('hr', 'mean')
-             #TODO
              , ele_up = ('ele_up','sum')
              , ele_down = ('ele_down','sum')
              , sum_ele = ('ele_ft_delta','sum')
@@ -388,11 +387,9 @@ def calc_values(actv_orig):
     # Forward Fill Heart Rate
     activity_clean['hr'].fillna(method='ffill', inplace=True)
 
-    # TODO: Calculate ELEVATION changes, might be done
     # Get elevation change, only first record has na so replace it with zero
     activity_clean['ele_ft'] = activity_clean['ele_meters'] * METERS_TO_FEET
     activity_clean['ele_ft_delta'] = activity_clean['ele_ft'].diff().fillna(0)
-    # actv_df[actv_df['ele_delta'].isna()] # Get all records with na for ele_delta
 
     return activity_clean
 

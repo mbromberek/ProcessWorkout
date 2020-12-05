@@ -224,7 +224,18 @@ on closeSheet()
 end closeSheet
 
 on generateWrktTable(sheetNm, tblNm, wrktData, wrktSumFrmla)
-	set columnCt to 5
+	
+	set INTRVL_COL to 1
+	set TM_COL to 2
+	set DIST_COL to 3
+	set PACE_COL to 4
+	set AVG_HR_COL to 5
+	set ELE_COL to 6
+	set ELE_UP_COL to 7
+	set ELE_DOWN_COL to 8
+	
+	
+	set columnCt to 8
 	set hdrRowCt to 1
 	set wrktRowCt to (count of wrktData)
 	set tblRowCt to (wrktRowCt + 5)
@@ -243,21 +254,27 @@ on generateWrktTable(sheetNm, tblNm, wrktData, wrktSumFrmla)
 				
 				tell thisTable
 					tell row 1
-						set value of cell 1 to "Interval"
-						set value of cell 2 to "Time"
-						set value of cell 3 to "Distance"
-						set value of cell 4 to "Pace"
-						set value of cell 5 to "Avg HR"
+						set value of cell INTRVL_COL to "Interval"
+						set value of cell TM_COL to "Time"
+						set value of cell DIST_COL to "Distance"
+						set value of cell PACE_COL to "Pace"
+						set value of cell AVG_HR_COL to "Avg HR"
+						set value of cell ELE_COL to "Elevation"
+						set value of cell ELE_UP_COL to "Ele Up"
+						set value of cell ELE_DOWN_COL to "Ele Down"
 					end tell
 					
 					set rowNbr to 2
 					repeat with theRecord in wrktData
 						tell row rowNbr
-							set value of cell 1 to (interval of theRecord)
-							set value of cell 2 to (dur_str of theRecord)
-							set value of cell 3 to (dist_mi of theRecord)
-							set value of cell 4 to (pace_str of theRecord)
-							set value of cell 5 to (avg_hr of theRecord)
+							set value of cell INTRVL_COL to (interval of theRecord)
+							set value of cell TM_COL to (dur_str of theRecord)
+							set value of cell DIST_COL to (dist_mi of theRecord)
+							set value of cell PACE_COL to (pace_str of theRecord)
+							set value of cell AVG_HR_COL to (avg_hr of theRecord)
+							set value of cell ELE_COL to (sum_ele of theRecord)
+							set value of cell ELE_UP_COL to (ele_up of theRecord)
+							set value of cell ELE_DOWN_COL to (ele_down of theRecord)
 						end tell
 						set rowNbr to rowNbr + 1
 					end repeat
@@ -265,35 +282,35 @@ on generateWrktTable(sheetNm, tblNm, wrktData, wrktSumFrmla)
 					
 					--Add summary for Total workout
 					tell row (wrktRowCt + hdrRowCt + 1)
-						set value of cell 1 to "Total"
+						set value of cell INTRVL_COL to "Total"
 						--set sumWrktDistFormula to "=sum(B:B)"
-						set value of cell 2 to (dist_mi of (wrkt_tot of wrktSumFrmla))
-						set value of cell 3 to (dur_str of (wrkt_tot of wrktSumFrmla))
-						set value of cell 4 to "=" & name of cell 2 & "/" & name of cell 3
+						set value of cell TM_COL to (dist_mi of (wrkt_tot of wrktSumFrmla))
+						set value of cell DIST_COL to (dur_str of (wrkt_tot of wrktSumFrmla))
+						set value of cell PACE_COL to "=" & name of cell 2 & "/" & name of cell 3
 					end tell
 					
 					--Add summary for workout without warm up and cooldown
 					tell row (wrktRowCt + hdrRowCt + 2)
-						set value of cell 1 to "Workout"
-						set value of cell 2 to (dist_mi of (intvl_tot of wrktSumFrmla))
-						set value of cell 3 to (dur_str of (intvl_tot of wrktSumFrmla))
-						set value of cell 4 to "=" & name of cell 2 & "/" & name of cell 3
+						set value of cell INTRVL_COL to "Workout"
+						set value of cell TM_COL to (dist_mi of (intvl_tot of wrktSumFrmla))
+						set value of cell DIST_COL to (dur_str of (intvl_tot of wrktSumFrmla))
+						set value of cell PACE_COL to "=" & name of cell 2 & "/" & name of cell 3
 					end tell
 					
 					--Add summary of first half of workout
 					tell row (wrktRowCt + hdrRowCt + 3)
-						set value of cell 1 to "First Half"
-						set value of cell 2 to (dist_mi of (frst_half of wrktSumFrmla))
-						set value of cell 3 to (dur_str of (frst_half of wrktSumFrmla))
-						set value of cell 4 to "=" & name of cell 2 & "/" & name of cell 3
+						set value of cell INTRVL_COL to "First Half"
+						set value of cell TM_COL to (dist_mi of (frst_half of wrktSumFrmla))
+						set value of cell DIST_COL to (dur_str of (frst_half of wrktSumFrmla))
+						set value of cell PACE_COL to "=" & name of cell 2 & "/" & name of cell 3
 					end tell
 					
 					--Add summary of second half of workout
 					tell row (wrktRowCt + hdrRowCt + 4)
-						set value of cell 1 to "Second Half"
-						set value of cell 2 to (dist_mi of (scnd_half of wrktSumFrmla))
-						set value of cell 3 to (dur_str of (scnd_half of wrktSumFrmla))
-						set value of cell 4 to "=" & name of cell 2 & "/" & name of cell 3
+						set value of cell INTRVL_COL to "Second Half"
+						set value of cell TM_COL to (dist_mi of (scnd_half of wrktSumFrmla))
+						set value of cell DIST_COL to (dur_str of (scnd_half of wrktSumFrmla))
+						set value of cell PACE_COL to "=" & name of cell 2 & "/" & name of cell 3
 					end tell
 				end tell
 				
