@@ -24,14 +24,19 @@ def group_actv(df, group_by_field):
     Will calculate the below fields
     '''
 
+    df['ele_up'] = df[df['ele_ft_delta']>0]['ele_ft_delta']
+    df['ele_down'] = df[df['ele_ft_delta']<0]['ele_ft_delta']
+
     grouped_df = (df.groupby([group_by_field])
-        .agg(max_time=('dur_sec', 'max'),
-             min_time=('dur_sec', 'min'),
-             avg_hr = ('hr', 'mean'),
-             max_dist = ('dist_mi','max'),
-             min_dist = ('dist_mi','min'),
+        .agg(max_time=('dur_sec', 'max')
+             , min_time=('dur_sec', 'min')
+             , avg_hr = ('hr', 'mean')
              #TODO
-             sum_ele = ('ele_ft_delta','sum')
+             , ele_up = ('ele_up','sum')
+             , ele_down = ('ele_down','sum')
+             , sum_ele = ('ele_ft_delta','sum')
+             , max_dist = ('dist_mi','max')
+             , min_dist = ('dist_mi','min')
         )
         .reset_index()
     )
@@ -47,14 +52,18 @@ def group_actv(df, group_by_field):
 
     grouped_df['dist_mi'] = grouped_df['dist_mi'].round(2)
     grouped_df['avg_hr'] = grouped_df['avg_hr'].round(2)
+    grouped_df['ele_up'] = grouped_df['ele_up'].round(2)
+    grouped_df['ele_down'] = grouped_df['ele_down'].round(2)
+    grouped_df['sum_ele'] = grouped_df['sum_ele'].round(2)
 
     # grouped_df = tc.break_up_time(grouped_df,'duration')
     # grouped_df = tc.break_up_time(grouped_df, 'pace')
 
     return grouped_df[[group_by_field,'dur_sec', 'dur_str', 'dist_mi' \
         , 'pace', 'pace_str' \
-        , 'avg_hr', 'min_time','max_time','min_dist', 'max_dist' \
-        , 'sum_ele'
+        , 'avg_hr' \
+        , 'ele_up', 'ele_down', 'sum_ele' \
+        , 'min_time','max_time','min_dist', 'max_dist' \
         ]]
 
 def normalize_activity(dataRaw):
