@@ -63,6 +63,8 @@ def save_df(df, outDir, outName, frmt='csv'):
     Output format can be passed as a list to save as multiple formats.
     Default output format is csv. Options are csv and pickle
     '''
+    # miles_df = pd.read_pickle(os.path.join("/Users/mikeyb/Library/Mobile Documents/com~apple~CloudDocs/_Runs/analyze/results/", "miles.pickle"))
+
     if not (isinstance(frmt, list)):
         frmt = [frmt]
     for outFrmt in frmt:
