@@ -25,12 +25,15 @@ def calcWrktSummary(splits_df, wrktCat='Training'):
     For Training calculate the Workout portions for Time, Distance, and avg Pace
     For Long Run calculate First Half and Second Half Time, Distance, and avg Pace
     '''
-    wrkt_df = splits_df[['interval','avg_hr','dur_sec','dist_mi','pace','dur_str','pace_str']].copy()
+    wrkt_df = splits_df[['interval','avg_hr','dur_sec','dist_mi','pace','dur_str','pace_str','sum_ele','ele_up','ele_down']].copy()
 
     # Calculate summary of total workout
     wrkt_tot_dist = wrkt_df['dist_mi'].sum()
     wrkt_tot_dur = wrkt_df['dur_sec'].sum()
     wrkt_tot_pace = wrkt_tot_dur / wrkt_tot_dist
+    wrkt_tot_ele = wrkt_df['sum_ele'].sum()
+    wrkt_tot_ele_up = wrkt_df['ele_up'].sum()
+    wrkt_tot_ele_down = wrkt_df['ele_down'].sum()
 
     # if wrktCat.replace(' ','_').lower() == 'Training':
     # wrkt_df['interval'].iloc[[0]] = 'Warm Up'
@@ -40,10 +43,16 @@ def calcWrktSummary(splits_df, wrktCat='Training'):
     intvl_tot_dist = wrkt_df['dist_mi'].iloc[1:-1].sum()
     intvl_tot_dur = wrkt_df['dur_sec'].iloc[1:-1].sum()
     intvl_tot_pace = intvl_tot_dur / intvl_tot_dist
+    intvl_tot_ele = wrkt_df['sum_ele'].iloc[1:-1].sum()
+    intvl_tot_ele_up = wrkt_df['ele_up'].iloc[1:-1].sum()
+    intvl_tot_ele_down = wrkt_df['ele_down'].iloc[1:-1].sum()
 
     intvl_avg_dist = wrkt_df['dist_mi'].iloc[1:-1].mean()
     intvl_avg_dur = wrkt_df['dur_sec'].iloc[1:-1].mean()
     intvl_avg_pace = intvl_avg_dur / intvl_avg_dist
+    intvl_avg_ele = wrkt_df['sum_ele'].iloc[1:-1].mean()
+    intvl_avg_ele_up = wrkt_df['ele_up'].iloc[1:-1].mean()
+    intvl_avg_ele_down = wrkt_df['ele_down'].iloc[1:-1].mean()
 
     # if wrktCat.replace(' ','_').lower() == 'long_run':
     # Calculate summary of first and second halves of workout
@@ -51,29 +60,35 @@ def calcWrktSummary(splits_df, wrktCat='Training'):
     wrkt_half_1_dist = wrkt_df['dist_mi'].iloc[0:frst_half_intrvl].sum()
     wrkt_half_1_dur = wrkt_df['dur_sec'].iloc[0:frst_half_intrvl].sum()
     wrkt_half_1_pace = wrkt_half_1_dur / wrkt_half_1_dist
+    wrkt_half_1_ele = wrkt_df['sum_ele'].iloc[0:frst_half_intrvl].sum()
+    wrkt_half_1_ele_up = wrkt_df['ele_up'].iloc[0:frst_half_intrvl].sum()
+    wrkt_half_1_ele_down = wrkt_df['ele_down'].iloc[0:frst_half_intrvl].sum()
 
     wrkt_half_2_dist = \
         wrkt_df['dist_mi'].iloc[frst_half_intrvl:wrkt_df.shape[0]].sum()
     wrkt_half_2_dur = \
         wrkt_df['dur_sec'].iloc[frst_half_intrvl:wrkt_df.shape[0]].sum()
     wrkt_half_2_pace = wrkt_half_2_dur / wrkt_half_2_dist
+    wrkt_half_2_ele = wrkt_df['sum_ele'].iloc[frst_half_intrvl:wrkt_df.shape[0]].sum()
+    wrkt_half_2_ele_up = wrkt_df['ele_up'].iloc[frst_half_intrvl:wrkt_df.shape[0]].sum()
+    wrkt_half_2_ele_down = wrkt_df['ele_down'].iloc[frst_half_intrvl:wrkt_df.shape[0]].sum()
 
     # The * is needed for tc.breakTimeFromSeconds to expand the three fields being returned
     wrkt_dict = {\
         'intvl_tot': \
-            {'dist_mi': intvl_tot_dist, 'dur_sec':intvl_tot_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(intvl_tot_dur)), 'pace_sec':intvl_tot_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(intvl_tot_pace))}\
+            {'dist_mi': intvl_tot_dist, 'dur_sec':intvl_tot_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(intvl_tot_dur)), 'pace_sec':intvl_tot_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(intvl_tot_pace)), 'sum_ele': intvl_tot_ele, 'ele_up':intvl_tot_ele_up, 'ele_down':intvl_tot_ele_down}\
         , 'intvl_avg': \
-            {'dist_mi': intvl_avg_dist, 'dur_sec':intvl_avg_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(intvl_avg_dur)), 'pace_sec':intvl_avg_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(intvl_avg_pace))}\
+            {'dist_mi': intvl_avg_dist, 'dur_sec':intvl_avg_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(intvl_avg_dur)), 'pace_sec':intvl_avg_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(intvl_avg_pace)), 'sum_ele': intvl_avg_ele, 'ele_up':intvl_avg_ele_up, 'ele_down':intvl_avg_ele_down}\
         , 'wrkt_tot':\
-            {'dist_mi': wrkt_tot_dist, 'dur_sec':wrkt_tot_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_tot_dur)), 'pace':wrkt_tot_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_tot_pace))}\
+            {'dist_mi': wrkt_tot_dist, 'dur_sec':wrkt_tot_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_tot_dur)), 'pace':wrkt_tot_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_tot_pace)), 'sum_ele': wrkt_tot_ele, 'ele_up':wrkt_tot_ele_up, 'ele_down':wrkt_tot_ele_down}\
         , 'frst_half': \
-            {'dist_mi': wrkt_half_1_dist, 'dur_sec':wrkt_half_1_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_half_1_dur)), 'pace_sec':wrkt_half_1_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_half_1_pace))}\
+            {'dist_mi': wrkt_half_1_dist, 'dur_sec':wrkt_half_1_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_half_1_dur)), 'pace_sec':wrkt_half_1_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_half_1_pace)), 'sum_ele': wrkt_half_1_ele, 'ele_up':wrkt_half_1_ele_up, 'ele_down':wrkt_half_1_ele_down}\
         , 'scnd_half': \
-            {'dist_mi': wrkt_half_2_dist, 'dur_sec':wrkt_half_2_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_half_2_dur)), 'pace_sec':wrkt_half_2_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_half_2_pace))}\
+            {'dist_mi': wrkt_half_2_dist, 'dur_sec':wrkt_half_2_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_half_2_dur)), 'pace_sec':wrkt_half_2_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_half_2_pace)), 'sum_ele': wrkt_half_1_ele, 'ele_up':wrkt_half_1_ele_up, 'ele_down':wrkt_half_1_ele_down}\
         , 'warm_up': \
-            {'dist_mi': wrkt_df['dist_mi'].iloc[0], 'dur_sec':wrkt_df['dur_sec'].iloc[0], 'dur_str':wrkt_df['dur_str'].iloc[0], 'pace_sec':wrkt_df['pace'].iloc[0], 'pace_str': wrkt_df['pace_str'].iloc[0]}\
+            {'dist_mi': wrkt_df['dist_mi'].iloc[0], 'dur_sec':wrkt_df['dur_sec'].iloc[0], 'dur_str':wrkt_df['dur_str'].iloc[0], 'pace_sec':wrkt_df['pace'].iloc[0], 'pace_str': wrkt_df['pace_str'].iloc[0], 'sum_ele': wrkt_df['sum_ele'].iloc[0], 'ele_up':wrkt_df['ele_up'].iloc[0], 'ele_down':wrkt_df['ele_down'].iloc[0]}\
         , 'cool_down': \
-            {'dist_mi': wrkt_df['dist_mi'].iloc[-1], 'dur_sec':wrkt_df['dur_sec'].iloc[-1], 'dur_str':wrkt_df['dur_str'].iloc[-1], 'pace_sec':wrkt_df['pace'].iloc[-1], 'pace_str': wrkt_df['pace_str'].iloc[-1]}\
+            {'dist_mi': wrkt_df['dist_mi'].iloc[-1], 'dur_sec':wrkt_df['dur_sec'].iloc[-1], 'dur_str':wrkt_df['dur_str'].iloc[-1], 'pace_sec':wrkt_df['pace'].iloc[-1], 'pace_str': wrkt_df['pace_str'].iloc[-1], 'sum_ele': wrkt_df['sum_ele'].iloc[-1], 'ele_up':wrkt_df['ele_up'].iloc[-1], 'ele_down':wrkt_df['ele_down'].iloc[-1]}\
     }
 
     return wrkt_dict
@@ -211,17 +226,23 @@ def main(argv):
     print('Warm Up: ' \
         + wrkt_summary['warm_up']['dur_str'] + ' total, ' \
         + str(wrkt_summary['warm_up']['dist_mi']) + ' miles, ' \
-        + wrkt_summary['warm_up']['pace_str']  \
+        + wrkt_summary['warm_up']['pace_str'] + 'per mile, ' \
+        + str(wrkt_summary['warm_up']['ele_up']) + ' ele up, ' \
+        + str(wrkt_summary['warm_up']['ele_down']) + ' ele down' \
     )
     print('Intervals: ' \
         + wrkt_summary['intvl_tot']['dur_str'] + ' total, ' \
         + str(wrkt_summary['intvl_tot']['dist_mi']) + ' miles, ' \
-        + wrkt_summary['intvl_tot']['pace_str']  \
+        + wrkt_summary['intvl_tot']['pace_str'] + 'per mile, '\
+        + str(wrkt_summary['intvl_tot']['ele_up']) + ' ele up, ' \
+        + str(wrkt_summary['intvl_tot']['ele_down']) + ' ele down' \
     )
     print('Cool Down: ' \
         + wrkt_summary['cool_down']['dur_str'] + ' total, ' \
         + str(wrkt_summary['cool_down']['dist_mi']) + ' miles, ' \
-        + wrkt_summary['cool_down']['pace_str']  \
+        + wrkt_summary['cool_down']['pace_str'] + 'per mile, '\
+        + str(wrkt_summary['cool_down']['ele_up']) + ' ele up, ' \
+        + str(wrkt_summary['cool_down']['ele_down']) + ' ele down' \
     )
 
     print('')
