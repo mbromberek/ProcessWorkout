@@ -84,7 +84,7 @@ def calcWrktSummary(splits_df, wrktCat='Training'):
         , 'frst_half': \
             {'dist_mi': wrkt_half_1_dist, 'dur_sec':wrkt_half_1_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_half_1_dur)), 'pace_sec':wrkt_half_1_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_half_1_pace)), 'sum_ele': wrkt_half_1_ele, 'ele_up':wrkt_half_1_ele_up, 'ele_down':wrkt_half_1_ele_down}\
         , 'scnd_half': \
-            {'dist_mi': wrkt_half_2_dist, 'dur_sec':wrkt_half_2_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_half_2_dur)), 'pace_sec':wrkt_half_2_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_half_2_pace)), 'sum_ele': wrkt_half_1_ele, 'ele_up':wrkt_half_1_ele_up, 'ele_down':wrkt_half_1_ele_down}\
+            {'dist_mi': wrkt_half_2_dist, 'dur_sec':wrkt_half_2_dur, 'dur_str':tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_half_2_dur)), 'pace_sec':wrkt_half_2_pace, 'pace_str': tc.formatNumbersTime(*tc.breakTimeFromSeconds(wrkt_half_2_pace)), 'sum_ele': wrkt_half_2_ele, 'ele_up':wrkt_half_2_ele_up, 'ele_down':wrkt_half_2_ele_down}\
         , 'warm_up': \
             {'dist_mi': wrkt_df['dist_mi'].iloc[0], 'dur_sec':wrkt_df['dur_sec'].iloc[0], 'dur_str':wrkt_df['dur_str'].iloc[0], 'pace_sec':wrkt_df['pace'].iloc[0], 'pace_str': wrkt_df['pace_str'].iloc[0], 'sum_ele': wrkt_df['sum_ele'].iloc[0], 'ele_up':wrkt_df['ele_up'].iloc[0], 'ele_down':wrkt_df['ele_down'].iloc[0]}\
         , 'cool_down': \
@@ -107,38 +107,53 @@ def calcWrktSumFrmla(splits_df, wrktCat='Training'):
     wrkt_tot_dist = '=sum(B:B)'
     wrkt_tot_dur = '=sum(C:C)'
     wrkt_tot_pace = '"=" & name of cell 2 & "/" & name of cell 3'
+    wrkt_tot_ele = '=sum(F:F)'
+    wrkt_tot_ele_up = '=sum(G:G)'
+    wrkt_tot_ele_down = '=sum(H:H)'
 
     # Calculate summary of intervals portion
     intvl_tot_dist = '=sum(B3:B' + str(wrkt_df.shape[0]) + ')'
     intvl_tot_dur = '=sum(C3:C' + str(wrkt_df.shape[0]) + ')'
     intvl_tot_pace = '"=" & name of cell 2 & "/" & name of cell 3'
+    intvl_tot_ele = '=sum(F3:F' + str(wrkt_df.shape[0]) + ')'
+    intvl_tot_ele_up = '=sum(G3:G' + str(wrkt_df.shape[0]) + ')'
+    intvl_tot_ele_down = '=sum(H3:H' + str(wrkt_df.shape[0]) + ')'
 
     # Calculate summary of total workout
     intvl_avg_dist = '=avg(B3:B' + str(wrkt_df.shape[0]) + ')'
     intvl_avg_dur = '=avg(C3:C' + str(wrkt_df.shape[0]) + ')'
     intvl_avg_pace = '"=" & name of cell 2 & "/" & name of cell 3'
+    intvl_avg_ele = '=sum(F3:F' + str(wrkt_df.shape[0]) + ')'
+    intvl_avg_ele_up = '=sum(G3:G' + str(wrkt_df.shape[0]) + ')'
+    intvl_avg_ele_down = '=sum(H3:H' + str(wrkt_df.shape[0]) + ')'
 
     # Calculate summary of first and second halves of workout
     frst_half_intrvl = round(wrkt_df.shape[0]/2)+1
     wrkt_half_1_dist = '=sum(B2:B' + str(frst_half_intrvl) + ')'
     wrkt_half_1_dur = '=sum(C2:C' + str(frst_half_intrvl) + ')'
     wrkt_half_1_pace = '"=" & name of cell 2 & "/" & name of cell 3'
+    wrkt_half_1_ele = '=sum(F2:F' + str(frst_half_intrvl) + ')'
+    wrkt_half_1_ele_up = '=sum(G2:G' + str(frst_half_intrvl) + ')'
+    wrkt_half_1_ele_down = '=sum(H2:H' + str(frst_half_intrvl) + ')'
 
     wrkt_half_2_dist = '=sum(B' + str(frst_half_intrvl+1) + ':B' + str(wrkt_df.shape[0]+1) + ')'
     wrkt_half_2_dur = '=sum(C' + str(frst_half_intrvl+1) + ':C' + str(wrkt_df.shape[0]+1) + ')'
     wrkt_half_2_pace = '"=" & name of cell 2 & "/" & name of cell 3'
+    wrkt_half_2_ele = '=sum(F' + str(frst_half_intrvl+1) + ':F' + str(wrkt_df.shape[0]+1) + ')'
+    wrkt_half_2_ele_up = '=sum(G' + str(frst_half_intrvl+1) + ':G' + str(wrkt_df.shape[0]+1) + ')'
+    wrkt_half_2_ele_down = '=sum(H' + str(frst_half_intrvl+1) + ':H' + str(wrkt_df.shape[0]+1) + ')'
 
     wrkt_dict = {\
         'intvl_tot': \
-            {'dist_mi': intvl_tot_dist, 'dur_str':intvl_tot_dur, 'pace_str':intvl_tot_pace}\
+            {'dist_mi': intvl_tot_dist, 'dur_str':intvl_tot_dur, 'pace_str':intvl_tot_pace, 'sum_ele': intvl_tot_ele, 'ele_up':intvl_tot_ele_up, 'ele_down':intvl_tot_ele_down}\
         , 'intvl_avg': \
-            {'dist_mi': intvl_avg_dist, 'dur_str':intvl_avg_dur, 'pace_str':intvl_avg_pace}\
+            {'dist_mi': intvl_avg_dist, 'dur_str':intvl_avg_dur, 'pace_str':intvl_avg_pace, 'sum_ele': intvl_avg_ele, 'ele_up':intvl_avg_ele_up, 'ele_down':intvl_avg_ele_down}\
         , 'wrkt_tot':\
-            {'dist_mi': wrkt_tot_dist, 'dur_str':wrkt_tot_dur, 'pace_str':wrkt_tot_pace}\
+            {'dist_mi': wrkt_tot_dist, 'dur_str':wrkt_tot_dur, 'pace_str':wrkt_tot_pace, 'sum_ele': wrkt_tot_ele, 'ele_up':wrkt_tot_ele_up, 'ele_down':wrkt_tot_ele_down}\
         , 'frst_half': \
-            {'dist_mi': wrkt_half_1_dist, 'dur_str':wrkt_half_1_dur, 'pace_str':wrkt_half_1_pace}\
+            {'dist_mi': wrkt_half_1_dist, 'dur_str':wrkt_half_1_dur, 'pace_str':wrkt_half_1_pace, 'sum_ele': wrkt_half_1_ele, 'ele_up':wrkt_half_1_ele_up, 'ele_down':wrkt_half_1_ele_down}\
         , 'scnd_half': \
-            {'dist_mi': wrkt_half_2_dist, 'dur_str':wrkt_half_2_dur, 'pace_str':wrkt_half_2_pace}\
+            {'dist_mi': wrkt_half_2_dist, 'dur_str':wrkt_half_2_dur, 'pace_str':wrkt_half_2_pace, 'sum_ele': wrkt_half_2_ele, 'ele_up':wrkt_half_2_ele_up, 'ele_down':wrkt_half_2_ele_down}\
 
     }
 

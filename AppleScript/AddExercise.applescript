@@ -287,6 +287,9 @@ on generateWrktTable(sheetNm, tblNm, wrktData, wrktSumFrmla)
 						set value of cell TM_COL to (dist_mi of (wrkt_tot of wrktSumFrmla))
 						set value of cell DIST_COL to (dur_str of (wrkt_tot of wrktSumFrmla))
 						set value of cell PACE_COL to "=" & name of cell 2 & "/" & name of cell 3
+						set value of cell ELE_COL to (sum_ele of (wrkt_tot of wrktSumFrmla))
+						set value of cell ELE_UP_COL to (ele_up of (wrkt_tot of wrktSumFrmla))
+						set value of cell ELE_DOWN_COL to (ele_down of (wrkt_tot of wrktSumFrmla))
 					end tell
 					
 					--Add summary for workout without warm up and cooldown
@@ -295,6 +298,9 @@ on generateWrktTable(sheetNm, tblNm, wrktData, wrktSumFrmla)
 						set value of cell TM_COL to (dist_mi of (intvl_tot of wrktSumFrmla))
 						set value of cell DIST_COL to (dur_str of (intvl_tot of wrktSumFrmla))
 						set value of cell PACE_COL to "=" & name of cell 2 & "/" & name of cell 3
+						set value of cell ELE_COL to (sum_ele of (intvl_tot of wrktSumFrmla))
+						set value of cell ELE_UP_COL to (ele_up of (intvl_tot of wrktSumFrmla))
+						set value of cell ELE_DOWN_COL to (ele_down of (intvl_tot of wrktSumFrmla))
 					end tell
 					
 					--Add summary of first half of workout
@@ -303,6 +309,9 @@ on generateWrktTable(sheetNm, tblNm, wrktData, wrktSumFrmla)
 						set value of cell TM_COL to (dist_mi of (frst_half of wrktSumFrmla))
 						set value of cell DIST_COL to (dur_str of (frst_half of wrktSumFrmla))
 						set value of cell PACE_COL to "=" & name of cell 2 & "/" & name of cell 3
+						set value of cell ELE_COL to (sum_ele of (frst_half of wrktSumFrmla))
+						set value of cell ELE_UP_COL to (ele_up of (frst_half of wrktSumFrmla))
+						set value of cell ELE_DOWN_COL to (ele_down of (frst_half of wrktSumFrmla))
 					end tell
 					
 					--Add summary of second half of workout
@@ -311,6 +320,9 @@ on generateWrktTable(sheetNm, tblNm, wrktData, wrktSumFrmla)
 						set value of cell TM_COL to (dist_mi of (scnd_half of wrktSumFrmla))
 						set value of cell DIST_COL to (dur_str of (scnd_half of wrktSumFrmla))
 						set value of cell PACE_COL to "=" & name of cell 2 & "/" & name of cell 3
+						set value of cell ELE_COL to (sum_ele of (scnd_half of wrktSumFrmla))
+						set value of cell ELE_UP_COL to (ele_up of (scnd_half of wrktSumFrmla))
+						set value of cell ELE_DOWN_COL to (ele_down of (scnd_half of wrktSumFrmla))
 					end tell
 				end tell
 				
