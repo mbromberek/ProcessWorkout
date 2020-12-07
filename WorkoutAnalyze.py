@@ -189,48 +189,14 @@ def main(argv):
     progDir = os.path.abspath('')
     config.read(progDir + "/wrktAnalyzeConfig.txt")
 
-    # logging.basicConfig(filename='/tmp/WorkoutAnalyze.log',  level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    # logger = logging.getLogger('WorkoutAnalyze')
-    # logger.setLevel(logging.DEBUG)
-    # logger.setFormatter(formatter)
-
-
-    # logging_config = dict(
-    #     version = 1,
-    #     formatters = {
-    #         'f': {'format':
-    #               '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'}
-    #         },
-    #     handlers = {
-    #         'h': {'class': 'logging.StreamHandler',
-    #               'formatter': 'f',
-    #               'level': logging.DEBUG}
-    #         },
-    #     root = {
-    #         'handlers': ['h'],
-    #         'level': logging.DEBUG,
-    #         },
-    # )
-    #
-    # dictConfig(logging_config)
-    #
-    # logger = logging.getLogger()
-
-
     # create logger
     logger.setLevel(logging.DEBUG)
-
-    # create console handler and set level to debug
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.INFO)
-
     # create formatter
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-    # add formatter to ch
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
     ch.setFormatter(formatter)
-
-    # add ch to logger
     logger.addHandler(ch)
 
     fh = logging.FileHandler(r'/tmp/WorkoutAnalyze.log')
@@ -291,22 +257,22 @@ def main(argv):
     '''
     # segments_df.rename(columns={splitBy: 'interval'}, inplace=False)
     wrkt_summary = calcWrktSummary(segments_df.rename(columns={'segment': 'interval'}, inplace=False))
-    logger.debug('Workout Stats:')
-    logger.debug('Warm Up: ' \
+    logger.info('Workout Stats:')
+    logger.info('Warm Up: ' \
         + wrkt_summary['warm_up']['dur_str'] + ' total, ' \
         + str(wrkt_summary['warm_up']['dist_mi']) + ' miles, ' \
         + wrkt_summary['warm_up']['pace_str'] + 'per mile, ' \
         + str(wrkt_summary['warm_up']['ele_up']) + ' ele up, ' \
         + str(wrkt_summary['warm_up']['ele_down']) + ' ele down' \
     )
-    logger.debug('Intervals: ' \
+    logger.info('Intervals: ' \
         + wrkt_summary['intvl_tot']['dur_str'] + ' total, ' \
         + str(wrkt_summary['intvl_tot']['dist_mi']) + ' miles, ' \
         + wrkt_summary['intvl_tot']['pace_str'] + 'per mile, '\
         + str(wrkt_summary['intvl_tot']['ele_up']) + ' ele up, ' \
         + str(wrkt_summary['intvl_tot']['ele_down']) + ' ele down' \
     )
-    logger.debug('Cool Down: ' \
+    logger.info('Cool Down: ' \
         + wrkt_summary['cool_down']['dur_str'] + ' total, ' \
         + str(wrkt_summary['cool_down']['dist_mi']) + ' miles, ' \
         + wrkt_summary['cool_down']['pace_str'] + 'per mile, '\
@@ -314,7 +280,6 @@ def main(argv):
         + str(wrkt_summary['cool_down']['ele_down']) + ' ele down' \
     )
 
-    logger.debug('')
     wrkt_sum_frmla = calcWrktSumFrmla(segments_df.rename(columns={'segment': 'interval'}, inplace=False))
 
 
