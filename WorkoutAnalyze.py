@@ -20,6 +20,26 @@ import util.timeConv as tc
 import rungap.normWrkt as rgNorm
 
 logger = logging.getLogger(__name__)
+tempDir = '/tmp/' #default to /tmp
+
+def custSplits(actv_df):
+    '''
+    Add Empty Custom_Split column to passed in DataFrame
+    Export DF to CSV and Pickle (Pickle is not needed at this time)
+    Open CSV on users system
+    Pause job for user input
+    User enters data to custom columns of spreadsheet and saves it to CSV of same name (maybe keep the file in Numbers)
+    Read updated CSV file (and original pickle if needed)
+    Update DF custom_split column with value from custom_split column in CSV
+    In DF fillna based on the split data provided in the custom_split column
+    Perform rgNorm.group_actv on df using custom_split column
+    Return custom splits grouped DataFrame
+    '''
+    df = actv_df.copy()
+
+
+    cust_splits_df = df
+    return cust_splits_df
 
 def calcWrktSummary(splits_df, wrktCat='Training'):
     '''
@@ -189,6 +209,9 @@ def main(argv):
     progDir = os.path.abspath('')
     config.read(progDir + "/wrktAnalyzeConfig.txt")
 
+    '''
+    Setup logging
+    '''
     # create logger
     logger.setLevel(logging.DEBUG)
     # create formatter
@@ -210,8 +233,10 @@ def main(argv):
     tempDir = config['analyze_inputs']['temp_dir']
     outDir = config['analyze_outputs']['dir']
 
+    customSplit = False
+
     try:
-        opts, args = getopt.getopt(argv,"hi:o:",["ifile=", "idir=", "odir="])
+        opts, args = getopt.getopt(argv,"hi:o:",["ifile=", "idir=", "odir=", "custom"])
     except getopt.GetoptError:
         printArgumentsHelp()
         sys.exit(2)
@@ -225,6 +250,8 @@ def main(argv):
             analyzeDir = arg
         elif opt in ("-o", "--odir"):
             outDir = arg
+        elif opt in ("--custom"):
+            customSplit = True
     logger.info('Input file: ' + filename)
     logger.info('Input directory: ' + analyzeDir)
 
@@ -233,6 +260,13 @@ def main(argv):
     data = fao.get_workout_data(tempDir)
 
     actv_df = rgNorm.normalize_activity(data)
+
+    '''
+    TODO
+    '''
+    if customSplit:
+        cust_splits_df = custSplits(actv_df)
+        fao.save_df(cust_splits_df, outDir,'custom_split', frmt=['csv','pickle'])
 
     '''
     # Group activities by mile and segment
