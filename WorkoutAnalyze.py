@@ -8,7 +8,7 @@ import datetime, time
 import configparser
 import sys, getopt
 import logging
-from logging.config import dictConfig
+import logging.config
 
 # 3rd party classes
 import numpy as np
@@ -24,16 +24,16 @@ tempDir = '/tmp/' #default to /tmp
 
 def custSplits(actv_df):
     '''
-    Add Empty Custom_Split column to passed in DataFrame
-    Export DF to CSV and Pickle (Pickle is not needed at this time)
-    Open CSV on users system
-    Pause job for user input
-    User enters data to custom columns of spreadsheet and saves it to CSV of same name (maybe keep the file in Numbers)
-    Read updated CSV file (and original pickle if needed)
-    Update DF custom_split column with value from custom_split column in CSV
-    In DF fillna based on the split data provided in the custom_split column
-    Perform rgNorm.group_actv on df using custom_split column
-    Return custom splits grouped DataFrame
+    1) Add Empty Custom_Split column to passed in DataFrame
+    2) Export DF to CSV and Pickle (Pickle is not needed at this time)
+    3) Open CSV on users system
+    4) Pause job for user input
+    5) User enters data to custom columns of spreadsheet and saves it to CSV of same name (maybe keep the file in Numbers)
+    6) Read updated CSV file (and original pickle if needed)
+    7) Update DF custom_split column with value from custom_split column in CSV
+    8) In DF fillna based on the split data provided in the custom_split column
+    9) Perform rgNorm.group_actv on df using custom_split column
+    10) Return custom splits grouped DataFrame
     '''
     df = actv_df.copy()
 
@@ -212,20 +212,23 @@ def main(argv):
     '''
     Setup logging
     '''
-    # create logger
-    logger.setLevel(logging.DEBUG)
-    # create formatter
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    logging.config.fileConfig('logging.conf')
+    logger = logging.getLogger('root')
 
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.INFO)
-    ch.setFormatter(formatter)
-    logger.addHandler(ch)
-
-    fh = logging.FileHandler(r'/tmp/WorkoutAnalyze.log')
-    fh.setLevel(logging.DEBUG)
-    fh.setFormatter(formatter)
-    logger.addHandler(fh)
+    # # create logger
+    # logger.setLevel(logging.DEBUG)
+    # # create formatter
+    # formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    #
+    # ch = logging.StreamHandler()
+    # ch.setLevel(logging.INFO)
+    # ch.setFormatter(formatter)
+    # logger.addHandler(ch)
+    #
+    # fh = logging.FileHandler(r'/tmp/WorkoutAnalyze.log')
+    # fh.setLevel(logging.DEBUG)
+    # fh.setFormatter(formatter)
+    # logger.addHandler(fh)
 
 
     filename = config['analyze_inputs']['file_name']
