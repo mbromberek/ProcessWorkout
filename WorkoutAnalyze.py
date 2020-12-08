@@ -19,8 +19,9 @@ import dao.files as fao
 import util.timeConv as tc
 import rungap.normWrkt as rgNorm
 
-logger = logging.getLogger(__name__)
 tempDir = '/tmp/' #default to /tmp
+logging.config.fileConfig('logging.conf')
+logger = logging.getLogger('root')
 
 def custSplits(actv_df):
     '''
@@ -212,24 +213,6 @@ def main(argv):
     '''
     Setup logging
     '''
-    logging.config.fileConfig('logging.conf')
-    logger = logging.getLogger('root')
-
-    # # create logger
-    # logger.setLevel(logging.DEBUG)
-    # # create formatter
-    # formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    #
-    # ch = logging.StreamHandler()
-    # ch.setLevel(logging.INFO)
-    # ch.setFormatter(formatter)
-    # logger.addHandler(ch)
-    #
-    # fh = logging.FileHandler(r'/tmp/WorkoutAnalyze.log')
-    # fh.setLevel(logging.DEBUG)
-    # fh.setFormatter(formatter)
-    # logger.addHandler(fh)
-
 
     filename = config['analyze_inputs']['file_name']
     analyzeDir = config['analyze_inputs']['analyze_dir']

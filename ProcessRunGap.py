@@ -29,6 +29,8 @@ import dao.files as fao
 
 
 config = configparser.ConfigParser()
+logging.config.fileConfig('logging.conf')
+logger = logging.getLogger('root')
 
 def determineGear(ex):
     '''
@@ -214,10 +216,10 @@ def processExercises(filesToProcess):
     jsonExtRegex = re.compile(r'(.json)$')
     for filename in filesToProcess:
         if jsonFileRegex.search(filename):
-            print('Process: ' + filename)
+            logger.info('Process: ' + filename)
             exLst.append(processExercise(filename))
         else:
-            print('Do not process: ' + filename)
+            logger.info('Do not process: ' + filename)
     return exLst
 
 def processExercise(filename):
@@ -315,8 +317,8 @@ def saveExToSheet(exLst, scpt):
         try:
             scpt.call('addExercise',ex.eDate, ex.type, duration, distance, ex.distUnit, ex.avgHeartRate, ex.calTot, ex.userNotes, startDateTime, ex.gear, ex.category, ex.elevationChange())
         except:
-            print('addExercise Unexpected Error')
-            print(sys.exc_info())
+            logger.error('addExercise Unexpected Error')
+            logger.error(sys.exc_info())
             raise
 
         if ex.wrktSegments is not None and exBrkdn is not None:
@@ -334,8 +336,8 @@ def saveExToSheet(exLst, scpt):
                     , wrktSumFrmla
                 )
             except applescript.ScriptError:
-                print('<ERROR> generateWrktTable Unexpected Error')
-                print(sys.exc_info())
+                logger.error('generateWrktTable Unexpected Error')
+                logger.error(sys.exc_info())
                 raise
 
 def cleanProcessedFile(exLst, monitorDir, tempDir):
@@ -408,7 +410,7 @@ def printWrktDetails(filename, ex):
 # MAIN
 #######################################################
 def main():
-    print('Start ProcessRunGap')
+    logger.info('Start ProcessRunGap')
 
     # Get config details
     progDir = os.path.dirname(os.path.abspath(__file__))
@@ -423,10 +425,10 @@ def main():
     scpt = initializeAppleScriptFunc( os.path.join(config['applescript']['script_path'], config['applescript']['script_name']), sheetName)
 
     if (config['rungap']['print_data'] == 'Y'):
-        print('monitorDir:' + monitorDir)
-        print('tempDir: ' + tempDir)
-        print('Monitor Directory Contents:')
-        print(os.listdir(monitorDir))
+        logger.debug('monitorDir:' + monitorDir)
+        logger.debug('tempDir: ' + tempDir)
+        logger.debug('Monitor Directory Contents:')
+        logger.debug(os.listdir(monitorDir))
 
     uncompressMonitorToTemp(monitorDir, tempDir)
 
@@ -440,6 +442,8 @@ def main():
 
     if (config['applescript']['close_sheet'] == 'Y'):
         scpt.call('closeSheet')
+
+    logger.info('End ProcessRunGap')
 
 if __name__ == '__main__':
     main()

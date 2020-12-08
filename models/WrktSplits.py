@@ -6,6 +6,10 @@ import pandas as pd
 import dao.files as fao
 import rungap.normWrkt as rgNorm
 
+logging.config.fileConfig('../logging.conf')
+logger = logging.getLogger('root')
+
+
 def breakDownWrkt(dirName, fName = '', splitBy='segment'):
     '''
     WrktSplits.breakDownWrkt(dirName=<class 'str'>, splitBy='segment')
@@ -31,7 +35,7 @@ def breakDownWrkt(dirName, fName = '', splitBy='segment'):
 def calcTrngType(wrktSegments, wrktCat):
     if wrktCat != 'Training':
         return wrktCat
-    
+
     if wrktSegments.shape[0] in (3, 4):
         # If number of records is 3 or 4the workout is likely a Tempo run
         return 'Tempo'
