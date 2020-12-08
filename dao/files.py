@@ -10,7 +10,11 @@ import json
 import os,glob,shutil
 import re
 import datetime, time
+import logging
+import logging.config
 
+logging.config.fileConfig('logging.conf')
+logger = logging.getLogger('root')
 
 def getFileName():
     """
@@ -73,7 +77,7 @@ def save_df(df, outDir, outName, frmt='csv'):
         elif outFrmt == 'pickle':
             df.to_pickle(os.path.join(outDir, outName) + '.pickle')
         else:
-            print('Invalid Format: ' + outFrmt)
+            logger.error('Invalid Format: ' + outFrmt)
 
 
 def clean_dir(dir):
