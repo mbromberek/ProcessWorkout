@@ -88,6 +88,34 @@ def apiCall(url):
     data = r.json()
     return data
 
+def getWrktWeather(ex, data):
+    '''
+    Get weather data using passed in data
+    Store weather in Exercise object and return it
+    '''
+    laps = data['laps']
+    exPath = data['displayPath']
+
+    lastLapStart = datetime.datetime.strptime(laps[-1]['startTime'] ,'%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=datetime.timezone.utc).astimezone(tz=None)
+    lastLapDuration = laps[-1]['duration']
+    lastLapEnd = lastLapStart + datetime.timedelta(seconds=lastLapDuration)
+    ex.endTime = lastLapEnd
+
+    # Get lat and long from path details
+    ex.startLat = exPath[0]['lat']
+    ex.startLon = exPath[0]['lon']
+    ex.endLat = exPath[-1]['lat']
+    ex.endLon = exPath[-1]['lon']
+
+    ex.startWeather = getWeather(ex.startLat, ex.startLon, ex.startTime)
+    ex.startWeather.position = 'Start'
+    ex.endWeather = getWeather(ex.endLat, ex.endLon, ex.endTime)
+    ex.endWeather.position = 'End'
+
+    ex.userNotes = generateUserNotes(ex.startWeather)
+    ex.userNotes = ex.userNotes + generateUserNotes(ex.endWeather)
+
+    return ex
 
 #######################################################
 # Get Weather from dark sky for the passed latitude,
@@ -250,28 +278,8 @@ def processExercise(filename):
         ex.gear = determineGear(ex)
 
     # Pull data for getting weather
-    laps = data['laps']
     if 'displayPath' in data:
-        exPath = data['displayPath']
-
-        lastLapStart = datetime.datetime.strptime(laps[-1]['startTime'] ,'%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=datetime.timezone.utc).astimezone(tz=None)
-        lastLapDuration = laps[-1]['duration']
-        lastLapEnd = lastLapStart + datetime.timedelta(seconds=lastLapDuration)
-        ex.endTime = lastLapEnd
-
-        # Get lat and long from path details
-        ex.startLat = exPath[0]['lat']
-        ex.startLon = exPath[0]['lon']
-        ex.endLat = exPath[-1]['lat']
-        ex.endLon = exPath[-1]['lon']
-
-        ex.startWeather = getWeather(ex.startLat, ex.startLon, ex.startTime)
-        ex.startWeather.position = 'Start'
-        ex.endWeather = getWeather(ex.endLat, ex.endLon, ex.endTime)
-        ex.endWeather.position = 'End'
-
-        ex.userNotes = generateUserNotes(ex.startWeather)
-        ex.userNotes = ex.userNotes + generateUserNotes(ex.endWeather)
+        ex = getWrktWeather(ex, data)
 
     # Break Down Workout
     if exBrkdn is not None and exBrkdn['generate_table'] == 'Y':
@@ -286,29 +294,11 @@ def processExercise(filename):
             raise
 
     if (config['rungap']['print_data'] == 'Y'):
-        print('filename: ' + filename)
-        print('RunGap file: ' + ex.rungapFile)
-        print('Metadata file: ' + ex.metadataFile)
+        printWrktDetails(filename, ex)
 
-        print("Start Date Time: " +
-            ex.startTime.strftime('%Y-%m-%dT%H:%M:%S'))
-        print("Start Unix Time: " + str(ex.startTime.timestamp()))
-        if ex.endTime == '':
-            print("End Date Time: Unknown")
-        else:
-            print('End Date Time: ' +
-                ex.endTime.strftime('%Y-%m-%dT%H:%M:%S'))
-
-        print("Distance: " + str(ex.distTot))
-        print("Duration: " + ex.durTot)
-        print('Avg Heartrate: ' + str(ex.avgHeartRate))
-        print('Calories Burned: ' + str(ex.calTot))
-        print('Category: ' + ex.category)
-
-        print('Start Lat, Lon: ' + str(ex.startLat) + ',' + str(ex.startLon) )
-        print('End Lat, Lon: ' + str(ex.endLat) + ',' + str(ex.endLon) )
-        print('')
     return ex
+
+
 
 def saveExToSheet(exLst, scpt):
     '''
@@ -386,6 +376,33 @@ def initializeAppleScriptFunc(appleScriptName, sheetName):
     scpt = applescript.AppleScript(scptTxt)
     scpt.call('initialize',sheetName)
     return scpt
+
+def printWrktDetails(filename, ex):
+    '''
+    Prints details about workout to console
+    '''
+    print('filename: ' + filename)
+    print('RunGap file: ' + ex.rungapFile)
+    print('Metadata file: ' + ex.metadataFile)
+
+    print("Start Date Time: " +
+        ex.startTime.strftime('%Y-%m-%dT%H:%M:%S'))
+    print("Start Unix Time: " + str(ex.startTime.timestamp()))
+    if ex.endTime == '':
+        print("End Date Time: Unknown")
+    else:
+        print('End Date Time: ' +
+            ex.endTime.strftime('%Y-%m-%dT%H:%M:%S'))
+
+    print("Distance: " + str(ex.distTot))
+    print("Duration: " + ex.durTot)
+    print('Avg Heartrate: ' + str(ex.avgHeartRate))
+    print('Calories Burned: ' + str(ex.calTot))
+    print('Category: ' + ex.category)
+
+    print('Start Lat, Lon: ' + str(ex.startLat) + ',' + str(ex.startLon) )
+    print('End Lat, Lon: ' + str(ex.endLat) + ',' + str(ex.endLon) )
+    print('')
 
 #######################################################
 # MAIN
