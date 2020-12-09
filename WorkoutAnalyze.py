@@ -25,22 +25,37 @@ logger = logging.getLogger('root')
 
 def custSplits(actv_df):
     '''
-    1) Add Empty Custom_Split column to passed in DataFrame
-    2) Export DF to CSV and Pickle (Pickle is not needed at this time)
-    3) Open CSV on users system
-    4) Pause job for user input
-    5) User enters data to custom columns of spreadsheet and saves it to CSV of same name (maybe keep the file in Numbers)
-    6) Read updated CSV file (and original pickle if needed)
-    7) Update DF custom_split column with value from custom_split column in CSV
-    8) In DF fillna based on the split data provided in the custom_split column
-    9) Perform rgNorm.group_actv on df using custom_split column
-    10) Return custom splits grouped DataFrame
+    Create a CSV file with a custom split column for the passed in activity. User can then add the split marks in the CSV and resave it as CSV with the same name.
+    Job will use the splits in the custom column to create a new grouping of splits that those.
+    Each entry in CSV file should be unique
     '''
     df = actv_df.copy()
+    # 1) Add Empty Custom_Split column to passed in DataFrame
+    df['custom'] = np.nan
+    df.loc[0,'custom'] = 1
 
+    # 2) Export DF to CSV and Pickle (Pickle is not needed at this time)
+    fao.save_df(df, tempDir,'temp_custom_split', frmt=['csv','pickle'])
 
-    cust_splits_df = df
-    return cust_splits_df
+    # 3) Pause job for user input
+    # 4) Open CSV on users system
+    # 5) User enters data to custom columns of spreadsheet and saves it to CSV of same name (maybe keep the file in Numbers)
+    input("Update the temp_custom_split.csv file with custom splits. Then Press Enter to continue")
+
+    # 6) Read updated CSV file (and original pickle if needed)
+    edit_df = pd.read_csv(os.path.join(tempDir,'temp_custom_split.csv'))
+    cust_df = edit_df[['date_time','custom']].copy()
+    cust_df['date_time'] = cust_df['date_time'].astype('datetime64')
+
+    # 7) Update DF custom column with value from custom column in CSV
+    df.drop(['custom'], axis=1, inplace=True)
+    actv_cust_df = pd.merge(df, cust_df, how='left', on='date_time')
+
+    # 8) In DF fillna based on the split data provided in the custom column
+    actv_cust_df['custom'].fillna(method='ffill', inplace=True)
+
+    # 9) Group using custom column
+    return rgNorm.group_actv(actv_cust_df, 'custom')
 
 def calcWrktSummary(splits_df, wrktCat='Training'):
     '''
