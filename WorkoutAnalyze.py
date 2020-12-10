@@ -144,13 +144,13 @@ def main(argv):
     config = configparser.ConfigParser()
     # progDir = os.path.dirname(os.path.abspath(__file__)) #might need to use this in actual Python script, but does not work in Jupyter Notebook
     progDir = os.path.abspath('')
-    config.read(progDir + "/wrktAnalyzeConfig.txt")
+    config.read(progDir + "/config.txt")
 
     logger.info('WorkoutAnalyze Start')
 
-    filename = config['analyze_inputs']['file_name']
-    tempDir = config['analyze_inputs']['temp_dir']
-    outDir = config['analyze_outputs']['dir']
+    filename = config['wrkt_analyze_inputs']['file_name']
+    tempDir = config['wrkt_analyze_inputs']['temp_dir']
+    outDir = config['wrkt_analyze_outputs']['dir']
 
     customSplit = False
     splitOptions = []
@@ -161,7 +161,7 @@ def main(argv):
         printArgumentsHelp()
         sys.exit(2)
     for opt, arg in opts:
-        if opt == '-h': # Print help for input arguments
+        if opt == '-h':
             printArgumentsHelp()
             sys.exit()
         elif opt in ("-i", "--ifile"):
@@ -171,8 +171,7 @@ def main(argv):
         elif opt in ('--split'):
             splitOptions = getSplitOptions(arg)
     if splitOptions == []:
-        # TODO should default options be a config entry?
-        splitOptions = ['mile','segment','resume']
+        splitOptions = config['wrkt_analyze']['dflt_split_opt'].split(',')
 
     logger.info('Input file: ' + filename)
     logger.info('Split arguments: ' + str(splitOptions))
