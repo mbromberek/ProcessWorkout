@@ -53,7 +53,7 @@ def get_workout_data_from_file(fNamePath):
     return data
 
 
-def extract_files(fname, src_dir, dest_dir):
+def extract_files(fname, dest_dir, src_dir=''):
     """
     Extract filename in analyzeDir and put output into tempDir
     """

@@ -117,7 +117,6 @@ def main(argv):
     logger.info('WorkoutAnalyze Start')
 
     filename = config['analyze_inputs']['file_name']
-    analyzeDir = config['analyze_inputs']['analyze_dir']
     tempDir = config['analyze_inputs']['temp_dir']
     outDir = config['analyze_outputs']['dir']
 
@@ -125,7 +124,7 @@ def main(argv):
     splitOptions = []
 
     try:
-        opts, args = getopt.getopt(argv,"hi:o:",["ifile=", "idir=", "odir=", "custom", "split="])
+        opts, args = getopt.getopt(argv,"hi:o:",["ifile=", "odir=", "split="])
     except getopt.GetoptError:
         printArgumentsHelp()
         sys.exit(2)
@@ -135,23 +134,18 @@ def main(argv):
             sys.exit()
         elif opt in ("-i", "--ifile"):
             filename = arg
-        # elif opt in ("--idir"):
-        #     analyzeDir = arg
         elif opt in ("-o", "--odir"):
             outDir = arg
         elif opt in ('--split'):
             splitOptions = getSplitOptions(arg)
-        # elif opt in ("--custom"):
-        #     customSplit = True
     if splitOptions == []:
         # TODO should default options be a config entry?
         splitOptions = ['mile','segment','resume']
 
     logger.info('Input file: ' + filename)
-    logger.info('Input directory: ' + analyzeDir)
     logger.info('Split arguments: ' + str(splitOptions))
 
-    fao.extract_files(filename, analyzeDir, tempDir)
+    fao.extract_files(filename, tempDir)
 
     data = fao.get_workout_data(tempDir)
 
