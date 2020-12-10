@@ -24,6 +24,39 @@ tempDir = '/tmp/' #default to /tmp
 logging.config.fileConfig('logging.conf')
 logger = logging.getLogger()
 
+
+def summarizeWrkoutSegments(segments_df):
+    '''
+    Get summary of Workout and write it to logs
+    '''
+    wrkt_summary = wrktSum.calcWrktSummary(segments_df.rename(columns={'segment': 'interval'}, inplace=False))
+    logger.info('Workout Stats:')
+    logger.info('Warm Up: ' \
+        + wrkt_summary['warm_up']['dur_str'] + ' total, ' \
+        + str(wrkt_summary['warm_up']['dist_mi']) + ' miles, ' \
+        + wrkt_summary['warm_up']['pace_str'] + 'per mile, ' \
+        + str(wrkt_summary['warm_up']['ele_up']) + ' ele up, ' \
+        + str(wrkt_summary['warm_up']['ele_down']) + ' ele down' \
+    )
+    logger.info('Intervals: ' \
+        + wrkt_summary['intvl_tot']['dur_str'] + ' total, ' \
+        + str(wrkt_summary['intvl_tot']['dist_mi']) + ' miles, ' \
+        + wrkt_summary['intvl_tot']['pace_str'] + 'per mile, '\
+        + str(wrkt_summary['intvl_tot']['ele_up']) + ' ele up, ' \
+        + str(wrkt_summary['intvl_tot']['ele_down']) + ' ele down' \
+    )
+    logger.info('Cool Down: ' \
+        + wrkt_summary['cool_down']['dur_str'] + ' total, ' \
+        + str(wrkt_summary['cool_down']['dist_mi']) + ' miles, ' \
+        + wrkt_summary['cool_down']['pace_str'] + 'per mile, '\
+        + str(wrkt_summary['cool_down']['ele_up']) + ' ele up, ' \
+        + str(wrkt_summary['cool_down']['ele_down']) + ' ele down' \
+    )
+
+    # wrkt_sum_frmla = wrktSum.calcWrktSumFrmla(segments_df.rename(columns={'segment': 'interval'}, inplace=False))
+    return wrkt_summary
+
+
 def custSplits(actv_df):
     '''
     Create a CSV file with a custom split column for the passed in activity. User can then add the split marks in the CSV and resave it as CSV with the same name.
@@ -156,53 +189,30 @@ def main(argv):
         fao.save_df(cust_splits_df, outDir,'custom_split', frmt=['csv','pickle'])
 
     '''
-    # Group activities by mile and segment
+    Group activities by different splits
     '''
-    miles_df = rgNorm.group_actv(actv_df, 'mile')
-    kilometers_df = rgNorm.group_actv(actv_df, 'kilometer')
-    segments_df = rgNorm.group_actv(actv_df, 'segment')
-    resume_pause_df = rgNorm.group_actv(actv_df, 'resume')
+    splitDict = {}
+    for split in splitOptions:
+        if split == 'custom':
+            splitDict['custom'] = custSplits(actv_df)
+        else:
+            splitDict[split] = rgNorm.group_actv(actv_df, split)
 
     '''
     # Export data frames to files for review
     '''
-    fao.save_df(miles_df, outDir,'miles_split', frmt=['csv','pickle'])
+    for split in splitOptions:
+        fao.save_df(splitDict[split], outDir, split + '_split', frmt=['csv','pickle'])
+
+    # Always save the activity dataframe
     fao.save_df(actv_df, outDir,'activity', frmt=['csv','pickle'])
-    fao.save_df(segments_df, outDir,'segments_split', frmt=['csv','pickle'])
-    fao.save_df(resume_pause_df, outDir,'pause_split', frmt=['csv'])
 
     fao.clean_dir(tempDir)
 
-    '''
-    Get summary of Workout
-    '''
-    # segments_df.rename(columns={splitBy: 'interval'}, inplace=False)
-    wrkt_summary = wrktSum.calcWrktSummary(segments_df.rename(columns={'segment': 'interval'}, inplace=False))
-    logger.info('Workout Stats:')
-    logger.info('Warm Up: ' \
-        + wrkt_summary['warm_up']['dur_str'] + ' total, ' \
-        + str(wrkt_summary['warm_up']['dist_mi']) + ' miles, ' \
-        + wrkt_summary['warm_up']['pace_str'] + 'per mile, ' \
-        + str(wrkt_summary['warm_up']['ele_up']) + ' ele up, ' \
-        + str(wrkt_summary['warm_up']['ele_down']) + ' ele down' \
-    )
-    logger.info('Intervals: ' \
-        + wrkt_summary['intvl_tot']['dur_str'] + ' total, ' \
-        + str(wrkt_summary['intvl_tot']['dist_mi']) + ' miles, ' \
-        + wrkt_summary['intvl_tot']['pace_str'] + 'per mile, '\
-        + str(wrkt_summary['intvl_tot']['ele_up']) + ' ele up, ' \
-        + str(wrkt_summary['intvl_tot']['ele_down']) + ' ele down' \
-    )
-    logger.info('Cool Down: ' \
-        + wrkt_summary['cool_down']['dur_str'] + ' total, ' \
-        + str(wrkt_summary['cool_down']['dist_mi']) + ' miles, ' \
-        + wrkt_summary['cool_down']['pace_str'] + 'per mile, '\
-        + str(wrkt_summary['cool_down']['ele_up']) + ' ele up, ' \
-        + str(wrkt_summary['cool_down']['ele_down']) + ' ele down' \
-    )
+    if 'segment' in splitOptions:
+        summarizeWrkoutSegments(splitDict['segment'])
 
-    wrkt_sum_frmla = wrktSum.calcWrktSumFrmla(segments_df.rename(columns={'segment': 'interval'}, inplace=False))
-
+    logger.info('WorkoutAnalyze End')
 
 
 if __name__ == '__main__':
