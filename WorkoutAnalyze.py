@@ -26,13 +26,11 @@ logger = logging.getLogger('root')
 def custSplits(actv_df):
     '''
     Create a CSV file with a custom split column for the passed in activity. User can then add the split marks in the CSV and resave it as CSV with the same name.
-    Job will use the splits in the custom column to create a new grouping of splits that those.
-    Each entry in CSV file should be unique
+    Job will use markers in the custom column to create a new grouping of splits.
     '''
     df = actv_df.copy()
     # 1) Add Empty Custom_Split column to passed in DataFrame
     df['custom'] = np.nan
-    df.loc[0,'custom'] = 1
 
     # 2) Export DF to CSV and Pickle (Pickle is not needed at this time)
     fao.save_df(df, tempDir,'temp_custom_split', frmt=['csv','pickle'])
@@ -44,7 +42,13 @@ def custSplits(actv_df):
 
     # 6) Read updated CSV file (and original pickle if needed)
     edit_df = pd.read_csv(os.path.join(tempDir,'temp_custom_split.csv'))
-    cust_df = edit_df[['date_time','custom']].copy()
+
+    # 7) Remove all but the records that have a custom value and change the custom value to a sequential number
+    edit_df.loc[0,'custom'] = 1
+    cust_df = edit_df[edit_df['custom'].notna()][['date_time','custom']]
+    cust_df.reset_index(inplace=True, drop=True)
+    cust_df['custom'] = cust_df.index.get_level_values(0).values
+    cust_df['custom'] = cust_df['custom'].astype('int64')
     cust_df['date_time'] = cust_df['date_time'].astype('datetime64')
 
     # 7) Update DF custom column with value from custom column in CSV
@@ -82,7 +86,10 @@ def calcWrktSummary(splits_df, wrktCat='Training'):
     # Calculate summary of intervals portion
     intvl_tot_dist = wrkt_df['dist_mi'].iloc[1:-1].sum()
     intvl_tot_dur = wrkt_df['dur_sec'].iloc[1:-1].sum()
-    intvl_tot_pace = intvl_tot_dur / intvl_tot_dist
+    if intvl_tot_dist == 0:
+        intvl_tot_pace = 0
+    else:
+        intvl_tot_pace = intvl_tot_dur / intvl_tot_dist
     intvl_tot_ele = wrkt_df['sum_ele'].iloc[1:-1].sum()
     intvl_tot_ele_up = wrkt_df['ele_up'].iloc[1:-1].sum()
     intvl_tot_ele_down = wrkt_df['ele_down'].iloc[1:-1].sum()
@@ -99,7 +106,10 @@ def calcWrktSummary(splits_df, wrktCat='Training'):
     frst_half_intrvl = round(wrkt_df.shape[0]/2)
     wrkt_half_1_dist = wrkt_df['dist_mi'].iloc[0:frst_half_intrvl].sum()
     wrkt_half_1_dur = wrkt_df['dur_sec'].iloc[0:frst_half_intrvl].sum()
-    wrkt_half_1_pace = wrkt_half_1_dur / wrkt_half_1_dist
+    if wrkt_half_1_dist == 0:
+        wrkt_half_1_pace = 0
+    else:
+        wrkt_half_1_pace = wrkt_half_1_dur / wrkt_half_1_dist
     wrkt_half_1_ele = wrkt_df['sum_ele'].iloc[0:frst_half_intrvl].sum()
     wrkt_half_1_ele_up = wrkt_df['ele_up'].iloc[0:frst_half_intrvl].sum()
     wrkt_half_1_ele_down = wrkt_df['ele_down'].iloc[0:frst_half_intrvl].sum()
@@ -225,10 +235,6 @@ def main(argv):
     progDir = os.path.abspath('')
     config.read(progDir + "/wrktAnalyzeConfig.txt")
 
-    '''
-    Setup logging
-    '''
-
     filename = config['analyze_inputs']['file_name']
     analyzeDir = config['analyze_inputs']['analyze_dir']
     tempDir = config['analyze_inputs']['temp_dir']
@@ -262,9 +268,6 @@ def main(argv):
 
     actv_df = rgNorm.normalize_activity(data)
 
-    '''
-    TODO
-    '''
     if customSplit:
         cust_splits_df = custSplits(actv_df)
         fao.save_df(cust_splits_df, outDir,'custom_split', frmt=['csv','pickle'])
