@@ -25,7 +25,7 @@ from ExerciseInfo_Class import ExerciseInfo
 from Weather_Class import WeatherInfo
 import util.timeConv as tc
 import models.WrktSplits as wrktSplits
-import WorkoutAnalyze as wa
+import util.WrktSummary as wrktSum
 import dao.files as fao
 
 
@@ -328,7 +328,7 @@ def saveExToSheet(exLst, scpt):
                     + ex.startTime.strftime(' %Y-%m-%d')
                 brkdnSheetNm = exBrkdn['sheet_name']
 
-                wrktSumFrmla = wa.calcWrktSumFrmla(ex.wrktSegments)
+                wrktSumFrmla = wrktSum.calcWrktSumFrmla(ex.wrktSegments)
 
                 # print('New Table Name: ' + newTblNm)
                 scpt.call('generateWrktTable' \
