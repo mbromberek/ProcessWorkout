@@ -100,7 +100,6 @@ def custSplits(actv_df):
 def printArgumentsHelp():
     print ('WorkoutAnalyze.py -i <inputfile> -o <outputdir>')
     print ("-i, --ifile arg  : Input filename to process")
-    print ("-idir arg        : Input directory with file name")
     print ("-o, --odir arg   : Output directory for results")
     print ("--splits arg     : Segments to split up file, ")
     print ("                    options are mile, kilometer, segment, pause, custom, all")
