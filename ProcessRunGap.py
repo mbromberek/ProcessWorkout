@@ -9,9 +9,10 @@ import datetime
 import math
 import configparser
 import requests # For API call
-
 import zipfile
 import json
+import logging
+import logging.config
 
 # 3rd party classes
 import applescript
@@ -30,7 +31,7 @@ import dao.files as fao
 
 config = configparser.ConfigParser()
 logging.config.fileConfig('logging.conf')
-logger = logging.getLogger('root')
+logger = logging.getLogger()
 
 def determineGear(ex):
     '''

@@ -9,3 +9,4 @@ scheduling/Run_ProcessRunGap.zsh
 scheduling/Run_ProcessRunGap.applescript
 scheduling/Run_ProcessRunGap.scpt
 wrktAnalyzeConfig.txt
+logging.conf

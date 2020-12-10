@@ -1,3 +1,7 @@
+# First party classes
+import logging
+import logging.config
+
 # 3rd party classes
 import numpy as np
 import pandas as pd
@@ -5,10 +9,6 @@ import pandas as pd
 # custom classes
 import dao.files as fao
 import rungap.normWrkt as rgNorm
-
-logging.config.fileConfig('../logging.conf')
-logger = logging.getLogger('root')
-
 
 def breakDownWrkt(dirName, fName = '', splitBy='segment'):
     '''

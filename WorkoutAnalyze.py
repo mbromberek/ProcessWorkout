@@ -21,7 +21,7 @@ import rungap.normWrkt as rgNorm
 
 tempDir = '/tmp/' #default to /tmp
 logging.config.fileConfig('logging.conf')
-logger = logging.getLogger('root')
+logger = logging.getLogger()
 
 def custSplits(actv_df):
     '''
@@ -234,6 +234,8 @@ def main(argv):
     # progDir = os.path.dirname(os.path.abspath(__file__)) #might need to use this in actual Python script, but does not work in Jupyter Notebook
     progDir = os.path.abspath('')
     config.read(progDir + "/wrktAnalyzeConfig.txt")
+
+    logger.info('WorkoutAnalyze Start')
 
     filename = config['analyze_inputs']['file_name']
     analyzeDir = config['analyze_inputs']['analyze_dir']
