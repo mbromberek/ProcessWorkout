@@ -69,8 +69,34 @@ def printArgumentsHelp():
     print ("-i, --ifile arg  : Input filename to process")
     print ("-idir arg        : Input directory with file name")
     print ("-o, --odir arg   : Output directory for results")
-    print ("--osplit arg     : Segments to generate in file, default is all (CURRENTLY NOT SETUP)")
-    print ("                    options are mile, segment, kilometer, pause, all")
+    print ("--splits arg     : Segments to split up file, ")
+    print ("                    options are mile, kilometer, segment, pause, custom, all")
+    print ("                    all option will generate mile, kilometer, segment, pause")
+    print ("                    default is mile, segment, pause")
+
+def getSplitOptions(arg):
+    '''
+    Parameger arg: comma delimited list of arguments for splitting the workout
+
+    Converts passed in split argument to lower case and splits on comma
+    Parses each argument doing needed transformations before adding to a list.
+    Prints to the console if any arguments are invalid
+    Removes duplicates from list of split arguments
+
+    Returns list of split arguments
+    '''
+    splitOptions = []
+    splitArgs = arg.lower().split(',')
+    for split in splitArgs:
+        if split == 'all':
+            splitOptions.extend(['mile','segment','resume','kilometer'])
+        elif split == 'pause':
+            splitOptions.append('resume')
+        elif split in ('custom','mile','segment','kilometer'):
+            splitOptions.append(split)
+        else:
+            print("Invalid split argument: " + split)
+    return(list(dict.fromkeys(splitOptions)))
 
 
 def main(argv):
@@ -96,9 +122,10 @@ def main(argv):
     outDir = config['analyze_outputs']['dir']
 
     customSplit = False
+    splitOptions = []
 
     try:
-        opts, args = getopt.getopt(argv,"hi:o:",["ifile=", "idir=", "odir=", "custom"])
+        opts, args = getopt.getopt(argv,"hi:o:",["ifile=", "idir=", "odir=", "custom", "split="])
     except getopt.GetoptError:
         printArgumentsHelp()
         sys.exit(2)
@@ -108,14 +135,21 @@ def main(argv):
             sys.exit()
         elif opt in ("-i", "--ifile"):
             filename = arg
-        elif opt in ("--idir"):
-            analyzeDir = arg
+        # elif opt in ("--idir"):
+        #     analyzeDir = arg
         elif opt in ("-o", "--odir"):
             outDir = arg
-        elif opt in ("--custom"):
-            customSplit = True
+        elif opt in ('--split'):
+            splitOptions = getSplitOptions(arg)
+        # elif opt in ("--custom"):
+        #     customSplit = True
+    if splitOptions == []:
+        # TODO should default options be a config entry?
+        splitOptions = ['mile','segment','resume']
+
     logger.info('Input file: ' + filename)
     logger.info('Input directory: ' + analyzeDir)
+    logger.info('Split arguments: ' + str(splitOptions))
 
     fao.extract_files(filename, analyzeDir, tempDir)
 
