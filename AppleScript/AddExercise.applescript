@@ -225,14 +225,14 @@ end closeSheet
 
 on generateWrktTable(sheetNm, tblNm, wrktData, wrktSumFrmla)
 	
-	set INTRVL_COL to 1
-	set TM_COL to 2
-	set DIST_COL to 3
-	set PACE_COL to 4
-	set AVG_HR_COL to 5
-	set ELE_COL to 6
-	set ELE_UP_COL to 7
-	set ELE_DOWN_COL to 8
+	set INTRVL_BRKDN_COL to 1
+	set TM_BRKDN_COL to 2
+	set DIST_BRKDN_COL to 3
+	set PACE_BRKDN_COL to 4
+	set AVG_HR_BRKDN_COL to 5
+	set ELE_BRKDN_COL to 6
+	set ELE_UP_BRKDN_COL to 7
+	set ELE_DOWN_BRKDN_COL to 8
 	
 	
 	set columnCt to 8
@@ -254,27 +254,27 @@ on generateWrktTable(sheetNm, tblNm, wrktData, wrktSumFrmla)
 				
 				tell thisTable
 					tell row 1
-						set value of cell INTRVL_COL to "Interval"
-						set value of cell TM_COL to "Time"
-						set value of cell DIST_COL to "Distance"
-						set value of cell PACE_COL to "Pace"
-						set value of cell AVG_HR_COL to "Avg HR"
-						set value of cell ELE_COL to "Elevation"
-						set value of cell ELE_UP_COL to "Ele Up"
-						set value of cell ELE_DOWN_COL to "Ele Down"
+						set value of cell INTRVL_BRKDN_COL to "Interval"
+						set value of cell TM_BRKDN_COL to "Time"
+						set value of cell DIST_BRKDN_COL to "Distance"
+						set value of cell PACE_BRKDN_COL to "Pace"
+						set value of cell AVG_HR_BRKDN_COL to "Avg HR"
+						set value of cell ELE_BRKDN_COL to "Elevation"
+						set value of cell ELE_UP_BRKDN_COL to "Ele Up"
+						set value of cell ELE_DOWN_BRKDN_COL to "Ele Down"
 					end tell
 					
 					set rowNbr to 2
 					repeat with theRecord in wrktData
 						tell row rowNbr
-							set value of cell INTRVL_COL to (interval of theRecord)
-							set value of cell TM_COL to (dur_str of theRecord)
-							set value of cell DIST_COL to (dist_mi of theRecord)
-							set value of cell PACE_COL to (pace_str of theRecord)
-							set value of cell AVG_HR_COL to (avg_hr of theRecord)
-							set value of cell ELE_COL to (sum_ele of theRecord)
-							set value of cell ELE_UP_COL to (ele_up of theRecord)
-							set value of cell ELE_DOWN_COL to (ele_down of theRecord)
+							set value of cell INTRVL_BRKDN_COL to (interval of theRecord)
+							set value of cell TM_BRKDN_COL to (dur_str of theRecord)
+							set value of cell DIST_BRKDN_COL to (dist_mi of theRecord)
+							set value of cell PACE_BRKDN_COL to (pace_str of theRecord)
+							set value of cell AVG_HR_BRKDN_COL to (avg_hr of theRecord)
+							set value of cell ELE_BRKDN_COL to (sum_ele of theRecord)
+							set value of cell ELE_UP_BRKDN_COL to (ele_up of theRecord)
+							set value of cell ELE_DOWN_BRKDN_COL to (ele_down of theRecord)
 						end tell
 						set rowNbr to rowNbr + 1
 					end repeat
@@ -282,47 +282,47 @@ on generateWrktTable(sheetNm, tblNm, wrktData, wrktSumFrmla)
 					
 					--Add summary for Total workout
 					tell row (wrktRowCt + hdrRowCt + 1)
-						set value of cell INTRVL_COL to "Total"
+						set value of cell INTRVL_BRKDN_COL to "Total"
 						--set sumWrktDistFormula to "=sum(B:B)"
-						set value of cell TM_COL to (dist_mi of (wrkt_tot of wrktSumFrmla))
-						set value of cell DIST_COL to (dur_str of (wrkt_tot of wrktSumFrmla))
-						set value of cell PACE_COL to "=" & name of cell 2 & "/" & name of cell 3
-						set value of cell ELE_COL to (sum_ele of (wrkt_tot of wrktSumFrmla))
-						set value of cell ELE_UP_COL to (ele_up of (wrkt_tot of wrktSumFrmla))
-						set value of cell ELE_DOWN_COL to (ele_down of (wrkt_tot of wrktSumFrmla))
+						set value of cell TM_BRKDN_COL to (dist_mi of (wrkt_tot of wrktSumFrmla))
+						set value of cell DIST_BRKDN_COL to (dur_str of (wrkt_tot of wrktSumFrmla))
+						set value of cell PACE_BRKDN_COL to "=" & name of cell 2 & "/" & name of cell 3
+						set value of cell ELE_BRKDN_COL to (sum_ele of (wrkt_tot of wrktSumFrmla))
+						set value of cell ELE_UP_BRKDN_COL to (ele_up of (wrkt_tot of wrktSumFrmla))
+						set value of cell ELE_DOWN_BRKDN_COL to (ele_down of (wrkt_tot of wrktSumFrmla))
 					end tell
 					
 					--Add summary for workout without warm up and cooldown
 					tell row (wrktRowCt + hdrRowCt + 2)
-						set value of cell INTRVL_COL to "Workout"
-						set value of cell TM_COL to (dist_mi of (intvl_tot of wrktSumFrmla))
-						set value of cell DIST_COL to (dur_str of (intvl_tot of wrktSumFrmla))
-						set value of cell PACE_COL to "=" & name of cell 2 & "/" & name of cell 3
-						set value of cell ELE_COL to (sum_ele of (intvl_tot of wrktSumFrmla))
-						set value of cell ELE_UP_COL to (ele_up of (intvl_tot of wrktSumFrmla))
-						set value of cell ELE_DOWN_COL to (ele_down of (intvl_tot of wrktSumFrmla))
+						set value of cell INTRVL_BRKDN_COL to "Workout"
+						set value of cell TM_BRKDN_COL to (dist_mi of (intvl_tot of wrktSumFrmla))
+						set value of cell DIST_BRKDN_COL to (dur_str of (intvl_tot of wrktSumFrmla))
+						set value of cell PACE_BRKDN_COL to "=" & name of cell 2 & "/" & name of cell 3
+						set value of cell ELE_BRKDN_COL to (sum_ele of (intvl_tot of wrktSumFrmla))
+						set value of cell ELE_UP_BRKDN_COL to (ele_up of (intvl_tot of wrktSumFrmla))
+						set value of cell ELE_DOWN_BRKDN_COL to (ele_down of (intvl_tot of wrktSumFrmla))
 					end tell
 					
 					--Add summary of first half of workout
 					tell row (wrktRowCt + hdrRowCt + 3)
-						set value of cell INTRVL_COL to "First Half"
-						set value of cell TM_COL to (dist_mi of (frst_half of wrktSumFrmla))
-						set value of cell DIST_COL to (dur_str of (frst_half of wrktSumFrmla))
-						set value of cell PACE_COL to "=" & name of cell 2 & "/" & name of cell 3
-						set value of cell ELE_COL to (sum_ele of (frst_half of wrktSumFrmla))
-						set value of cell ELE_UP_COL to (ele_up of (frst_half of wrktSumFrmla))
-						set value of cell ELE_DOWN_COL to (ele_down of (frst_half of wrktSumFrmla))
+						set value of cell INTRVL_BRKDN_COL to "First Half"
+						set value of cell TM_BRKDN_COL to (dist_mi of (frst_half of wrktSumFrmla))
+						set value of cell DIST_BRKDN_COL to (dur_str of (frst_half of wrktSumFrmla))
+						set value of cell PACE_BRKDN_COL to "=" & name of cell 2 & "/" & name of cell 3
+						set value of cell ELE_BRKDN_COL to (sum_ele of (frst_half of wrktSumFrmla))
+						set value of cell ELE_UP_BRKDN_COL to (ele_up of (frst_half of wrktSumFrmla))
+						set value of cell ELE_DOWN_BRKDN_COL to (ele_down of (frst_half of wrktSumFrmla))
 					end tell
 					
 					--Add summary of second half of workout
 					tell row (wrktRowCt + hdrRowCt + 4)
-						set value of cell INTRVL_COL to "Second Half"
-						set value of cell TM_COL to (dist_mi of (scnd_half of wrktSumFrmla))
-						set value of cell DIST_COL to (dur_str of (scnd_half of wrktSumFrmla))
-						set value of cell PACE_COL to "=" & name of cell 2 & "/" & name of cell 3
-						set value of cell ELE_COL to (sum_ele of (scnd_half of wrktSumFrmla))
-						set value of cell ELE_UP_COL to (ele_up of (scnd_half of wrktSumFrmla))
-						set value of cell ELE_DOWN_COL to (ele_down of (scnd_half of wrktSumFrmla))
+						set value of cell INTRVL_BRKDN_COL to "Second Half"
+						set value of cell TM_BRKDN_COL to (dist_mi of (scnd_half of wrktSumFrmla))
+						set value of cell DIST_BRKDN_COL to (dur_str of (scnd_half of wrktSumFrmla))
+						set value of cell PACE_BRKDN_COL to "=" & name of cell 2 & "/" & name of cell 3
+						set value of cell ELE_BRKDN_COL to (sum_ele of (scnd_half of wrktSumFrmla))
+						set value of cell ELE_UP_BRKDN_COL to (ele_up of (scnd_half of wrktSumFrmla))
+						set value of cell ELE_DOWN_BRKDN_COL to (ele_down of (scnd_half of wrktSumFrmla))
 					end tell
 				end tell
 				
