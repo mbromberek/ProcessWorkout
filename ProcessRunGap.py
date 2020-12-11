@@ -211,6 +211,7 @@ def processExercises(filesToProcess):
     '''
     Loop through exercise files
     filesToProcess full path to files to check for processing. Will look at files to determine if they are valid for being processed.
+    Exercise list will be in ascending order by start date/time
     '''
     exLst = []
     jsonFileRegex = re.compile(r'(metadata.json)$')
@@ -221,6 +222,7 @@ def processExercises(filesToProcess):
             exLst.append(processExercise(filename))
         else:
             logger.info('Do not process: ' + filename)
+    exLst.sort(key=lambda x: x.startTime, reverse=False)
     return exLst
 
 def processExercise(filename):
@@ -314,6 +316,9 @@ def saveExToSheet(exLst, scpt):
         distance = "%.2f" % ex.distTot
         duration = tc.formatNumbersTime(ex.hourTot, ex.minTot, ex.secTot)
         exBrkdn = getWrktBrkdnConfig(ex.category)
+        logger.debug('Exercise startDateTime:' + str(startDateTime))
+        logger.debug('dist:' + distance + ' ' + str(ex.distTot))
+        logger.debug('duration:' + str(duration))
 
         try:
             scpt.call('addExercise',ex.eDate, ex.type, duration, distance, ex.distUnit, ex.avgHeartRate, ex.calTot, ex.userNotes, startDateTime, ex.gear, ex.category, ex.elevationChange())
