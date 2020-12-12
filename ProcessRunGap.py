@@ -115,8 +115,8 @@ def getWrktWeather(ex, data):
     ex.endWeather = getWeather(ex.endLat, ex.endLon, ex.endTime)
     ex.endWeather.position = 'End'
 
-    ex.userNotes = generateUserNotes(ex.startWeather)
-    ex.userNotes = ex.userNotes + generateUserNotes(ex.endWeather)
+    ex.userNotes = ex.userNotes + generateWeatherUserNotes(ex.startWeather)
+    ex.userNotes = ex.userNotes + generateWeatherUserNotes(ex.endWeather)
 
     return ex
 
@@ -147,7 +147,7 @@ def getWeather(lat, lon, tm):
 
     return w
 
-def generateUserNotes(w):
+def generateWeatherUserNotes(w):
     """
     Generates notes for User Notes field of Exercise spreadsheet.
     Puts all the text into an array that is joined into the returned string.
@@ -167,6 +167,37 @@ def generateUserNotes(w):
     txtLst.append('{0:.{1}f}'.format(w.apparentTemp,0))
     txtLst.append(' degrees. ')
     txtLst.append('\n')
+    return ''.join(txtLst)
+
+def generateBrkdnUserNotes(ex):
+    '''
+    Generates notes of workout break down for User Notes field of Exercise spreadsheet.
+    Puts all the text into an array that is joined into the returned string.
+    '''
+    txtLst = []
+    txtLst.append('Warm Up: ')
+    txtLst.append(tc.formatNumbersTime(*tc.breakTimeFromSeconds(ex.warmUpTotDurSec)))
+    txtLst.append(', ')
+    txtLst.append('{0:.{1}f}'.format(ex.warmUpTotDistMi,2))
+    txtLst.append(' miles, ')
+    txtLst.append(tc.formatNumbersTime(*tc.breakTimeFromSeconds(ex.warmUpTotPaceSec)))
+    txtLst.append(' per mile\n')
+
+    txtLst.append('Workout: ')
+    txtLst.append(tc.formatNumbersTime(*tc.breakTimeFromSeconds(ex.intvlTotDurSec)))
+    txtLst.append(', ')
+    txtLst.append('{0:.{1}f}'.format(ex.intvlTotDistMi,2))
+    txtLst.append(' miles, ')
+    txtLst.append(tc.formatNumbersTime(*tc.breakTimeFromSeconds(ex.intvlTotPaceSec)))
+    txtLst.append(' per mile\n')
+
+    txtLst.append('Cool Down: ')
+    txtLst.append(tc.formatNumbersTime(*tc.breakTimeFromSeconds(ex.coolDnTotDurSec)))
+    txtLst.append(', ')
+    txtLst.append('{0:.{1}f}'.format(ex.coolDnTotDistMi,2))
+    txtLst.append(' miles, ')
+    txtLst.append(tc.formatNumbersTime(*tc.breakTimeFromSeconds(ex.coolDnTotPaceSec)))
+    txtLst.append(' per mile\n')
     return ''.join(txtLst)
 
 def uncompressMonitorToTemp(monitorDir, tempDir):
@@ -293,6 +324,32 @@ def processExercise(filename):
                 srcDir, fName=ex.rungapFile, \
                 splitBy=exBrkdn['split_type'] \
             )
+            if ex.category == 'Training':
+                wrkt_summary = wrktSum.calcWrktSummary(ex.wrktSegments, ex.category)
+
+                ex.warmUpTotDistMi = wrkt_summary['warm_up']['dist_mi']
+                ex.warmUpTotDurSec = wrkt_summary['warm_up']['dur_sec']
+                ex.warmUpTotPaceSec = wrkt_summary['warm_up']['pace_sec']
+                ex.warmUpTotEleUp = wrkt_summary['warm_up']['ele_up']
+                ex.warmUpTotEleDown = wrkt_summary['warm_up']['ele_down']
+                ex.coolDnTotDistMi = wrkt_summary['cool_down']['dist_mi']
+                ex.coolDnTotDurSec = wrkt_summary['cool_down']['dur_sec']
+                ex.coolDnTotPaceSec = wrkt_summary['cool_down']['pace_sec']
+                ex.coolDnTotEleUp = wrkt_summary['cool_down']['ele_up']
+                ex.coolDnTotEleDown = wrkt_summary['cool_down']['ele_down']
+
+                ex.intvlTotDistMi = wrkt_summary['intvl_tot']['dist_mi']
+                ex.intvlTotDurSec = wrkt_summary['intvl_tot']['dur_sec']
+                ex.intvlTotPaceSec = wrkt_summary['intvl_tot']['pace_sec']
+                ex.intvlTotEleUp = wrkt_summary['intvl_tot']['ele_up']
+                ex.intvlTotEleDown = wrkt_summary['intvl_tot']['ele_down']
+                ex.intvlAvgDistMi = wrkt_summary['intvl_avg']['dist_mi']
+                ex.intvlAvgDurSec = wrkt_summary['intvl_avg']['dur_sec']
+                ex.intvlAvgPaceSec = wrkt_summary['intvl_avg']['pace_sec']
+                ex.intvlAvgEleUp = wrkt_summary['intvl_avg']['ele_up']
+                ex.intvlAvgEleDown = wrkt_summary['intvl_avg']['ele_down']
+                
+                ex.userNotes = ex.userNotes + generateBrkdnUserNotes(ex)
         except:
             print('<ERROR> Breakdown Workout Unexpected Error')
             print(sys.exc_info())

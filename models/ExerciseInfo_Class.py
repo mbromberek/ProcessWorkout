@@ -45,6 +45,24 @@ class ExerciseInfo:
 
     wrktSegments = None
 
+    warmUpTotDistMi = 0
+    warmUpTotDurSec = 0
+    warmUpTotPaceSec = 0
+    coolDnTotDistMi = 0
+    coolDnTotDurSec = 0
+    coolDnTotPaceSec = 0
+    
+    intvlTotDistMi = 0
+    intvlTotDurSec = 0
+    intvlTotPaceSec = 0
+    intvlTotEleUp = 0
+    intvlTotEleDown = 0
+    intvlAvgDistMi = 0
+    intvlAvgDurSec = 0
+    intvlAvgPaceSec = 0
+    intvlAvgEleUp = 0
+    intvlAvgEleDown = 0
+
 
     def __init__(self):
         self.epName = ''
