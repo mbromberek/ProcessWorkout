@@ -1,3 +1,8 @@
+```
+BSD 3-Clause License
+Copyright (c) 2020, Mike Bromberek
+All rights reserved.
+```
 # ProcessWorkout
 
 Exercise data is exported in JSON format to iCloud using the app RunGap on my iPhone. This program reads the JSON file to get the details about an exercises (type, duration, distance, start time, end time, start and end GPS coordinates).

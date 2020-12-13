@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 # coding: utf-8
+'''
+BSD 3-Clause License
+Copyright (c) 2020, Mike Bromberek
+All rights reserved.
+'''
+
 """
 Functions for converting time in seconds
 """

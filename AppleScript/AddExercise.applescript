@@ -1,3 +1,8 @@
+(*
+BSD 3-Clause License
+Copyright (c) 2020, Mike Bromberek
+All rights reserved.
+*)
 property docName : ""
 property p2Cloud : (path to library folder from user domain as text) & "Mobile Documents:com~apple~"
 property DATE_COL : 1

@@ -1,6 +1,12 @@
 #! /Users/mikeyb/Applications/python3
 # -*- coding: utf-8 -*-
 
+'''
+BSD 3-Clause License
+Copyright (c) 2020, Mike Bromberek
+All rights reserved.
+'''
+
 # First party classes
 import os,glob,shutil
 import sys
@@ -348,7 +354,7 @@ def processExercise(filename):
                 ex.intvlAvgPaceSec = wrkt_summary['intvl_avg']['pace_sec']
                 ex.intvlAvgEleUp = wrkt_summary['intvl_avg']['ele_up']
                 ex.intvlAvgEleDown = wrkt_summary['intvl_avg']['ele_down']
-                
+
                 ex.userNotes = ex.userNotes + generateBrkdnUserNotes(ex)
         except:
             print('<ERROR> Breakdown Workout Unexpected Error')

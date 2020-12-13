@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
+'''
+BSD 3-Clause License
+Copyright (c) 2020, Mike Bromberek
+All rights reserved.
+'''
 """
 Functions for normalizing the workout from RunGap JSON files
 Uses pandas and numpy to process and normalize the data.

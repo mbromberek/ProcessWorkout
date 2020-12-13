@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+'''
+BSD 3-Clause License
+Copyright (c) 2020, Mike Bromberek
+All rights reserved.
+'''
 from Weather_Class import WeatherInfo
 
 METERS_TO_FEET = 3.28084
@@ -51,7 +56,7 @@ class ExerciseInfo:
     coolDnTotDistMi = 0
     coolDnTotDurSec = 0
     coolDnTotPaceSec = 0
-    
+
     intvlTotDistMi = 0
     intvlTotDurSec = 0
     intvlTotPaceSec = 0
