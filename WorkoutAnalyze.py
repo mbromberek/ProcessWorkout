@@ -7,7 +7,7 @@ All rights reserved.
 '''
 
 # First party classes
-import os,glob,shutil
+import os,glob,shutil, subprocess
 import re
 import datetime, time
 import configparser
@@ -25,7 +25,7 @@ import util.timeConv as tc
 import util.WrktSummary as wrktSum
 import rungap.normWrkt as rgNorm
 
-tempDir = '/tmp/' #default to /tmp
+# tempDir = '/tmp/' #default to /tmp
 logging.config.fileConfig('logging.conf')
 logger = logging.getLogger()
 
@@ -62,7 +62,7 @@ def summarizeWrkoutSegments(segments_df):
     return wrkt_summary
 
 
-def custSplits(actv_df):
+def custSplits(actv_df, tempDir):
     '''
     Create a CSV file with a custom split column for the passed in activity. User can then add the split marks in the CSV and resave it as CSV with the same name.
     Job will use markers in the custom column to create a new grouping of splits.
@@ -76,6 +76,11 @@ def custSplits(actv_df):
 
     # 3) Pause job for user input
     # 4) Open CSV on users system
+    openCmd = os.path.join(tempDir,'temp_custom_split.csv')
+    logger.debug('Path to temp custom file: ' + openCmd)
+
+    subprocess.run(args=['open', openCmd], cwd='/')
+
     # 5) User enters data to custom columns of spreadsheet and saves it to CSV of same name (maybe keep the file in Numbers)
     input("Update the temp_custom_split.csv file with custom splits. Then Press Enter to continue")
 
@@ -187,9 +192,9 @@ def main(argv):
 
     actv_df = rgNorm.normalize_activity(data)
 
-    if customSplit:
-        cust_splits_df = custSplits(actv_df)
-        fao.save_df(cust_splits_df, outDir,'custom_split', frmt=['csv','pickle'])
+    # if customSplit:
+    #     cust_splits_df = custSplits(actv_df, tempDir)
+    #     fao.save_df(cust_splits_df, outDir,'custom_split', frmt=['csv','pickle'])
 
     '''
     Group activities by different splits
@@ -197,7 +202,7 @@ def main(argv):
     splitDict = {}
     for split in splitOptions:
         if split == 'custom':
-            splitDict['custom'] = custSplits(actv_df)
+            splitDict['custom'] = custSplits(actv_df, tempDir)
         else:
             splitDict[split] = rgNorm.group_actv(actv_df, split)
 
