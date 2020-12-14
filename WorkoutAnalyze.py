@@ -69,7 +69,7 @@ def custSplits(actv_df):
     '''
     df = actv_df.copy()
     # 1) Add Empty Custom_Split column to passed in DataFrame
-    df['custom'] = np.nan
+    df.insert(5,'custom', np.nan) #column will be added before other split indicators
 
     # 2) Export DF to CSV and Pickle (Pickle is not needed at this time)
     fao.save_df(df, tempDir,'temp_custom_split', frmt=['csv','pickle'])
