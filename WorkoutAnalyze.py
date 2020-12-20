@@ -158,12 +158,12 @@ def main(argv):
 
     logger.info('WorkoutAnalyze Start')
 
-    filename = config['wrkt_analyze_inputs']['file_name']
     tempDir = config['wrkt_analyze_inputs']['temp_dir']
     outDir = config['wrkt_analyze_outputs']['dir']
 
     customSplit = False
     splitOptions = []
+    filename = ''
 
     try:
         opts, args = getopt.getopt(argv,"hi:o:",["ifile=", "odir=", "split="])
@@ -183,6 +183,8 @@ def main(argv):
     if splitOptions == []:
         splitOptions = config['wrkt_analyze']['dflt_split_opt'].split(',')
 
+    if filename == '':
+        filename = os.path.join(config['rungap']['backup_dir'], fao.getLatestFile(config['rungap']['backup_dir']))
     logger.info('Input file: ' + filename)
     logger.info('Split arguments: ' + str(splitOptions))
 

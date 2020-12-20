@@ -95,3 +95,11 @@ def listdir_fullpath(d):
     get full directory path for files in passed directory
     '''
     return [os.path.join(d, f) for f in os.listdir(d)]
+
+def getLatestFile(d):
+    '''
+    get latest filename from passed in directory
+    '''
+    fileLst = glob.glob(os.path.join(d,'*'))
+    latestFile = max(fileLst, key=os.path.getctime)
+    return latestFile
