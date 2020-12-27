@@ -5,6 +5,7 @@ Copyright (c) 2020, Mike Bromberek
 All rights reserved.
 '''
 from Weather_Class import WeatherInfo
+import util.timeConv as tc
 
 METERS_TO_FEET = 3.28084
 
@@ -80,3 +81,18 @@ class ExerciseInfo:
 
     def elevationChange(self):
         return '{0:.{1}f}'.format(self.elevationGain*METERS_TO_FEET,1) + '↑\n' + '{0:.{1}f}'.format(self.elevationLoss*METERS_TO_FEET,1) + '↓'
+
+    def to_dict(self):
+        dateTimeSheetFormat = '%m/%d/%Y %H:%M:%S'
+        wrkt = {}
+        wrkt['wrkt_dt'] = self.eDate + ' ' + self.startTime.strftime(dateTimeSheetFormat)
+        wrkt['wrkt_typ'] = self.type
+        wrkt['tot_tm'] = tc.formatNumbersTime(self.hourTot, self.minTot, self.secTot)
+        wrkt['dist'] = "%.2f" % self.distTot,
+        wrkt['hr'] = self.avgHeartRate
+        wrkt['cal_burn'] = self.calTot
+        wrkt['notes'] = self.userNotes
+        wrkt['gear'] = self.gear
+        wrkt['category'] = self.category
+        wrkt['elevation'] = self.elevationChange()
+        return wrkt
