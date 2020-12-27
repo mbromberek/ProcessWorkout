@@ -33,11 +33,13 @@ import util.timeConv as tc
 import models.WrktSplits as wrktSplits
 import util.WrktSummary as wrktSum
 import dao.files as fao
+import ws.createWrkt as createWrkt
 
 
 config = configparser.ConfigParser()
 logging.config.fileConfig('logging.conf')
 logger = logging.getLogger()
+createWrkt.logger = logger
 
 def determineGear(ex):
     '''
@@ -408,6 +410,10 @@ def saveExToSheet(exLst, scpt):
                 logger.error('generateWrktTable Unexpected Error')
                 logger.error(sys.exc_info())
                 raise
+
+        createWrkt.create(ex)
+
+
 
 def cleanProcessedFile(exLst, monitorDir, tempDir):
     '''
