@@ -23,7 +23,7 @@ def create(ex):
     r = requests.post('http://localhost:5000/api/v1/wrkt', json=wrkt)
     logger.info(r)
 
-    return wrkt
+    return r
 
 # def apiCall(url):
 #     r = requests.get(url)
