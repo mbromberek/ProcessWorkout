@@ -2,6 +2,7 @@
 import os, sys
 import logging
 import logging.config
+import requests
 
 # Third party classes
 # from flask import Flask
@@ -15,11 +16,12 @@ from ExerciseInfo_Class import ExerciseInfo
 
 def create(ex):
     # Convert ExerciseInfo object to Dictionary
-    wrkt = ex.to_dict()
+    wrkt = {'workout':ex.to_dict()}
     logger.info(wrkt)
 
     # Call webservice
-    
+    r = requests.post('http://localhost:5000/api/v1/wrkt', json=wrkt)
+    logger.info(r)
 
     return wrkt
 

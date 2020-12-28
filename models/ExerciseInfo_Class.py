@@ -88,11 +88,13 @@ class ExerciseInfo:
         wrkt['wrkt_dt'] = self.eDate + ' ' + self.startTime.strftime(dateTimeSheetFormat)
         wrkt['wrkt_typ'] = self.type
         wrkt['tot_tm'] = tc.formatNumbersTime(self.hourTot, self.minTot, self.secTot)
-        wrkt['dist'] = "%.2f" % self.distTot,
+        wrkt['dist'] = round(self.distTot, 2)
+        wrkt['pace'] = (self.hourTot*60*60+self.minTot*60+self.secTot) / wrkt['dist']
         wrkt['hr'] = self.avgHeartRate
         wrkt['cal_burn'] = self.calTot
         wrkt['notes'] = self.userNotes
         wrkt['gear'] = self.gear
         wrkt['category'] = self.category
         wrkt['elevation'] = self.elevationChange()
+        wrkt['dist_km'] = 0
         return wrkt
