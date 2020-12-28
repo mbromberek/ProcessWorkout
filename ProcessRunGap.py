@@ -300,7 +300,8 @@ def processExercise(filename):
     eDistanceTotMeters = data['distance']
     ex.distTot = eDistanceTotMeters / METERS_IN_KILOMETERS * MILES_IN_KILOMETERS
 
-    ex.hourTot, ex.minTot, ex.secTot = tc.breakTimeFromSeconds(data['duration'])
+    ex.totTmSec = data['duration']
+    ex.hourTot, ex.minTot, ex.secTot = tc.breakTimeFromSeconds(ex.totTmSec)
     durTotNumbers = tc.formatNumbersTime(ex.hourTot, ex.minTot, ex.secTot)
     durTotSheets = tc.formatSheetsTime(ex.hourTot, ex.minTot, ex.secTot)
 

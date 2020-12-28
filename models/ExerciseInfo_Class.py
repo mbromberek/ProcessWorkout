@@ -21,6 +21,7 @@ class ExerciseInfo:
     hourTot = ''
     minTot = ''
     secTot = ''
+    totTmSec = 0
 
     rating = ''
 
@@ -89,7 +90,7 @@ class ExerciseInfo:
         wrkt['wrkt_typ'] = self.type
         wrkt['tot_tm'] = tc.formatNumbersTime(self.hourTot, self.minTot, self.secTot)
         wrkt['dist'] = round(self.distTot, 2)
-        wrkt['pace'] = (self.hourTot*60*60+self.minTot*60+self.secTot) / wrkt['dist']
+        wrkt['pace'] = tc.formatNumbersTime(*tc.breakTimeFromSeconds(self.totTmSec / wrkt['dist']))
         wrkt['hr'] = self.avgHeartRate
         wrkt['cal_burn'] = self.calTot
         wrkt['notes'] = self.userNotes
