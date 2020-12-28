@@ -97,5 +97,4 @@ class ExerciseInfo:
         wrkt['gear'] = self.gear
         wrkt['category'] = self.category
         wrkt['elevation'] = self.elevationChange()
-        wrkt['dist_km'] = 0
         return wrkt
