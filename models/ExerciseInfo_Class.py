@@ -89,12 +89,45 @@ class ExerciseInfo:
         wrkt['wrkt_dt'] = self.eDate + ' ' + self.startTime.strftime(dateTimeSheetFormat)
         wrkt['wrkt_typ'] = self.type
         wrkt['tot_tm'] = tc.formatNumbersTime(self.hourTot, self.minTot, self.secTot)
+        wrkt['tot_tm_sec'] = self.totTmSec
         wrkt['dist'] = round(self.distTot, 2)
+        wrkt['dist_mi'] = round(self.distTot, 2)
         wrkt['pace'] = tc.formatNumbersTime(*tc.breakTimeFromSeconds(self.totTmSec / wrkt['dist']))
+        wrkt['pace_sec'] = wrkt['tot_tm_sec'] / wrkt['dist_mi']
+
+        wrkt['wethr_start'] = {}
+        wrkt['wethr_start']['temp'] = self.startWeather.temp
+        wrkt['wethr_start']['temp_feels_like'] = self.startWeather.apparentTemp
+        wrkt['wethr_start']['hmdty'] = self.startWeather.humidity
+        wrkt['wethr_start']['lat'] = self.startWeather.lat
+        wrkt['wethr_start']['lon'] = self.startWeather.lon
+        wrkt['wethr_start']['wind_speed'] = self.startWeather.windSpeed
+        wrkt['wethr_start']['wind_gust'] = self.startWeather.windGust
+        wrkt['wethr_start']['cond'] = self.startWeather.summary
+        wrkt['wethr_start']['tm'] = self.startWeather.time.strftime(dateTimeSheetFormat)
+
+        wrkt['wethr_end'] = {}
+        wrkt['wethr_end']['temp'] = self.endWeather.temp
+        wrkt['wethr_end']['temp_feels_like'] = self.endWeather.apparentTemp
+        wrkt['wethr_end']['hmdty'] = self.endWeather.humidity
+        wrkt['wethr_end']['lat'] = self.endWeather.lat
+        wrkt['wethr_end']['lon'] = self.endWeather.lon
+        wrkt['wethr_end']['wind_speed'] = self.endWeather.windSpeed
+        wrkt['wethr_end']['wind_gust'] = self.endWeather.windGust
+        wrkt['wethr_end']['cond'] = self.endWeather.summary
+        wrkt['wethr_end']['tm'] = self.endWeather.time.strftime(dateTimeSheetFormat)
+
         wrkt['hr'] = self.avgHeartRate
         wrkt['cal_burn'] = self.calTot
         wrkt['notes'] = self.userNotes
         wrkt['gear'] = self.gear
         wrkt['category'] = self.category
         wrkt['elevation'] = self.elevationChange()
+        wrkt['ele_up'] = '{0:.{1}f}'.format(self.elevationGain*METERS_TO_FEET,1)
+        wrkt['ele_down'] = '{0:.{1}f}'.format(self.elevationLoss*METERS_TO_FEET,1)
+        wrkt['wrkt_segments'] = self.wrktSegments
+        wrkt['originLoc'] = self.originLoc
+        wrkt['category'] = self.category
+        wrkt['clothes'] = None
+
         return wrkt

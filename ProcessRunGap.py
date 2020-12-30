@@ -24,6 +24,7 @@ import logging.config
 import applescript
 import pandas
 
+
 # Custom Classes
 sys.path.insert(1, 'models') # Add to sys.path the directory with custom classes
 # Import customer classes that are in models directory
@@ -148,6 +149,9 @@ def getWeather(lat, lon, tm):
     w.windSpeed = weatherData['currently']['windSpeed']
     w.summary = weatherData['currently']['summary']
     w.windGust = weatherData['currently']['windGust']
+    w.lat = lat
+    w.lon = lon
+    w.time = tm
 
     if (config['dark_sky']['save_weather'] == 'Y'):
         with open('/tmp/weatherData' + tm.strftime('%Y%m%dT%H%M%S') + '.txt', 'w') as outfile:
