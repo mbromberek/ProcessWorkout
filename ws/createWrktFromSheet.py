@@ -20,7 +20,7 @@ def create(ex):
     logger.info(wrkt)
 
     # Call webservice
-    r = requests.post('http://localhost:5000/api/v1/wrkt', json=wrkt)
+    r = requests.post('http://localhost:5000/api/v1/wrkt_sheet', json=wrkt)
     logger.info(r)
 
     return r

@@ -34,13 +34,13 @@ import util.timeConv as tc
 import models.WrktSplits as wrktSplits
 import util.WrktSummary as wrktSum
 import dao.files as fao
-import ws.createWrkt as createWrkt
+import ws.createWrktFromSheet as createWrktSheet
 
 
 config = configparser.ConfigParser()
 logging.config.fileConfig('logging.conf')
 logger = logging.getLogger()
-createWrkt.logger = logger
+createWrktSheet.logger = logger
 
 def determineGear(ex):
     '''
@@ -416,7 +416,7 @@ def saveExToSheet(exLst, scpt):
                 logger.error(sys.exc_info())
                 raise
 
-        createWrkt.create(ex)
+        createWrktSheet.create(ex)
 
 
 
