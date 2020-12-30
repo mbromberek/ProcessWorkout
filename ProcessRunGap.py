@@ -24,7 +24,6 @@ import logging.config
 import applescript
 import pandas
 
-
 # Custom Classes
 sys.path.insert(1, 'models') # Add to sys.path the directory with custom classes
 # Import customer classes that are in models directory
@@ -35,12 +34,14 @@ import models.WrktSplits as wrktSplits
 import util.WrktSummary as wrktSum
 import dao.files as fao
 import ws.createWrktFromSheet as createWrktSheet
-
+import ws.createWrktFromBrkdn as createWrktBrkdn
 
 config = configparser.ConfigParser()
 logging.config.fileConfig('logging.conf')
 logger = logging.getLogger()
 createWrktSheet.logger = logger
+createWrktBrkdn.logger = logger
+
 
 def determineGear(ex):
     '''
@@ -416,7 +417,8 @@ def saveExToSheet(exLst, scpt):
                 logger.error(sys.exc_info())
                 raise
 
-        createWrktSheet.create(ex)
+        # createWrktSheet.create(ex)
+        createWrktBrkdn.create(ex)
 
 
 
