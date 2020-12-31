@@ -125,7 +125,7 @@ class ExerciseInfo:
         wrkt['elevation'] = self.elevationChange()
         wrkt['ele_up'] = '{0:.{1}f}'.format(self.elevationGain*METERS_TO_FEET,1)
         wrkt['ele_down'] = '{0:.{1}f}'.format(self.elevationLoss*METERS_TO_FEET,1)
-        wrkt['wrkt_segments'] = self.wrktSegments
+        # wrkt['wrkt_segments'] = self.wrktSegments
         wrkt['originLoc'] = self.originLoc
         wrkt['category'] = self.category
         wrkt['clothes'] = None
