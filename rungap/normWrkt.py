@@ -390,7 +390,10 @@ def calc_values(actv_orig):
     activity_clean['avg_pace'] = activity_clean['run_time_min'] / activity_clean['dist_mi']
 
     # Forward Fill Heart Rate
-    activity_clean['hr'].fillna(method='ffill', inplace=True)
+    if 'hr' in activity_clean.columns:
+        activity_clean['hr'].fillna(method='ffill', inplace=True)
+    else:
+        activity_clean['hr'] = 0
 
     # Get elevation change, only first record has na so replace it with zero
     activity_clean['ele_ft'] = activity_clean['ele_meters'] * METERS_TO_FEET
