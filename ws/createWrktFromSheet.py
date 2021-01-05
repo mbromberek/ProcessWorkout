@@ -1,8 +1,18 @@
+#! /Users/mikeyb/Applications/python3
+# -*- coding: utf-8 -*-
+
+'''
+BSD 3-Clause License
+Copyright (c) 2020, Mike Bromberek
+All rights reserved.
+'''
+
 # First party classes
 import os, sys
 import logging
 import logging.config
 import requests
+# import datetime
 
 # Third party classes
 # from flask import Flask
@@ -15,8 +25,8 @@ import configparser
 from ExerciseInfo_Class import ExerciseInfo
 
 def create(ex):
-    # Convert ExerciseInfo object to Dictionary
-    wrkt = {'workout':ex.to_dict()}
+
+    wrkt = {'workout':ex}
     logger.info(wrkt)
 
     # Call webservice

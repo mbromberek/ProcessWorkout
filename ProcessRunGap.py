@@ -417,9 +417,8 @@ def saveExToSheet(exLst, scpt):
                 logger.error(sys.exc_info())
                 raise
 
-        # createWrktSheet.create(ex)
+        # createWrktSheet.create(ex.to_dict())
         createWrktBrkdn.create(ex)
-
 
 
 def cleanProcessedFile(exLst, monitorDir, tempDir):
