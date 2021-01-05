@@ -83,9 +83,7 @@ def sendUpdates(wrktLst):
     Create workouts one at a time using web service call
     '''
     logger.debug(wrktLst)
-
-    for wrkt in wrktLst:
-        createWrktSheet.create(wrkt)
+    createWrktSheet.create(wrktLst)
 
 
 def main():

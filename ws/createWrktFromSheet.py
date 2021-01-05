@@ -26,7 +26,7 @@ from ExerciseInfo_Class import ExerciseInfo
 
 def create(ex):
 
-    wrkt = {'workout':ex}
+    wrkt = {'workouts':ex}
     logger.info(wrkt)
 
     # Call webservice
