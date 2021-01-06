@@ -8,6 +8,9 @@ class WeatherInfo:
     temp = -999
     apparentTemp = -999
     humidity = -999
+    windSpeed = ''
+    windGust = ''
+    summary = ''
 
     lat = -999
     lon = -999
