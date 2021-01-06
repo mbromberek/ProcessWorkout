@@ -18,7 +18,6 @@ import logging.config
 
 # 3rd party classes
 import applescript
-# import pandas
 
 # Custom Classes
 sys.path.insert(1, 'models') # Add to sys.path the directory with custom classes

@@ -35,6 +35,7 @@ import util.WrktSummary as wrktSum
 import dao.files as fao
 import ws.createWrktFromSheet as createWrktSheet
 import ws.createWrktFromBrkdn as createWrktBrkdn
+import UpdtRecentWrkts as updtRecentWrkts
 
 config = configparser.ConfigParser()
 logging.config.fileConfig('logging.conf')
@@ -510,6 +511,9 @@ def main():
         logger.debug('tempDir: ' + tempDir)
         logger.debug('Monitor Directory Contents:')
         logger.debug(os.listdir(monitorDir))
+
+    if (config['update_workouts']['process_with_new'] == 'Y'):
+        updtRecentWrkts.processUpdates(scpt, config['update_workouts']['nbr_records'])
 
     uncompressMonitorToTemp(monitorDir, tempDir)
 
