@@ -12,13 +12,7 @@ import os, sys
 import logging
 import logging.config
 import requests
-# import datetime
 
-# Third party classes
-# from flask import Flask
-# from flask import request, Response
-# from flask import jsonify
-# import simplejson as json
 import configparser
 
 # Custom classes
@@ -34,8 +28,3 @@ def create(ex):
     logger.info(r)
 
     return r
-
-# def apiCall(url):
-#     r = requests.get(url)
-#     data = r.json()
-#     return data

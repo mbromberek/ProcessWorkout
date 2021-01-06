@@ -24,66 +24,25 @@ import applescript
 sys.path.insert(1, 'models') # Add to sys.path the directory with custom classes
 import ws.createWrktFromSheet as createWrktSheet
 import util.timeConv as tc
+import dao.exerciseSheet as exSheetDao
 
 config = configparser.ConfigParser()
 logging.config.fileConfig('logging.conf')
 logger = logging.getLogger()
 createWrktSheet.logger = logger
+exSheetDao.logger = logger
 
-def getRecentWrkts(scpt, nbrRows):
+def processUpdates(scpt, nbrRows):
     '''
-    Use AppleScript function getExercises
-    Convert dictionary from AppleScript to dictionary for create workout API and return list of records read
+    Gets number of workouts passed and send them to database using create workout sheet api.
+    Arguments
+        scpt - initialized applescript for connecting to numbers spreadsheet
+        nbrRows - number of rows to read from spreadsheet
+    Returns result of update webservice call
     '''
-    wrktLst = []
-    dateTimeSheetFormat = '%m/%d/%Y %H:%M:%S'
-
-    try:
-        exSheetLst = scpt.call('getExercises',nbrRows)
-    except:
-        logger.error('getExercises Unexpected Error')
-        logger.error(sys.exc_info())
-        raise
-
-    for exSheet in exSheetLst:
-        wrkt = {}
-        wrkt['wrkt_dt'] = exSheet['dateVal'].strftime(dateTimeSheetFormat)
-        wrkt['wrkt_typ'] = exSheet['typeVal']
-        h,m,s = tc.breakTimeFromSeconds(exSheet['durationVal'])
-        wrkt['tot_tm'] = str(h)+'h ' + str(m)+'m ' + str(s)+'s'
-        wrkt['dist'] = exSheet['distanseVal']
-        wrkt['hr'] = exSheet['hrVal']
-        wrkt['cal_burn'] = exSheet['caloriesVal']
-        wrkt['notes'] = exSheet['noteVal']
-        wrkt['gear'] = exSheet['gearVal']
-        wrkt['category'] = exSheet['catVal']
-        h,m,s = tc.breakTimeFromSeconds(exSheet['paceVal'])
-        wrkt['pace'] = str(h)+'h ' + str(m)+'m ' + str(s)+'s'
-        wrkt['elevation'] = exSheet['eleVal']
-        wrktLst.append(wrkt)
-
-    wrktLst.sort(key=lambda x: x['wrkt_dt'], reverse=False)
-    return wrktLst
-
-def initializeAppleScriptFunc(appleScriptName, sheetName):
-    '''
-    Read applescript file for reading and updating exercise spreadseeht
-    After initializing it sets the sheetName to be updated.
-    Return: AppleScript file for performing function calls
-    '''
-    scptFile = open(appleScriptName)
-    scptTxt = scptFile.read()
-    scpt = applescript.AppleScript(scptTxt)
-    scpt.call('initialize',sheetName)
-    return scpt
-
-
-def sendUpdates(wrktLst):
-    '''
-    Create workouts one at a time using web service call
-    '''
-    logger.debug(wrktLst)
-    createWrktSheet.create(wrktLst)
+    wrktLst = exSheetDao.getRecentWrkts(scpt, nbrRows)
+    r = createWrktSheet.create(wrktLst)
+    return r
 
 
 def main():
@@ -98,14 +57,11 @@ def main():
 
     sheetName = config['applescript']['sheet_name']
 
-    scpt = initializeAppleScriptFunc( os.path.join(config['applescript']['script_path'], config['applescript']['script_name']), sheetName)
+    scpt = exSheetDao.initializeAppleScriptFunc( os.path.join(config['applescript']['script_path'], config['applescript']['script_name']), sheetName)
 
-    wrktLst = getRecentWrkts(scpt, config['update_workouts']['nbr_records'])
+    processUpdates(scpt, config['update_workouts']['nbr_records'])
 
-    sendUpdates(wrktLst)
-
-    if (config['applescript']['close_sheet'] == 'Y'):
-        scpt.call('closeSheet')
+    exSheetDao.closeSheet(scpt, config['applescript']['close_sheet'])
 
     logger.info('End UpdtRecentWrkts')
 
