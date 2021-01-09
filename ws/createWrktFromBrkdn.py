@@ -14,13 +14,18 @@ import configparser
 # Custom classes
 from ExerciseInfo_Class import ExerciseInfo
 
-def create(ex):
+def create(exLst):
+    wrktLst = []
     # Convert ExerciseInfo object to Dictionary
-    wrkt = {'workout':ex.to_dict()}
+    for ex in exLst:
+        wrkt = ex.to_dict()
+        wrktLst.append(wrkt)
+
+    wrktLstJson = {'workouts':wrktLst}
     logger.info(wrkt)
 
     # Call webservice
-    r = requests.post('http://localhost:5000/api/v1/wrkt_brkdn', json=wrkt)
+    r = requests.post('http://localhost:5000/api/v1/wrkt_brkdn', json=wrktLstJson)
     logger.info(r)
 
     return r
