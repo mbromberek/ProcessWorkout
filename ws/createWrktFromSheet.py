@@ -18,13 +18,15 @@ import configparser
 # Custom classes
 from ExerciseInfo_Class import ExerciseInfo
 
-def create(ex):
+def create(exLst, wsConfig):
+    server = wsConfig['server']
+    port = wsConfig['port']
 
-    wrkt = {'workouts':ex}
-    logger.info(wrkt)
+    wrkt = {'workouts':exLst}
+    logger.debug(wrkt)
 
     # Call webservice
-    r = requests.post('http://localhost:5000/api/v1/wrkt_sheet', json=wrkt)
+    r = requests.post(server + ':' + port + '/api/v1/wrkt_sheet', json=wrkt)
     logger.info(r)
 
     return r

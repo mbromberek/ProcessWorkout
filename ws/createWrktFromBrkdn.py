@@ -5,27 +5,26 @@ import logging.config
 import requests
 
 # Third party classes
-# from flask import Flask
-# from flask import request, Response
-# from flask import jsonify
-# import simplejson as json
 import configparser
 
 # Custom classes
 from ExerciseInfo_Class import ExerciseInfo
 
-def create(exLst):
+def create(exLst, wsConfig):
     wrktLst = []
+    server = wsConfig['server']
+    port = wsConfig['port']
+
     # Convert ExerciseInfo object to Dictionary
     for ex in exLst:
         wrkt = ex.to_dict()
         wrktLst.append(wrkt)
 
     wrktLstJson = {'workouts':wrktLst}
-    logger.info(wrkt)
+    logger.debug(wrktLstJson)
 
     # Call webservice
-    r = requests.post('http://localhost:5000/api/v1/wrkt_brkdn', json=wrktLstJson)
+    r = requests.post(server + ':' + port + '/api/v1/wrkt_brkdn', json=wrktLstJson)
     logger.info(r)
 
     return r

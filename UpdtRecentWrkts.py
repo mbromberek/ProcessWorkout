@@ -31,7 +31,7 @@ logger = logging.getLogger()
 createWrktSheet.logger = logger
 exSheetDao.logger = logger
 
-def processUpdates(scpt, nbrRows):
+def processUpdates(scpt, nbrRows, wsConfig):
     '''
     Gets number of workouts passed and send them to database using create workout sheet api.
     Arguments
@@ -39,8 +39,9 @@ def processUpdates(scpt, nbrRows):
         nbrRows - number of rows to read from spreadsheet
     Returns result of update webservice call
     '''
+    logger.info('processUpdates: ' + str(nbrRows))
     wrktLst = exSheetDao.getRecentWrkts(scpt, nbrRows)
-    r = createWrktSheet.create(wrktLst)
+    r = createWrktSheet.create(wrktLst, wsConfig)
     return r
 
 
@@ -58,7 +59,7 @@ def main():
 
     scpt = exSheetDao.initializeAppleScriptFunc( os.path.join(config['applescript']['script_path'], config['applescript']['script_name']), sheetName)
 
-    processUpdates(scpt, config['update_workouts']['nbr_records'])
+    processUpdates(scpt, config['update_workouts']['nbr_records'], config['webservices'])
 
     exSheetDao.closeSheet(scpt, config['applescript']['close_sheet'])
 

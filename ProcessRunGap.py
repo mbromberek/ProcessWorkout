@@ -418,8 +418,11 @@ def saveExToSheet(exLst, scpt):
                 logger.error(sys.exc_info())
                 raise
 
-    createWrktBrkdn.create(exLst)
-
+def saveExToDb(exLst, wsConfig):
+    '''
+    Save passed list of exercises to database using API call
+    '''
+    createWrktBrkdn.create(exLst, wsConfig)
 
 def cleanProcessedFile(exLst, monitorDir, tempDir):
     '''
@@ -505,6 +508,8 @@ def main():
 
     scpt = initializeAppleScriptFunc( os.path.join(config['applescript']['script_path'], config['applescript']['script_name']), sheetName)
 
+
+
     if (config['rungap']['print_data'] == 'Y'):
         logger.debug('monitorDir:' + monitorDir)
         logger.debug('tempDir: ' + tempDir)
@@ -512,7 +517,7 @@ def main():
         logger.debug(os.listdir(monitorDir))
 
     if (config['update_workouts']['process_with_new'] == 'Y'):
-        updtRecentWrkts.processUpdates(scpt, config['update_workouts']['nbr_records'])
+        updtRecentWrkts.processUpdates(scpt, config['update_workouts']['nbr_records'], config['webservices'])
 
     uncompressMonitorToTemp(monitorDir, tempDir)
 
@@ -520,7 +525,9 @@ def main():
 
     exLst = processExercises(filesToProcess)
 
-    saveExToSheet(exLst, scpt)
+    if len(exLst) > 0:
+        saveExToSheet(exLst, scpt)
+        saveExToDb(exLst, config['webservices'])
 
     cleanProcessedFile(exLst, monitorDir, tempDir)
 
