@@ -36,13 +36,14 @@ import dao.files as fao
 import ws.createWrktFromSheet as createWrktSheet
 import ws.createWrktFromBrkdn as createWrktBrkdn
 import UpdtRecentWrkts as updtRecentWrkts
+import dao.exerciseSheet as exSheetDao
 
 config = configparser.ConfigParser()
 logging.config.fileConfig('logging.conf')
 logger = logging.getLogger()
 createWrktSheet.logger = logger
 createWrktBrkdn.logger = logger
-
+exSheetDao.logger = logger
 
 def determineGear(ex):
     '''
@@ -454,18 +455,6 @@ def cleanProcessedFile(exLst, monitorDir, tempDir):
             for fl in glob.glob(monitorDir + fileNameStart + '*'):
                 os.remove(fl)
 
-def initializeAppleScriptFunc(appleScriptName, sheetName):
-    '''
-    Read applescript file for reading and updating exercise spreadseeht
-    After initializing it sets the sheetName to be updated.
-    Return: AppleScript file for performing function calls
-    '''
-    scptFile = open(appleScriptName)
-    scptTxt = scptFile.read()
-    scpt = applescript.AppleScript(scptTxt)
-    scpt.call('initialize',sheetName)
-    return scpt
-
 def printWrktDetails(filename, ex):
     '''
     Prints details about workout to console
@@ -509,7 +498,7 @@ def main():
     monitorDir = runGapConfigs['monitor_dir']
     tempDir = runGapConfigs['temp_dir']
 
-    scpt = initializeAppleScriptFunc( os.path.join(config['applescript']['script_path'], config['applescript']['script_name']), sheetName)
+    scpt = exSheetDao.initializeAppleScriptFunc( os.path.join(config['applescript']['script_path'], config['applescript']['script_name']), sheetName)
 
 
 
