@@ -422,7 +422,10 @@ def saveExToDb(exLst, wsConfig):
     '''
     Save passed list of exercises to database using API call
     '''
-    createWrktBrkdn.create(exLst, wsConfig)
+    if wsConfig['save_to_db'] == 'Y':
+        createWrktBrkdn.create(exLst, wsConfig)
+    else:
+        logger.info('Saving to Database turned off')
 
 def cleanProcessedFile(exLst, monitorDir, tempDir):
     '''
