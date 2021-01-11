@@ -31,11 +31,11 @@ on addExercise(eDate, eType, eTime, eDistance, eDistanceUnit, eHeartRate, eCal, 
 					set firstRow to header row count + 1
 					set lastRow to rowCt - footer row count
 					set updateRow to -1
-
+					
 					if exerciseDateOrder = "desc" then
 						add row above row firstRow
 					end if
-
+					
 					repeat with i from firstRow to lastRow
 						set dateVal to value of cell 1 of row i
 						log (dateVal)
@@ -64,7 +64,7 @@ on addExercise(eDate, eType, eTime, eDistance, eDistanceUnit, eHeartRate, eCal, 
 					end tell
 				end tell
 			end tell
-
+			
 			save
 		end tell
 	end tell
@@ -91,7 +91,7 @@ on readLastExercise(eType, exerciseDateOrder)
 					set lastRow to rowCt - footer row count
 					set updateRow to -1
 					set lastDate to current date
-
+					
 					if exerciseDateOrder = "asc" then
 						set startRow to lastRow
 						set endRow to firstRow
@@ -101,7 +101,7 @@ on readLastExercise(eType, exerciseDateOrder)
 						set endRow to lastRow
 						set incrementVal to 1
 					end if
-
+					
 					--repeat with i from lastRow to firstRow by -1
 					repeat with i from startRow to endRow by incrementVal
 						set dateVal to value of cell 1 of row i
@@ -160,9 +160,9 @@ on getExercises(numRowsToReturn)
 					set firstRow to header row count + 1
 					set lastRow to rowCt - footer row count
 					set updateRow to -1
-
+					
 					if exerciseDateOrder = "desc" then
-						set lastRowToPull to firstRow + (numRowsToReturn as number)
+						set lastRowToPull to firstRow + (numRowsToReturn as number) -1
 						if lastRow > lastRowToPull then
 							set lastRow to lastRowToPull
 						end if
@@ -171,11 +171,11 @@ on getExercises(numRowsToReturn)
 						if firstRow > lastRowToPull then
 							set firstRow to lastRowToPull
 						end if
-
+						
 					end if
-
+					
 					set exerciseLst to {}
-
+					
 					repeat with i from firstRow to lastRow
 						set dateVal to my chkMissingVal(value of cell DATE_COL of row i)
 						set typeVal to my chkMissingVal(value of cell TYPE_COL of row i)
@@ -188,7 +188,7 @@ on getExercises(numRowsToReturn)
 						set gearVal to my chkMissingVal(value of cell GEAR_COL of row i)
 						set catVal to my chkMissingVal(value of cell CATEGORY_COL of row i)
 						set eleVal to my chkMissingVal(value of cell ELEVATION_COL of row i)
-
+						
 						set exerciseVal to {rowVal:i, dateVal:dateVal, typeVal:typeVal, durationVal:durVal, distanseVal:distVal, hrVal:hrVal, caloriesVal:calVal, noteVal:noteVal, gearVal:gearVal, catVal:catVal, paceVal:paceVal, eleVal:eleVal}
 						log (exerciseVal)
 						set exerciseLst to exerciseLst & {exerciseVal}
@@ -230,7 +230,7 @@ on closeSheet()
 end closeSheet
 
 on generateWrktTable(sheetNm, tblNm, wrktData, wrktSumFrmla)
-
+	
 	set INTRVL_BRKDN_COL to 1
 	set TM_BRKDN_COL to 2
 	set DIST_BRKDN_COL to 3
@@ -239,25 +239,25 @@ on generateWrktTable(sheetNm, tblNm, wrktData, wrktSumFrmla)
 	set ELE_BRKDN_COL to 6
 	set ELE_UP_BRKDN_COL to 7
 	set ELE_DOWN_BRKDN_COL to 8
-
-
+	
+	
 	set columnCt to 8
 	set hdrRowCt to 1
 	set wrktRowCt to (count of wrktData)
 	set tblRowCt to (wrktRowCt + 5)
-
+	
 	set {hours:h, minutes:m, seconds:s, time:t} to (current date)
 	set tm_str to (h as string) & (m as number) & s
-
+	
 	tell application "Numbers"
 		activate
 		tell document docName
 			tell sheet sheetNm
 				if (exists table tblNm) then set tblNm to tblNm & "_" & tm_str
 				log ("Table Name: " & tblNm)
-
+				
 				set thisTable to make new table with properties {name:tblNm, column count:columnCt, row count:tblRowCt, header row count:hdrRowCt, header column count:1, footer row count:4}
-
+				
 				tell thisTable
 					tell row 1
 						set value of cell INTRVL_BRKDN_COL to "Interval"
@@ -269,7 +269,7 @@ on generateWrktTable(sheetNm, tblNm, wrktData, wrktSumFrmla)
 						set value of cell ELE_UP_BRKDN_COL to "Ele Up"
 						set value of cell ELE_DOWN_BRKDN_COL to "Ele Down"
 					end tell
-
+					
 					set rowNbr to 2
 					repeat with theRecord in wrktData
 						tell row rowNbr
@@ -284,8 +284,8 @@ on generateWrktTable(sheetNm, tblNm, wrktData, wrktSumFrmla)
 						end tell
 						set rowNbr to rowNbr + 1
 					end repeat
-
-
+					
+					
 					--Add summary for Total workout
 					tell row (wrktRowCt + hdrRowCt + 1)
 						set value of cell INTRVL_BRKDN_COL to "Total"
@@ -297,7 +297,7 @@ on generateWrktTable(sheetNm, tblNm, wrktData, wrktSumFrmla)
 						set value of cell ELE_UP_BRKDN_COL to (ele_up of (wrkt_tot of wrktSumFrmla))
 						set value of cell ELE_DOWN_BRKDN_COL to (ele_down of (wrkt_tot of wrktSumFrmla))
 					end tell
-
+					
 					--Add summary for workout without warm up and cooldown
 					tell row (wrktRowCt + hdrRowCt + 2)
 						set value of cell INTRVL_BRKDN_COL to "Workout"
@@ -308,7 +308,7 @@ on generateWrktTable(sheetNm, tblNm, wrktData, wrktSumFrmla)
 						set value of cell ELE_UP_BRKDN_COL to (ele_up of (intvl_tot of wrktSumFrmla))
 						set value of cell ELE_DOWN_BRKDN_COL to (ele_down of (intvl_tot of wrktSumFrmla))
 					end tell
-
+					
 					--Add summary of first half of workout
 					tell row (wrktRowCt + hdrRowCt + 3)
 						set value of cell INTRVL_BRKDN_COL to "First Half"
@@ -319,7 +319,7 @@ on generateWrktTable(sheetNm, tblNm, wrktData, wrktSumFrmla)
 						set value of cell ELE_UP_BRKDN_COL to (ele_up of (frst_half of wrktSumFrmla))
 						set value of cell ELE_DOWN_BRKDN_COL to (ele_down of (frst_half of wrktSumFrmla))
 					end tell
-
+					
 					--Add summary of second half of workout
 					tell row (wrktRowCt + hdrRowCt + 4)
 						set value of cell INTRVL_BRKDN_COL to "Second Half"
@@ -331,21 +331,20 @@ on generateWrktTable(sheetNm, tblNm, wrktData, wrktSumFrmla)
 						set value of cell ELE_DOWN_BRKDN_COL to (ele_down of (scnd_half of wrktSumFrmla))
 					end tell
 				end tell
-
+				
 			end tell
 		end tell
 	end tell
-
+	
 end generateWrktTable
 
-set docName to "Exercise 2017 test.numbers"
-set wrktData to {{interval:0, dur_str:"0h 5m 1s", dist_mi:0.65, pace_str:"0h 7m 45s"}, {interval:1, dur_str:"0h 17m 47s", dist_mi:2.37, pace_str:"0h 7m 30s"}, {interval:2, dur_str:"0h 16m 27s", dist_mi:2.29, pace_str:"0h 7m 11s"}, {interval:3, dur_str:"0h 5m 53s", dist_mi:0.7, pace_str:"0h 8m 27s"}}
-set wrktFrmla to {wrkt_tot:{distance:"=sum(B:B)", dur_str:"=sum(C:C)"}}
-my generateWrktTable("2020-Fall Training", "Tempo 2020-11-24", wrktData, wrktFrmla)
+my initialize("Exercise 2017 test.numbers")
+--set wrktData to {{interval:0, dur_str:"0h 5m 1s", dist_mi:0.65, pace_str:"0h 7m 45s"}, {interval:1, dur_str:"0h 17m 47s", dist_mi:2.37, pace_str:"0h 7m 30s"}, {interval:2, dur_str:"0h 16m 27s", dist_mi:2.29, pace_str:"0h 7m 11s"}, {interval:3, dur_str:"0h 5m 53s", dist_mi:0.7, pace_str:"0h 8m 27s"}}
+--set wrktFrmla to {wrkt_tot:{distance:"=sum(B:B)", dur_str:"=sum(C:C)"}}
+--my generateWrktTable("2020-Fall Training", "Tempo 2020-11-24", wrktData, wrktFrmla)
 
 
 --my addExercise("06/03/2016", "Running", "0h 30m 31s", "4.01", "MI", "161", "111", "Run felt good", "4:00 PM", "")
---my initialize("Exercise 2017 test.numbers")
 --my readLastExercise("Running", "desc")
 
---my getExercises(1)
+my getExercises(1)
