@@ -88,6 +88,8 @@ def determineCategory(ex):
                         if float(categoryConfigs[catOption.replace(' ','_').lower() + '_min_dist']) < ex.distTot:
                             cat = catOption
                             break
+                if cat == '':
+                    cat = dayCat.split(',')[-1]
             else:
                 cat = dayCat
 
