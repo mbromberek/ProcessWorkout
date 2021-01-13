@@ -20,6 +20,7 @@ def create(exLst, wsConfig):
         wrkt = ex.to_dict()
         wrktLst.append(wrkt)
 
+    logger.debug(wrktLst)
     wrktLstJson = {'workouts':wrktLst}
     logger.debug(wrktLstJson)
 

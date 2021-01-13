@@ -131,4 +131,26 @@ class ExerciseInfo:
         wrkt['category'] = self.category
         wrkt['clothes'] = None
 
+        if self.intvlTotDistMi != 0:
+            wrkt['warm_up'] = {}
+            wrkt['warm_up']['tot_dist_mi'] = self.warmUpTotDistMi
+            wrkt['warm_up']['tot_tot_tm_sec'] = self.warmUpTotDurSec
+            wrkt['warm_up']['tot_pace_sec'] = self.warmUpTotPaceSec
+            wrkt['cool_down'] = {}
+            wrkt['cool_down']['tot_dist_mi'] = self.coolDnTotDistMi
+            wrkt['cool_down']['tot_tot_tm_sec'] = self.coolDnTotDurSec
+            wrkt['cool_down']['tot_pace_sec'] = self.coolDnTotPaceSec
+            wrkt['intrvl'] = {}
+            wrkt['intrvl']['tot_dist_mi'] = self.intvlTotDistMi
+            wrkt['intrvl']['tot_tot_tm_sec'] = self.intvlTotDurSec
+            wrkt['intrvl']['tot_pace_sec'] = self.intvlTotPaceSec
+            wrkt['intrvl']['tot_ele_up'] = self.intvlTotEleUp
+            wrkt['intrvl']['tot_ele_down'] = self.intvlTotEleDown
+            wrkt['intrvl']['avg_dist_mi'] = self.intvlAvgDistMi
+            wrkt['intrvl']['avg_tot_tm_sec'] = self.intvlAvgDurSec
+            wrkt['intrvl']['avg_pace_sec'] = self.intvlAvgPaceSec
+            wrkt['intrvl']['avg_ele_up'] = self.intvlAvgEleUp
+            wrkt['intrvl']['avg_ele_down'] = self.intvlAvgEleDown
+
+
         return wrkt
