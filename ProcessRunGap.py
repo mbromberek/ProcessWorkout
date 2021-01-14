@@ -502,8 +502,6 @@ def main():
 
     scpt = exSheetDao.initializeAppleScriptFunc( os.path.join(config['applescript']['script_path'], config['applescript']['script_name']), sheetName)
 
-
-
     if (config['rungap']['print_data'] == 'Y'):
         logger.debug('monitorDir:' + monitorDir)
         logger.debug('tempDir: ' + tempDir)
