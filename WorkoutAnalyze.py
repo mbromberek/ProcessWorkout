@@ -165,6 +165,8 @@ def main(argv):
     splitOptions = []
     filename = ''
 
+    fao.clean_dir(tempDir)
+
     try:
         opts, args = getopt.getopt(argv,"hi:o:",["ifile=", "odir=", "split="])
     except getopt.GetoptError:
