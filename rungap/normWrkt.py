@@ -48,13 +48,14 @@ def group_actv(df, group_by_field):
     Set min_time and min_dist to the max of previous split
     '''
     grouped_df_copy = grouped_df.copy()
-    grouped_df['prev_val'] = grouped_df[group_by_field] - 1
-    grouped_df_copy.rename(columns={group_by_field: 'group_by_field'}, inplace=True)
+    grouped_df['prev_val'] = grouped_df.index.values - 1
+    # grouped_df_copy.rename(columns={group_by_field: 'group_by_field'}, inplace=True)
+    grouped_df_copy['index_orig'] = grouped_df_copy.index.values
 
     grouped_min_dist_df = pd.merge(grouped_df[[group_by_field,'prev_val']],
-                             grouped_df_copy[['max_dist','max_time','group_by_field']],
+                             grouped_df_copy[['max_dist','max_time','index_orig']],
                              how='left',
-                             left_on='prev_val', right_on='group_by_field')
+                             left_on='prev_val', right_on='index_orig')
     grouped_min_dist_df.rename(columns={'max_dist': 'min_dist','max_time':'min_time'}, inplace=True)
     grouped_df = grouped_df.merge(right=grouped_min_dist_df, how='inner', left_on=group_by_field, right_on=group_by_field)
     grouped_df.fillna({'min_dist':0, 'min_time':0}, inplace=True)
