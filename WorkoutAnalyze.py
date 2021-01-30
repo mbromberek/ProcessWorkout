@@ -82,6 +82,7 @@ def custSplits(actv_df, tempDir):
     subprocess.run(args=['open', openCmd], cwd='/')
 
     # 5) User enters data to custom columns of spreadsheet and saves it to CSV of same name (maybe keep the file in Numbers)
+    print('Export update CSV to: ' + tempDir)
     input("Update the temp_custom_split.csv file with custom splits. Then Press Enter to continue")
 
     # 6) Read updated CSV file (and original pickle if needed)
