@@ -29,22 +29,39 @@ def group_actv(df, group_by_field):
     Will calculate the below fields
     '''
 
-    df['ele_up'] = df[df['ele_ft_delta']>0]['ele_ft_delta']
-    df['ele_down'] = df[df['ele_ft_delta']<0]['ele_ft_delta']
+    df_edit = df.copy()
+    df_edit['ele_up'] = df[df['ele_ft_delta']>0]['ele_ft_delta']
+    df_edit['ele_down'] = df[df['ele_ft_delta']<0]['ele_ft_delta']
 
-    grouped_df = (df.groupby([group_by_field])
+    grouped_df = (df_edit.groupby([group_by_field])
         .agg(max_time=('dur_sec', 'max')
-             , min_time=('dur_sec', 'min')
              , avg_hr = ('hr', 'mean')
              , ele_up = ('ele_up','sum')
              , ele_down = ('ele_down','sum')
              , sum_ele = ('ele_ft_delta','sum')
              , max_dist = ('dist_mi','max')
-             , min_dist = ('dist_mi','min')
         )
         .reset_index()
     )
 
+    '''
+    Set min_time and min_dist to the max of previous split
+    '''
+    grouped_df_copy = grouped_df.copy()
+    grouped_df['prev_val'] = grouped_df[group_by_field] - 1
+    grouped_df_copy.rename(columns={group_by_field: 'group_by_field'}, inplace=True)
+
+    grouped_min_dist_df = pd.merge(grouped_df[[group_by_field,'prev_val']],
+                             grouped_df_copy[['max_dist','max_time','group_by_field']],
+                             how='left',
+                             left_on='prev_val', right_on='group_by_field')
+    grouped_min_dist_df.rename(columns={'max_dist': 'min_dist','max_time':'min_time'}, inplace=True)
+    grouped_df = grouped_df.merge(right=grouped_min_dist_df, how='inner', left_on=group_by_field, right_on=group_by_field)
+    grouped_df.fillna({'min_dist':0, 'min_time':0}, inplace=True)
+
+    '''
+    Calculate the grouped values
+    '''
     grouped_df['dur_sec'] = grouped_df['max_time'] - grouped_df['min_time']
     grouped_df['dist_mi'] = grouped_df['max_dist'] - grouped_df['min_dist']
 
@@ -59,9 +76,6 @@ def group_actv(df, group_by_field):
     grouped_df['ele_up'] = grouped_df['ele_up'].round(2)
     grouped_df['ele_down'] = grouped_df['ele_down'].round(2)
     grouped_df['sum_ele'] = grouped_df['sum_ele'].round(2)
-
-    # grouped_df = tc.break_up_time(grouped_df,'duration')
-    # grouped_df = tc.break_up_time(grouped_df, 'pace')
 
     return grouped_df[[group_by_field,'dur_sec', 'dur_str', 'dist_mi' \
         , 'pace', 'pace_str' \
