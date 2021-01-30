@@ -65,7 +65,12 @@ def getRecentWrkts(scpt, nbrRows):
         wrkt['notes'] = exSheet['noteVal']
         wrkt['gear'] = exSheet['gearVal']
         wrkt['category'] = exSheet['catVal']
-        h,m,s = tc.breakTimeFromSeconds(exSheet['paceVal'])
+        if type(exSheet['paceVal']) == int or type(exSheet['paceVal']) == float:
+            h,m,s = tc.breakTimeFromSeconds(exSheet['paceVal'])
+        else:
+            h = 0
+            m = 0
+            s = 0
         wrkt['pace'] = str(h)+'h ' + str(m)+'m ' + str(s)+'s'
         wrkt['elevation'] = exSheet['eleVal']
         wrktLst.append(wrkt)

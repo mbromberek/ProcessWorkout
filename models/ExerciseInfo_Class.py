@@ -92,8 +92,12 @@ class ExerciseInfo:
         wrkt['tot_tm_sec'] = self.totTmSec
         wrkt['dist'] = round(self.distTot, 2)
         wrkt['dist_mi'] = round(self.distTot, 2)
-        wrkt['pace'] = tc.formatNumbersTime(*tc.breakTimeFromSeconds(self.totTmSec / wrkt['dist']))
-        wrkt['pace_sec'] = wrkt['tot_tm_sec'] / wrkt['dist_mi']
+        if wrkt['dist'] == 0:
+            wrkt['pace'] = tc.formatNumbersTime(0,0,0)
+            wrkt['pace_sec'] = 0
+        else:
+            wrkt['pace'] = tc.formatNumbersTime(*tc.breakTimeFromSeconds(self.totTmSec / wrkt['dist']))
+            wrkt['pace_sec'] = wrkt['tot_tm_sec'] / wrkt['dist_mi']
 
         if self.startWeather.temp != -999:
             wrkt['wethr_start'] = {}
