@@ -424,7 +424,7 @@ def rm_unneeded_cols(actv_orig):
     actv_df = actv_orig.copy()
 
     # Drop unneeded fields
-    actv_df.drop(['kcal','dist_meters', 'va','ha','lon','lat',
+    actv_df.drop(['kcal', 'va','ha','lon','lat',
                   'pause_resume','run_time_sec','run_time_min',
                   'run_time_min_resume', 'avg_pace', 'time'],
                  axis=1, inplace=True)
@@ -446,6 +446,7 @@ def rm_unneeded_cols(actv_orig):
     actv_df = actv_df[['date_time', 'dist_mi', 'dur_sec', 'dur_str'
         , 'avg_pace', 'mile','kilometer','segment','resume'
         , 'hr', 'ele_ft', 'ele_ft_delta', 'runcad'
+        , 'dist_meters'
     ]]
     return actv_df
 
