@@ -67,12 +67,12 @@ def group_actv(df, group_by_field):
     grouped_df['dist_mi'] = grouped_df['max_dist'] - grouped_df['min_dist']
 
     grouped_df['pace'] = grouped_df['dur_sec'] / grouped_df['dist_mi']
-    grouped_df['pace'] = grouped_df['pace'].replace(np.inf, 0)
+    grouped_df['pace'] = grouped_df['pace'].replace(np.inf, 0).fillna(0)
 
     grouped_df['dur_str'] = tc.seconds_to_time_str(grouped_df, 'dur_sec', 'hms')
     grouped_df['pace_str'] = tc.seconds_to_time_str(grouped_df, 'pace', 'hms')
 
-    grouped_df['dist_mi'] = grouped_df['dist_mi'].round(2)
+    grouped_df['dist_mi'] = grouped_df['dist_mi'].round(2).fillna(0)
     grouped_df['avg_hr'] = grouped_df['avg_hr'].round(2)
     grouped_df['ele_up'] = grouped_df['ele_up'].round(2)
     grouped_df['ele_down'] = grouped_df['ele_down'].round(2)
