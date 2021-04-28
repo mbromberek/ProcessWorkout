@@ -430,6 +430,10 @@ def saveExToDb(exLst, wsConfig):
     else:
         logger.info('Saving to Database turned off')
 
+def saveExToSite(exLst, wsConfig):
+    token = wsConfig['token']
+    
+
 def cleanProcessedFile(exLst, monitorDir, tempDir):
     '''
     Clean up processed files
@@ -520,6 +524,7 @@ def main():
     if len(exLst) > 0:
         saveExToSheet(exLst, scpt)
         saveExToDb(exLst, config['webservices'])
+        saveExToSite(exLst, config['webservices'])
 
     cleanProcessedFile(exLst, monitorDir, tempDir)
 

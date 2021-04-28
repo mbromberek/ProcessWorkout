@@ -156,5 +156,77 @@ class ExerciseInfo:
             wrkt['intrvl']['avg_ele_up'] = self.intvlAvgEleUp
             wrkt['intrvl']['avg_ele_down'] = self.intvlAvgEleDown
 
+    def to_psite_dict(self):
+        dateTimeSheetFormat = '%Y/%m/%dT%H:%M:%SZ'
+        wrkt = {}
+        wrkt['wrkt_dt'] = self.eDate + ' ' + self.startTime.strftime(dateTimeSheetFormat)
+        if self.type != '':
+            wrkt['wrkt_typ'] = self.type
+        if self.totTmSec >0:
+            wrkt['tot_tm_sec'] = self.totTmSec
+        if self.distTot >0:
+            wrkt['dist_mi'] = round(self.distTot, 2)
+
+        if self.startWeather.temp != -999:
+            wrkt['wethr_start'] = {}
+            wrkt['wethr_start']['temp'] = self.startWeather.temp
+            wrkt['wethr_start']['temp_feels_like'] = self.startWeather.apparentTemp
+            wrkt['wethr_start']['hmdty'] = self.startWeather.humidity
+            wrkt['wethr_start']['lat'] = self.startWeather.lat
+            wrkt['wethr_start']['lon'] = self.startWeather.lon
+            wrkt['wethr_start']['wind_speed'] = self.startWeather.windSpeed
+            wrkt['wethr_start']['wind_gust'] = self.startWeather.windGust
+            wrkt['wethr_start']['wethr_cond'] = self.startWeather.summary
+            wrkt['wethr_start']['tm'] = self.startWeather.time.strftime(dateTimeSheetFormat)
+
+            wrkt['wethr_end'] = {}
+            wrkt['wethr_end']['temp'] = self.endWeather.temp
+            wrkt['wethr_end']['temp_feels_like'] = self.endWeather.apparentTemp
+            wrkt['wethr_end']['hmdty'] = self.endWeather.humidity
+            wrkt['wethr_end']['lat'] = self.endWeather.lat
+            wrkt['wethr_end']['lon'] = self.endWeather.lon
+            wrkt['wethr_end']['wind_speed'] = self.endWeather.windSpeed
+            wrkt['wethr_end']['wind_gust'] = self.endWeather.windGust
+            wrkt['wethr_end']['wethr_cond'] = self.endWeather.summary
+            wrkt['wethr_end']['tm'] = self.endWeather.time.strftime(dateTimeSheetFormat)
+
+        if self.avgHeartRate != '':
+            wrkt['hr'] = self.avgHeartRate
+        if self.calTot != '':
+            wrkt['cal_burn'] = self.calTot
+        if self.userNotes != '':
+            wrkt['notes'] = self.userNotes
+        if self.gear != '':
+            wrkt['gear'] = self.gear
+        wrkt['category'] = self.category
+        wrkt['elevation'] = self.elevationChange()
+        wrkt['ele_up'] = '{0:.{1}f}'.format(self.elevationGain*METERS_TO_FEET,1)
+        wrkt['ele_down'] = '{0:.{1}f}'.format(self.elevationLoss*METERS_TO_FEET,1)
+        wrkt['wrkt_segments'] = self.wrktSegments
+        wrkt['originLoc'] = self.originLoc
+        wrkt['category'] = self.category
+        wrkt['clothes'] = None
+
+        if self.intvlTotDistMi != 0:
+            wrkt['warm_up'] = {}
+            wrkt['warm_up']['tot_dist_mi'] = self.warmUpTotDistMi
+            wrkt['warm_up']['tot_tot_tm_sec'] = self.warmUpTotDurSec
+            wrkt['warm_up']['tot_pace_sec'] = self.warmUpTotPaceSec
+            wrkt['cool_down'] = {}
+            wrkt['cool_down']['tot_dist_mi'] = self.coolDnTotDistMi
+            wrkt['cool_down']['tot_tot_tm_sec'] = self.coolDnTotDurSec
+            wrkt['cool_down']['tot_pace_sec'] = self.coolDnTotPaceSec
+            wrkt['intrvl'] = {}
+            wrkt['intrvl']['tot_dist_mi'] = self.intvlTotDistMi
+            wrkt['intrvl']['tot_tot_tm_sec'] = self.intvlTotDurSec
+            wrkt['intrvl']['tot_pace_sec'] = self.intvlTotPaceSec
+            wrkt['intrvl']['tot_ele_up'] = self.intvlTotEleUp
+            wrkt['intrvl']['tot_ele_down'] = self.intvlTotEleDown
+            wrkt['intrvl']['avg_dist_mi'] = self.intvlAvgDistMi
+            wrkt['intrvl']['avg_tot_tm_sec'] = self.intvlAvgDurSec
+            wrkt['intrvl']['avg_pace_sec'] = self.intvlAvgPaceSec
+            wrkt['intrvl']['avg_ele_up'] = self.intvlAvgEleUp
+            wrkt['intrvl']['avg_ele_down'] = self.intvlAvgEleDown
+
 
         return wrkt
