@@ -2,10 +2,10 @@
 import os, sys
 import logging
 import logging.config
-import requests
 
 # Third party classes
 import configparser
+import requests
 
 # Custom classes
 from ExerciseInfo_Class import ExerciseInfo
@@ -21,16 +21,14 @@ def create(exLst, wsConfig):
         wrkt = ex.to_psite_dict()
         wrktLst.append(wrkt)
 
-    wrktLstJson = {'workouts':wrktLst}
-    logger.debug(wrktLstJson)
+    # wrktLst
+    logger.debug(wrktLst)
+
+    token = '+Wrh9wG5rXXAfh551ATvSkiJlbWTKQba'
 
     # Call webservice
-    r = requests.post(server + ':' + port + '/api/workout', json=wrktLstJson)
+    r = requests.post(server + ':' + port + '/api/workout', json=wrktLst, headers={'Authorization':'Bearer ' + token})
     logger.info(r)
 
     return r
-
-# def apiCall(url):
-#     r = requests.get(url)
-#     data = r.json()
-#     return data
+    # return None

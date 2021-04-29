@@ -37,6 +37,7 @@ import ws.createWrktFromSheet as createWrktSheet
 import ws.createWrktFromBrkdn as createWrktBrkdn
 import UpdtRecentWrkts as updtRecentWrkts
 import dao.exerciseSheet as exSheetDao
+import ws.createWrkt as createWrkt
 
 config = configparser.ConfigParser()
 logging.config.fileConfig('logging.conf')
@@ -44,6 +45,7 @@ logger = logging.getLogger()
 createWrktSheet.logger = logger
 createWrktBrkdn.logger = logger
 exSheetDao.logger = logger
+createWrkt.logger = logger
 
 def determineGear(ex):
     '''
@@ -432,7 +434,7 @@ def saveExToDb(exLst, wsConfig):
 
 def saveExToSite(exLst, wsConfig):
     token = wsConfig['token']
-    
+    createWrkt.create(exLst, wsConfig)
 
 def cleanProcessedFile(exLst, monitorDir, tempDir):
     '''
@@ -523,7 +525,7 @@ def main():
 
     if len(exLst) > 0:
         saveExToSheet(exLst, scpt)
-        saveExToDb(exLst, config['webservices'])
+        # saveExToDb(exLst, config['webservices'])
         saveExToSite(exLst, config['webservices'])
 
     cleanProcessedFile(exLst, monitorDir, tempDir)
