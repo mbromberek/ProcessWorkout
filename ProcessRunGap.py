@@ -433,7 +433,6 @@ def saveExToDb(exLst, wsConfig):
         logger.info('Saving to Database turned off')
 
 def saveExToSite(exLst, wsConfig):
-    token = wsConfig['token']
     createWrkt.create(exLst, wsConfig)
 
 def cleanProcessedFile(exLst, monitorDir, tempDir):

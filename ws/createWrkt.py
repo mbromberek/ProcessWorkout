@@ -19,6 +19,7 @@ def create(exLst, wsConfig):
     # Convert ExerciseInfo object to Dictionary
     for ex in exLst:
         wrkt = ex.to_psite_dict()
+        wrkt.pop('notes',None) #remove Notes field
         wrktLst.append(wrkt)
 
     logger.debug(wrktLst)

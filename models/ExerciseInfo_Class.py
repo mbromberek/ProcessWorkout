@@ -208,8 +208,6 @@ class ExerciseInfo:
             wrkt['ele_up'] = '{0:.{1}f}'.format(self.elevationGain*METERS_TO_FEET,1)
         if self.elevationLoss != '':
             wrkt['ele_down'] = '{0:.{1}f}'.format(self.elevationLoss*METERS_TO_FEET,1)
-        if self.wrktSegments != '':
-            wrkt['wrkt_segments'] = self.wrktSegments
         if self.originLoc != '':
             wrkt['originLoc'] = self.originLoc
         if self.category != '':
@@ -217,26 +215,21 @@ class ExerciseInfo:
         if self.clothes != '':
             wrkt['clothes'] = self.clothes
 
-        # if self.intvlTotDistMi != 0:
-        #     wrkt['warm_up'] = {}
-        #     wrkt['warm_up']['tot_dist_mi'] = self.warmUpTotDistMi
-        #     wrkt['warm_up']['tot_tot_tm_sec'] = self.warmUpTotDurSec
-        #     wrkt['warm_up']['tot_pace_sec'] = self.warmUpTotPaceSec
-        #     wrkt['cool_down'] = {}
-        #     wrkt['cool_down']['tot_dist_mi'] = self.coolDnTotDistMi
-        #     wrkt['cool_down']['tot_tot_tm_sec'] = self.coolDnTotDurSec
-        #     wrkt['cool_down']['tot_pace_sec'] = self.coolDnTotPaceSec
-        #     wrkt['intrvl'] = {}
-        #     wrkt['intrvl']['tot_dist_mi'] = self.intvlTotDistMi
-        #     wrkt['intrvl']['tot_tot_tm_sec'] = self.intvlTotDurSec
-        #     wrkt['intrvl']['tot_pace_sec'] = self.intvlTotPaceSec
-        #     wrkt['intrvl']['tot_ele_up'] = self.intvlTotEleUp
-        #     wrkt['intrvl']['tot_ele_down'] = self.intvlTotEleDown
-        #     wrkt['intrvl']['avg_dist_mi'] = self.intvlAvgDistMi
-        #     wrkt['intrvl']['avg_tot_tm_sec'] = self.intvlAvgDurSec
-        #     wrkt['intrvl']['avg_pace_sec'] = self.intvlAvgPaceSec
-        #     wrkt['intrvl']['avg_ele_up'] = self.intvlAvgEleUp
-        #     wrkt['intrvl']['avg_ele_down'] = self.intvlAvgEleDown
-
+        if self.warmUpTotDistMi >0:
+            wrkt['warm_up_tot_dist_mi'] = str(round(self.warmUpTotDistMi, 2))
+        if self.warmUpTotDurSec >0:
+            wrkt['warm_up_tot_tm_sec'] = str(round(self.warmUpTotDurSec))
+        if self.coolDnTotDistMi >0:
+            wrkt['cool_down_tot_dist_mi'] = str(round(self.coolDnTotDistMi, 2))
+        if self.coolDnTotDurSec >0:
+            wrkt['cool_down_tot_tm_sec'] = str(round(self.coolDnTotDurSec))
+        if self.intvlTotDistMi >0:
+            wrkt['intrvl_tot_dist_mi'] = str(round(self.intvlTotDistMi, 2))
+        if self.intvlTotDurSec >0:
+            wrkt['intrvl_tot_tm_sec'] = str(round(self.intvlTotDurSec))
+        if self.intvlTotEleUp >0:
+            wrkt['intrvl_tot_ele_up'] =            '{0:.{1}f}'.format(self.intvlTotEleUp*METERS_TO_FEET,1)
+        if self.intvlTotEleDown >0:
+            wrkt['intrvl_tot_ele_down'] = '{0:.{1}f}'.format(self.intvlTotEleDown*METERS_TO_FEET,1)
 
         return wrkt
