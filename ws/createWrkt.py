@@ -21,14 +21,10 @@ def create(exLst, wsConfig):
         wrkt = ex.to_psite_dict()
         wrktLst.append(wrkt)
 
-    # wrktLst
     logger.debug(wrktLst)
-
-    token = '+Wrh9wG5rXXAfh551ATvSkiJlbWTKQba'
 
     # Call webservice
     r = requests.post(server + ':' + port + '/api/workout', json=wrktLst, headers={'Authorization':'Bearer ' + token})
     logger.info(r)
 
     return r
-    # return None
