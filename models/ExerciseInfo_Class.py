@@ -4,6 +4,10 @@ BSD 3-Clause License
 Copyright (c) 2020, Mike Bromberek
 All rights reserved.
 '''
+# First party classes
+from datetime import datetime
+
+# Custom Classes
 from Weather_Class import WeatherInfo
 import util.timeConv as tc
 
@@ -79,11 +83,24 @@ class ExerciseInfo:
 #     def __str__(self):
 #         print (epName)
 
+    def __repr__(self):
+        return '<Exercise {}: {}>'.format(self.type, self.startTime)
+
     def cycleDateTime():
         return self.runDate + ' ' + self.runTime
 
     def elevationChange(self):
         return '{0:.{1}f}'.format(self.elevationGain*METERS_TO_FEET,1) + '↑\n' + '{0:.{1}f}'.format(self.elevationLoss*METERS_TO_FEET,1) + '↓'
+
+    @staticmethod
+    def breakupElevation(ele):
+        d = {}
+        if ele == None:
+            return None
+        else:
+            d['ele_up'] = float(ele.split('↑')[0])
+            d['ele_down'] = float(ele.split('↑')[1].split('↓')[0])
+        return d
 
     def to_dict(self):
         dateTimeSheetFormat = '%m/%d/%Y %H:%M:%S'
@@ -202,12 +219,10 @@ class ExerciseInfo:
             wrkt['gear'] = self.gear
         if self.category != '':
             wrkt['category'] = self.category
-        if self.gear != '':
-            wrkt['elevation'] = self.elevationChange()
         if self.elevationGain != '':
-            wrkt['ele_up'] = '{0:.{1}f}'.format(self.elevationGain*METERS_TO_FEET,1)
+            wrkt['ele_up'] = '{0:.{1}f}'.format(self.elevationGain,1)
         if self.elevationLoss != '':
-            wrkt['ele_down'] = '{0:.{1}f}'.format(self.elevationLoss*METERS_TO_FEET,1)
+            wrkt['ele_down'] = '{0:.{1}f}'.format(self.elevationLoss,1)
         if self.originLoc != '':
             wrkt['originLoc'] = self.originLoc
         if self.category != '':
@@ -233,3 +248,32 @@ class ExerciseInfo:
             wrkt['intrvl_tot_ele_down'] = '{0:.{1}f}'.format(self.intvlTotEleDown*METERS_TO_FEET,1)
 
         return wrkt
+
+    def from_dict(self, data):
+        dateTimeSheetFormat = '%m/%d/%Y %H:%M:%S'
+        self.startTime = datetime.strptime(data['wrkt_dt'], dateTimeSheetFormat)
+        if 'wrkt_typ' in data:
+            self.type = data['wrkt_typ']
+        if 'tot_tm' in data:
+            self.durTot = data['tot_tm']
+        if 'dist' in data:
+            self.distTot = data['dist']
+        if 'hr' in data:
+            self.avgHeartRate = data['hr']
+        if 'cal_burn' in data:
+            self.calTot = data['cal_burn']
+        if 'notes' in data:
+            self.userNotes = data['notes']
+        if 'gear' in data:
+            self.gear = data['gear']
+        if 'category' in data:
+            self.category = data['category']
+        if 'elevation' in data:
+            d = self.breakupElevation(data['elevation'])
+            self.elevationGain = d['ele_up']
+            self.elevationLoss = d['ele_down']
+        else:
+            if 'ele_up' in data:
+                self.elevationGain = data['ele_up']
+            if 'ele_down' in data:
+                self.elevationGain = data['ele_down']
