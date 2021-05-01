@@ -37,6 +37,7 @@ class ExerciseInfo:
 
     gear = ''
     category = ''
+    training_type = ''
 
     source = ''
 
@@ -229,6 +230,8 @@ class ExerciseInfo:
             wrkt['category'] = self.category
         if self.clothes != '':
             wrkt['clothes'] = self.clothes
+        if self.training_type != '':
+            wrkt['training_type'] = self.training_type
 
         if self.warmUpTotDistMi >0:
             wrkt['warm_up_tot_dist_mi'] = str(round(self.warmUpTotDistMi, 2))

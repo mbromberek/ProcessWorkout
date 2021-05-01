@@ -44,7 +44,7 @@ def processUpdates(scpt, nbrRows, wsConfig):
     '''
     logger.info('processUpdates: ' + str(nbrRows))
     sheetWrktLst = exSheetDao.getRecentWrkts(scpt, nbrRows)
-    logger.info(sheetWrktLst)
+    logger.debug(sheetWrktLst)
     # r = createWrktSheet.create(sheetWrktLst, wsConfig)
     wrktLst = calcWrktFieldsFromSheet(sheetWrktLst)
     r = updateWrkt.update(wrktLst, wsConfig)
@@ -62,6 +62,10 @@ def calcWrktFieldsFromSheet(sheetWrktLst):
         # For now will ignore the weather from Notes
         # strt_wethr = notes_dict['weatherStart']
         # end_wethr =  notes_dict['weatherEnd']
+        cat_split = ex.category.split(' - ')
+        ex.category = cat_split[0]
+        if len(cat_split) >1:
+            ex.training_type = cat_split[1]
 
         logger.info(ex)
         updtWrktLst.append(ex)
