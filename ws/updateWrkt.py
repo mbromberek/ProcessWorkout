@@ -11,7 +11,14 @@ import requests
 from ExerciseInfo_Class import ExerciseInfo
 
 def update(exLst, wsConfig):
+    '''
+    Returns: dictionary
+        result = webservice result
+        wrktNotUpdtLst = workouts not found
+        wrktUpdtLst = update results for workouts
+    '''
     wrktLst = []
+    wrktNotUpdtLst = []
     server = wsConfig['server']
     port = wsConfig['port']
     token = wsConfig['token']
@@ -22,6 +29,7 @@ def update(exLst, wsConfig):
         wrkt_id = getWrktId(wrkt['wrkt_dttm'], wsConfig)
         if wrkt_id == None:
             logger.error('No match for workout date: ' + wrkt['wrkt_dttm'])
+            wrktNotUpdtLst.append(wrkt)
         else:
             wrkt['id'] = wrkt_id
             wrktLst.append(wrkt)
@@ -30,9 +38,12 @@ def update(exLst, wsConfig):
 
     # Call webservice
     r = requests.put(server + ':' + port + '/api/workout', json=wrktLst, headers={'Authorization':'Bearer ' + token})
-    # logger.info(r)
+    logger.info("Update Result: " + str(r))
+    # logger.info(r.status_code)
+    # logger.info(r.json())
+    update_result = {'result':r, 'wrktNotUpdtLst': wrktNotUpdtLst, 'wrktUpdtLst': r.json()}
 
-    return r
+    return update_result
     # return None
 
 def getWrktId(dttm_str, wsConfig):

@@ -26,6 +26,7 @@ import util.timeConv as tc
 import dao.exerciseSheet as exSheetDao
 from ExerciseInfo_Class import ExerciseInfo
 import ws.updateWrkt as updateWrkt
+import ws.createWrkt as createWrkt
 
 config = configparser.ConfigParser()
 logging.config.fileConfig('logging.conf')
@@ -33,6 +34,7 @@ logger = logging.getLogger()
 createWrktSheet.logger = logger
 exSheetDao.logger = logger
 updateWrkt.logger = logger
+createWrkt.logger = logger
 
 def processUpdates(scpt, nbrRows, wsConfig):
     '''
@@ -48,7 +50,6 @@ def processUpdates(scpt, nbrRows, wsConfig):
     # r = createWrktSheet.create(sheetWrktLst, wsConfig)
     wrktLst = calcWrktFieldsFromSheet(sheetWrktLst)
     r = updateWrkt.update(wrktLst, wsConfig)
-    logger.info(r)
     return r
 
 def calcWrktFieldsFromSheet(sheetWrktLst):
@@ -60,8 +61,8 @@ def calcWrktFieldsFromSheet(sheetWrktLst):
         ex.userNotes = notes_dict['notes']
         ex.clothes = notes_dict['clothes']
         # For now will ignore the weather from Notes
-        # strt_wethr = notes_dict['weatherStart']
-        # end_wethr =  notes_dict['weatherEnd']
+        strt_wethr = notes_dict['weatherStart']
+        end_wethr =  notes_dict['weatherEnd']
         cat_split = ex.category.split(' - ')
         ex.category = cat_split[0]
         if len(cat_split) >1:
@@ -182,7 +183,11 @@ def main():
 
     scpt = exSheetDao.initializeAppleScriptFunc( os.path.join(config['applescript']['script_path'], config['applescript']['script_name']), sheetName)
 
-    processUpdates(scpt, config['update_workouts']['nbr_records'], config['webservices'])
+    result = processUpdates(scpt, config['update_workouts']['nbr_records'], config['webservices'])
+
+    # logger.info(result['wrktNotUpdtLst'])
+    # if len(result['wrktNotUpdtLst']) >0:
+    #     createWrkt.create_json(result['wrktNotUpdtLst'],config['webservices'])
 
     exSheetDao.closeSheet(scpt, config['applescript']['close_sheet'])
 

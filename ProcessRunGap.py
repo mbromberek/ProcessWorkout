@@ -514,7 +514,12 @@ def main():
         logger.debug(os.listdir(monitorDir))
 
     if (config['update_workouts']['process_with_new'] == 'Y'):
-        updtRecentWrkts.processUpdates(scpt, config['update_workouts']['nbr_records'], config['webservices'])
+        result = updtRecentWrkts.processUpdates(scpt, config['update_workouts']['nbr_records'], config['webservices'])
+
+        logger.info(result['wrktNotUpdtLst'])
+        if len(result['wrktNotUpdtLst']) >0:
+            createWrkt.create_json(result['wrktNotUpdtLst'],config['webservices'])
+
 
     uncompressMonitorToTemp(monitorDir, tempDir)
 

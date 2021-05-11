@@ -259,6 +259,7 @@ class ExerciseInfo:
             self.type = data['wrkt_typ']
         if 'tot_tm' in data:
             self.durTot = data['tot_tm']
+            self.totTmSec = tc.time_str_to_sec(self.durTot)
         if 'dist' in data:
             self.distTot = data['dist']
         if 'hr' in data:

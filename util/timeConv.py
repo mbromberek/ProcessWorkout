@@ -19,6 +19,7 @@ import math
 import numpy as np
 import pandas as pd
 
+
 '''
 Constants
 '''
@@ -86,3 +87,16 @@ def formatNumbersTime(h, m, s, forceHr=False):
 def formatSheetsTime(h, m, s):
     durTotSheets = str(h) + ':' + str(m) + ':' + str(s)
     return durTotSheets
+
+def time_str_to_sec(tm_str):
+    '''
+    Convert passed in time string from format ##h ##m ##s to seconds
+    '''
+
+    hours_sec = int(re.search('(\d*)h', tm_str).group(1))*SECONDS_IN_HOUR if re.search('(\d*)h', tm_str) else 0
+    minutes_sec = int(re.search('(\d*)m', tm_str).group(1))*SECONDS_IN_MINUTE if re.search('(\d*)m', tm_str) else 0
+    seconds = int(re.search('(\d*)s', tm_str).group(1)) if re.search('(\d*)s', tm_str) else 0
+
+    tm_sec = hours_sec + minutes_sec + seconds
+
+    return tm_sec
