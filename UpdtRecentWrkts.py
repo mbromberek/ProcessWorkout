@@ -25,6 +25,7 @@ import ws.createWrktFromSheet as createWrktSheet
 import util.timeConv as tc
 import dao.exerciseSheet as exSheetDao
 from ExerciseInfo_Class import ExerciseInfo
+from Weather_Class import WeatherInfo
 import ws.updateWrkt as updateWrkt
 import ws.createWrkt as createWrkt
 
@@ -61,8 +62,11 @@ def calcWrktFieldsFromSheet(sheetWrktLst):
         ex.userNotes = notes_dict['notes']
         ex.clothes = notes_dict['clothes']
         # For now will ignore the weather from Notes
-        strt_wethr = notes_dict['weatherStart']
-        end_wethr =  notes_dict['weatherEnd']
+        ex.startWeather = WeatherInfo()
+        ex.startWeather.from_dict(notes_dict['weatherStart'])
+        # ex.endWeather =  notes_dict['weatherEnd']
+        ex.endWeather = WeatherInfo()
+        ex.endWeather.from_dict(notes_dict['weatherEnd'])
         cat_split = ex.category.split(' - ')
         ex.category = cat_split[0]
         if len(cat_split) >1:
@@ -120,8 +124,10 @@ def breakupNotes(rec):
     logger.debug('Clothes:' + d['clothes'])
     logger.debug('Notes:' + d['notes'])
 
-    d['weatherStart'] = splitWeather(weatherStart, keySuffix='_strt')
-    d['weatherEnd'] = splitWeather(weatherEnd, keySuffix='_end')
+    d['weatherStart'] = splitWeather(weatherStart)
+    d['weatherEnd'] = splitWeather(weatherEnd)
+    logger.debug('Weather Start: ' + str(d['weatherStart']))
+    logger.debug('Weather End: ' + str(d['weatherEnd']))
 
     return d
 

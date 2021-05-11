@@ -19,3 +19,11 @@ class WeatherInfo:
 
     def __init__(self):
         self.temp = -999
+
+    def from_dict(self, data):
+        self.temp = data['temp']
+        self.apparentTemp = data['temp_feels_like']
+        self.humidity = data['hmdty']
+        self.windSpeed = data['wind_speed']
+        self.windGust = data['wind_gust']
+        self.summary = data['wethr_cond']

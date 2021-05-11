@@ -197,7 +197,8 @@ class ExerciseInfo:
             wrkt['wethr_start']['wind_speed'] = self.startWeather.windSpeed
             wrkt['wethr_start']['wind_gust'] = self.startWeather.windGust
             wrkt['wethr_start']['wethr_cond'] = self.startWeather.summary
-            wrkt['wethr_start']['tm'] = self.startWeather.time.strftime(dateTimeSheetFormat)
+            if self.startWeather.time != '':
+                wrkt['wethr_start']['tm'] = self.startWeather.time.strftime(dateTimeSheetFormat)
 
             wrkt['wethr_end'] = {}
             wrkt['wethr_end']['temp'] = self.endWeather.temp
@@ -208,7 +209,8 @@ class ExerciseInfo:
             wrkt['wethr_end']['wind_speed'] = self.endWeather.windSpeed
             wrkt['wethr_end']['wind_gust'] = self.endWeather.windGust
             wrkt['wethr_end']['wethr_cond'] = self.endWeather.summary
-            wrkt['wethr_end']['tm'] = self.endWeather.time.strftime(dateTimeSheetFormat)
+            if self.endWeather.time != '':
+                wrkt['wethr_end']['tm'] = self.endWeather.time.strftime(dateTimeSheetFormat)
 
         if self.avgHeartRate != '':
             wrkt['hr'] = self.avgHeartRate
