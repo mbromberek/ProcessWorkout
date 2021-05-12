@@ -152,7 +152,7 @@ def getWeather(lat, lon, tm):
     weatherData = apiCall(darkSkyUrl)
     w.temp = weatherData['currently']['temperature']
     w.apparentTemp = weatherData['currently']['apparentTemperature']
-    w.humidity = weatherData['currently']['humidity']
+    w.humidity = weatherData['currently']['humidity']*100
     w.windSpeed = weatherData['currently']['windSpeed']
     w.summary = weatherData['currently']['summary']
     w.windGust = weatherData['currently']['windGust']
@@ -177,7 +177,7 @@ def generateWeatherUserNotes(w):
     txtLst.append(' degrees ')
     txtLst.append(w.summary)
     txtLst.append(', ')
-    txtLst.append('{0:.{1}f}'.format(w.humidity*100,0))
+    txtLst.append('{0:.{1}f}'.format(w.humidity,0))
     txtLst.append(' percent humidity, wind speed ')
     txtLst.append('{0:.{1}f}'.format(w.windSpeed,2))
     txtLst.append(' mph, wind gust ')
