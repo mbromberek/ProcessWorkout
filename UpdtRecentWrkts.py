@@ -56,6 +56,7 @@ def processUpdates(scpt, nbrRows, wsConfig):
 def calcWrktFieldsFromSheet(sheetWrktLst):
     updtWrktLst = []
     for wrkt in sheetWrktLst:
+        logger.debug('Workout for ' + str(wrkt['wrkt_dt']))
         ex = ExerciseInfo()
         ex.from_dict(wrkt)
         notes_dict = breakupNotes(ex.userNotes)
@@ -120,7 +121,7 @@ def breakupNotes(rec):
 
     d['notes'] = rec[endMatchPos:].strip()
     logger.debug('Weather Start:' + weatherStart)
-    logger.debug('Weather End:' + weatherStart)
+    logger.debug('Weather End:' + weatherEnd)
     logger.debug('Clothes:' + d['clothes'])
     logger.debug('Notes:' + d['notes'])
 

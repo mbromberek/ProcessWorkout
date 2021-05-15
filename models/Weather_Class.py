@@ -21,9 +21,15 @@ class WeatherInfo:
         self.temp = -999
 
     def from_dict(self, data):
-        self.temp = data['temp']
-        self.apparentTemp = data['temp_feels_like']
-        self.humidity = data['hmdty']
-        self.windSpeed = data['wind_speed']
-        self.windGust = data['wind_gust']
-        self.summary = data['wethr_cond']
+        if 'temp' in data:
+            self.temp = data['temp']
+        if 'temp_feels_like' in data:
+            self.apparentTemp = data['temp_feels_like']
+        if 'hmdty' in data:
+            self.humidity = data['hmdty']
+        if 'wind_speed' in data:
+            self.windSpeed = data['wind_speed']
+        if 'wind_gust' in data:
+            self.windGust = data['wind_gust']
+        if 'wethr_cond' in data:
+            self.summary = data['wethr_cond']
