@@ -37,7 +37,7 @@ def update(exLst, wsConfig):
     logger.debug(wrktLst)
 
     # Call webservice
-    r = requests.put(server + ':' + port + '/api/workout', json=wrktLst, headers={'Authorization':'Bearer ' + token})
+    r = requests.put(server + ':' + port + '/api/workout', json=wrktLst, headers={'Authorization':'Bearer ' + token}, verify=wsConfig['verifyCert'] == 'Y')
     logger.info("Update Result: " + str(r))
     # logger.info(r.status_code)
     # logger.info(r.json())
@@ -47,7 +47,7 @@ def update(exLst, wsConfig):
     # return None
 
 def getWrktId(dttm_str, wsConfig):
-    r = requests.get(wsConfig['server'] + ':' + wsConfig['port'] + '/api/workouts/' + dttm_str, headers={'Authorization':'Bearer ' + wsConfig['token']})
+    r = requests.get(wsConfig['server'] + ':' + wsConfig['port'] + '/api/workouts/' + dttm_str, headers={'Authorization':'Bearer ' + wsConfig['token']}, verify=wsConfig['verifyCert'] == 'Y')
     if r.status_code == 200:
         data = r.json()
         return data[0]['id']

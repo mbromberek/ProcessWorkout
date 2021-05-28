@@ -31,7 +31,7 @@ def create_json(wrktLst, wsConfig):
     logger.debug(wrktLst)
 
     # Call webservice
-    r = requests.post(server + ':' + port + '/api/workout', json=wrktLst, headers={'Authorization':'Bearer ' + token})
+    r = requests.post(server + ':' + port + '/api/workout', json=wrktLst, headers={'Authorization':'Bearer ' + token}, verify=wsConfig['verifyCert'] == 'Y')
     logger.info('Create Result: ' + str(r))
     if r.status_code == 400:
         logger.info(r.json())
