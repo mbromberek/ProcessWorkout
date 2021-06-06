@@ -445,9 +445,10 @@ def rm_unneeded_cols(actv_orig):
     # Rearrange columns
     actv_df = actv_df[['date_time', 'dist_mi', 'dur_sec', 'dur_str'
         , 'avg_pace', 'mile','kilometer','segment','resume'
-        , 'hr', 'ele_ft', 'ele_ft_delta', 'runcad'
+        , 'hr', 'ele_ft', 'ele_ft_delta'
         , 'dist_meters'
     ]]
+    #, 'runcad'
     return actv_df
 
 
