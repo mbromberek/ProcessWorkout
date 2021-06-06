@@ -9,6 +9,7 @@ from datetime import datetime
 
 # Custom Classes
 from Weather_Class import WeatherInfo
+from Wrkt_intrvl_class import Workout_interval
 import util.timeConv as tc
 
 METERS_TO_FEET = 3.28084
@@ -58,6 +59,8 @@ class ExerciseInfo:
     clothes = ''
 
     wrktSegments = None
+    mileSplits = []
+    intrvlSplits = []
 
     warmUpTotDistMi = 0
     warmUpTotDurSec = 0
@@ -252,6 +255,16 @@ class ExerciseInfo:
         if self.intvlTotEleDown >0:
             wrkt['intrvl_tot_ele_down'] = '{0:.{1}f}'.format(self.intvlTotEleDown*METERS_TO_FEET,1)
 
+        if len(self.mileSplits) >0:
+            wrkt['mile_splits'] = []
+            for splt in self.mileSplits:
+                wrkt['mile_splits'].append(splt.to_dict())
+
+        if len(self.intrvlSplits) >0:
+            wrkt['interval_splits'] = []
+            for splt in self.intrvlSplits:
+                wrkt['interval_splits'].append(splt.to_dict())
+
         return wrkt
 
     def from_dict(self, data):
@@ -283,3 +296,13 @@ class ExerciseInfo:
                 self.elevationGain = data['ele_up']
             if 'ele_down' in data:
                 self.elevationGain = data['ele_down']
+
+    @staticmethod
+    def wrkt_intrvl_from_dict(data, break_type):
+        splt_lst = []
+        for segment in data:
+            splt = Workout_interval()
+            print(splt)
+            splt.from_df_dict(segment, break_type)
+            splt_lst.append(splt)
+        return splt_lst

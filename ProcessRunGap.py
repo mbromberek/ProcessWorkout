@@ -374,6 +374,30 @@ def processExercise(filename):
             print('<ERROR> Breakdown Workout Unexpected Error')
             print(sys.exc_info())
             raise
+    try:
+        mileSplitsDf = wrktSplits.breakDownWrkt( \
+            srcDir, fName=ex.rungapFile, \
+            splitBy='mile' \
+        )
+        ex.mileSplits = \
+          ExerciseInfo.wrkt_intrvl_from_dict(mileSplitsDf.to_dict(orient='records'), 'mile')
+    except:
+        print('<ERROR> Breakdown Workout by mile Unexpected Error')
+        print(sys.exc_info())
+        raise
+
+    if ex.category == 'Training':
+        try:
+            intrvlSplitsDf = wrktSplits.breakDownWrkt( \
+                srcDir, fName=ex.rungapFile, \
+                splitBy='segment' \
+            )
+            ex.intrvlSplits = \
+              ExerciseInfo.wrkt_intrvl_from_dict(intrvlSplitsDf.to_dict(orient='records'), 'segment')
+        except:
+            print('<ERROR> Breakdown Workout by segment Unexpected Error')
+            print(sys.exc_info())
+            raise
 
     if (config['rungap']['print_data'] == 'Y'):
         printWrktDetails(filename, ex)
