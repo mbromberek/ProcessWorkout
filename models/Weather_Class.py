@@ -15,6 +15,7 @@ class WeatherInfo:
     lat = -999
     lon = -999
     time = ''
+    dewPoint = ''
 
 
     def __init__(self):
@@ -33,3 +34,5 @@ class WeatherInfo:
             self.windGust = data['wind_gust']
         if 'wethr_cond' in data:
             self.summary = data['wethr_cond']
+        if 'dew_point' in data:
+            self.dewPoint = data['dew_point']

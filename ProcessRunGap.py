@@ -159,6 +159,7 @@ def getWeather(lat, lon, tm):
     w.lat = lat
     w.lon = lon
     w.time = tm
+    w.dewPoint = weatherData['currently']['dewPoint']
 
     if (config['dark_sky']['save_weather'] == 'Y'):
         with open('/tmp/weatherData' + tm.strftime('%Y%m%dT%H%M%S') + '.txt', 'w') as outfile:
