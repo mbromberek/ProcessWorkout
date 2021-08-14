@@ -387,18 +387,31 @@ def processExercise(filename):
         print(sys.exc_info())
         raise
 
-    if ex.category == 'Training':
-        try:
-            intrvlSplitsDf = wrktSplits.breakDownWrkt( \
-                srcDir, fName=ex.rungapFile, \
-                splitBy='segment' \
-            )
+    try:
+        intrvlSplitsDf = wrktSplits.breakDownWrkt( \
+            srcDir, fName=ex.rungapFile, \
+            splitBy='segment' \
+        )
+        if intrvlSplitsDf.shape[0] >1:
             ex.intrvlSplits = \
               ExerciseInfo.wrkt_intrvl_from_dict(intrvlSplitsDf.to_dict(orient='records'), 'segment')
-        except:
-            print('<ERROR> Breakdown Workout by segment Unexpected Error')
-            print(sys.exc_info())
-            raise
+    except:
+        print('<ERROR> Breakdown Workout by segment Unexpected Error')
+        print(sys.exc_info())
+        raise
+
+    try:
+        resumeSplitsDf = wrktSplits.breakDownWrkt( \
+            srcDir, fName=ex.rungapFile, \
+            splitBy='resume' \
+        )
+        if resumeSplitsDf.shape[0] >1:
+            ex.pauseSplits = \
+              ExerciseInfo.wrkt_intrvl_from_dict(mileSplitsDf.to_dict(orient='records'), 'resume')
+    except:
+        logger.error('<ERROR> Breakdown Workout by resume Unexpected Error')
+        logger.error(sys.exc_info())
+        raise
 
     if (config['rungap']['print_data'] == 'Y'):
         printWrktDetails(filename, ex)

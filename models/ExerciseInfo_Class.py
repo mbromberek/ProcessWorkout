@@ -61,6 +61,7 @@ class ExerciseInfo:
     wrktSegments = None
     mileSplits = []
     intrvlSplits = []
+    pauseSplits = []
 
     warmUpTotDistMi = 0
     warmUpTotDurSec = 0
@@ -273,6 +274,12 @@ class ExerciseInfo:
             wrkt['interval_splits'] = []
             for splt in self.intrvlSplits:
                 wrkt['interval_splits'].append(splt.to_dict())
+
+        if len(self.pauseSplits) >0:
+            wrkt['pause_splits'] = []
+            for splt in self.pauseSplits:
+                wrkt['pause_splits'].append(splt.to_dict())
+
 
         return wrkt
 
