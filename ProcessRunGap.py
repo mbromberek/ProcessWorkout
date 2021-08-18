@@ -407,7 +407,7 @@ def processExercise(filename):
         )
         if resumeSplitsDf.shape[0] >1:
             ex.pauseSplits = \
-              ExerciseInfo.wrkt_intrvl_from_dict(mileSplitsDf.to_dict(orient='records'), 'resume')
+              ExerciseInfo.wrkt_intrvl_from_dict(resumeSplitsDf.to_dict(orient='records'), 'resume')
     except:
         logger.error('<ERROR> Breakdown Workout by resume Unexpected Error')
         logger.error(sys.exc_info())
