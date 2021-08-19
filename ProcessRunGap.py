@@ -8,7 +8,7 @@ All rights reserved.
 '''
 
 # First party classes
-import os,glob,shutil
+import os,glob,shutil, platform
 import sys
 import re
 import datetime
@@ -572,7 +572,12 @@ def main():
 
     cleanProcessedFile(exLst, monitorDir, tempDir)
 
-    if (config['applescript']['close_sheet'] == 'Y'):
+    hostKeepOpenLst = config['applescript']['keep_sheet_open_on'].split(',')
+    logger.info(str(hostKeepOpenLst))
+    logger.info(platform.node())
+
+    if (config['applescript']['close_sheet'] == 'Y' \
+    and platform.node() not in hostKeepOpenLst):
         scpt.call('closeSheet')
 
     logger.info('End ProcessRunGap')
