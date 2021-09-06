@@ -119,7 +119,8 @@ def clean_events(df_orig):
                                  '_HKPrivateWorkoutSegmentIndex':'segment_index',
                                  '_HKPrivateMetadataSplitActiveDurationQuantity':'dur_sec',
                                  '_HKPrivateMetadataSplitDistanceQuantity':'dist_meters'}, inplace=True)
-    events_clean.dist_uom.replace(['1','2'],['kilometers','miles'], inplace=True)
+    if 'dist_uom' in events_clean.columns:
+        events_clean.dist_uom.replace(['1','2'],['kilometers','miles'], inplace=True)
 
     if 'segment_index' in events_clean.columns:
         events_clean['segment_index'].fillna(-1, inplace=True)
