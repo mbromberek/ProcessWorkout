@@ -349,6 +349,7 @@ def add_splits(actv_orig, evnt_orig):
         , {'evnt_df': pause_resume_events, 'new_field':'pause_resume', 'evnt_field': 'type'}
         , {'evnt_df': pause_resume_events, 'new_field':'pause_resume_section', 'evnt_field': 'switch_id'}
     ])
+    activity_clean['pause_resume'] = activity_clean['pause_resume'].astype('str')
     activity_clean.pause_resume.replace(to_replace='0', value='resume', inplace=True)
     activity_clean['date_time'] = pd.to_datetime(activity_clean['time'], unit='s')
     activity_clean['pause_resume_section'] = activity_clean['pause_resume_section'].astype('int64')
