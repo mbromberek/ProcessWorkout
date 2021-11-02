@@ -47,6 +47,11 @@ pip install -r requirements.txt
 deactivate
 workon ProcessWorkout #Activate ProcessWorkout Virtual Environment
 workon #See all projects
+
+python3 -m venv $HOME/.virtualenvironments/ProcessWorkout
+source $HOME/.virtualenvironments/ProcessWorkout/bin/activate
+pip install -r requirements.txt
+deactivate
 ```
 
 # WorkoutAnalyze
