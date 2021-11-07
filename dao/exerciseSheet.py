@@ -55,6 +55,7 @@ def getRecentWrkts(scpt, nbrRows):
 
     for exSheet in exSheetLst:
         wrkt = {}
+        exSheet['dateVal'] = tc.adjustAppleNumbersTimeForDst(exSheet['dateVal'])
         wrkt['wrkt_dt'] = exSheet['dateVal'].strftime(dateTimeSheetFormat)
         wrkt['wrkt_typ'] = exSheet['typeVal']
         h,m,s = tc.breakTimeFromSeconds(exSheet['durationVal'])

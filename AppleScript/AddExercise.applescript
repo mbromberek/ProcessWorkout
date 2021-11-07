@@ -162,7 +162,7 @@ on getExercises(numRowsToReturn)
 					set updateRow to -1
 					
 					if exerciseDateOrder = "desc" then
-						set lastRowToPull to firstRow + (numRowsToReturn as number) -1
+						set lastRowToPull to firstRow + (numRowsToReturn as number) - 1
 						if lastRow > lastRowToPull then
 							set lastRow to lastRowToPull
 						end if
@@ -347,4 +347,4 @@ my initialize("Exercise 2017 test.numbers")
 --my addExercise("06/03/2016", "Running", "0h 30m 31s", "4.01", "MI", "161", "111", "Run felt good", "4:00 PM", "")
 --my readLastExercise("Running", "desc")
 
-my getExercises(1)
+my getExercises(2)

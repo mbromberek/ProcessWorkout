@@ -12,7 +12,7 @@ Functions for converting time in seconds
 
 # First party classes
 import re
-import datetime, time
+import datetime, time, pytz
 import math
 
 # 3rd party classes
@@ -100,3 +100,33 @@ def time_str_to_sec(tm_str):
     tm_sec = hours_sec + minutes_sec + seconds
 
     return tm_sec
+
+def adjustAppleNumbersTimeForDst(dttm):
+    '''
+    This is needed since Numbers AppleScript is returning entries that were in DST with an hour later if pulled during ST. So adjusting the time to handle it.
+
+    If passed in datetime is in DST and current date is not in DST then
+        decrement passed datetime by one hour
+    If passed in datetime is not in DST and current date is in DST then
+        increment passed datetime by one hour
+    Else
+        return unmodified dttm
+    '''
+    # Set timezone to US/Central
+    tz_str = 'US/Central'
+
+    # Get current date and time and set timezone
+    curr_dttm = datetime.datetime.now()
+    curr_dttm_tz = pytz.timezone(tz_str).localize(curr_dttm)
+
+    # Set timezone for passed in datetime
+    dttmtz = pytz.timezone(tz_str).localize(dttm)
+
+    if bool(dttmtz.dst()) and not bool(curr_dttm_tz.dst()):
+        dttm_mod = dttm - datetime.timedelta(hours=1)
+        return dttm_mod
+    elif not bool(dttmtz.dst()) and bool(curr_dttm_tz.dst()):
+        dttm_mod = dttm + datetime.timedelta(hours=1)
+        return dttm_mod
+    else:
+        return dttm

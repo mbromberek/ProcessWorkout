@@ -81,6 +81,9 @@ def save_df(df, outDir, outName, frmt='csv'):
             df.to_csv(os.path.join(outDir, outName) + '.csv')
         elif outFrmt == 'pickle':
             df.to_pickle(os.path.join(outDir, outName) + '.pickle')
+        # elif outFrmt == 'json':
+            # df.to_json(os.path.join(outDir, outName) + '.json',orient='index')
+        # elif outFrmt == 'wrktIntrvlJson':
         else:
             logger.error('Invalid Format: ' + outFrmt)
 
