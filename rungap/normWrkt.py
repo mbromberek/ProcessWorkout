@@ -21,6 +21,7 @@ import pandas as pd
 
 # custom classes
 import util.timeConv as tc
+# import dao.files as fao
 
 def group_actv(df, group_by_field):
     '''
@@ -96,6 +97,9 @@ def normalize_activity(dataRaw):
     # Initialize Pandas DataFrames
     df_events = pd.DataFrame(eventTyps)
     df_activity = pd.DataFrame(activityPts)
+
+    # fao.save_df(df_activity, '/Users/mikeyb/Library/Mobile Documents/com~apple~CloudDocs/_Runs/analyze/results','df_activity', frmt=['csv','pickle'])
+    # fao.save_df(df_events, '/Users/mikeyb/Library/Mobile Documents/com~apple~CloudDocs/_Runs/analyze/results','df_events', frmt=['csv','pickle'])
 
     return(merge_evnts_to_actv(df_activity, df_events))
 
