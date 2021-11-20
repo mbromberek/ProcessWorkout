@@ -16,6 +16,7 @@ LAPS_COLUMN_NAMES = ['number', 'start_time', 'total_distance',
 
 MILES_IN_KILOMETERS = 0.621371
 METERS_IN_KILOMETERS = 1000
+METERS_TO_FEET = 3.28084
 
 def get_fit_lap_data(frame: fitdecode.records.FitDataMessage) -> Dict[str, Union[float, datetime, timedelta, int]]:
     """Extract some data from a FIT frame representing a lap and return
@@ -92,7 +93,9 @@ def get_dataframes(fname: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
     # Not sure if total_elapsed_time includes pauses
     laps_df['dur_sec'] = laps_df['total_elapsed_time']
     laps_df['dist_mi'] = (laps_df['total_distance'] / METERS_IN_KILOMETERS * MILES_IN_KILOMETERS).round(2)
-    laps_df.rename(columns={'avg_heart_rate': 'avg_hr','total_ascent':'ele_up', 'total_descent':'ele_down'}, inplace=True)
+    laps_df['ele_up'] = laps_df['total_ascent'] * METERS_TO_FEET
+    laps_df['ele_down'] = laps_df['total_descent'] * METERS_TO_FEET
+    laps_df.rename(columns={'avg_heart_rate': 'avg_hr'}, inplace=True)
     laps_df.set_index('number', inplace=True)
     points_df = pd.DataFrame(points_data, columns=POINTS_COLUMN_NAMES)
 

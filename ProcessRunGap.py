@@ -48,6 +48,8 @@ createWrktBrkdn.logger = logger
 exSheetDao.logger = logger
 createWrkt.logger = logger
 
+METERS_TO_FEET = 3.28084
+
 def determineGear(ex):
     '''
     determines gear based on the type of workout and if workout is a Run it looks at the category to determine shoes.
@@ -328,6 +330,9 @@ def processExercise(filename):
     if 'elevationGain' in data:
         ex.elevationGain = data['elevationGain']
         ex.elevationLoss = data['elevationLoss']
+        if ex.source == 'Coros':
+            ex.elevationGain = ex.elevationGain * METERS_TO_FEET
+            ex.elevationLoss = ex.elevationLoss * METERS_TO_FEET
 
     ex.category = determineCategory(ex)
 
