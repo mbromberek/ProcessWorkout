@@ -96,7 +96,7 @@ class ExerciseInfo:
         return self.runDate + ' ' + self.runTime
 
     def elevationChange(self):
-        return '{0:.{1}f}'.format(self.elevationGain*METERS_TO_FEET,1) + '↑\n' + '{0:.{1}f}'.format(self.elevationLoss*METERS_TO_FEET,1) + '↓'
+        return '{0:.{1}f}'.format(self.elevationGain,1) + '↑\n' + '{0:.{1}f}'.format(self.elevationLoss,1) + '↓'
 
     @staticmethod
     def breakupElevation(ele):
