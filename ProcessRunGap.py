@@ -38,6 +38,7 @@ import ws.createWrktFromBrkdn as createWrktBrkdn
 import UpdtRecentWrkts as updtRecentWrkts
 import dao.exerciseSheet as exSheetDao
 import ws.createWrkt as createWrkt
+import rungap.fitParse as fitParse
 
 config = configparser.ConfigParser()
 logging.config.fileConfig('logging.conf')
@@ -54,7 +55,7 @@ def determineGear(ex):
     '''
     gear = ''
     try:
-        if ex.type == 'Running':
+        if ex.type.lower() == 'running':
             if config.has_option('gear','shoe_' + ex.category.replace(' ','_').lower()):
                 gear = config['gear']['shoe_' + ex.category.replace(' ','_').lower()]
             else:
@@ -72,7 +73,7 @@ def determineCategory(ex):
     '''
     cat = ''
     categoryConfigs = ''
-    if ex.type == 'Running':
+    if ex.type.lower() == 'running':
         categoryConfigs = config['run_category']
         # Get day of the exercise
         if ex.startTime.strftime('%A') in categoryConfigs:
@@ -296,9 +297,10 @@ def processExercise(filename):
     ex.source = data['source']
     ex.originLoc = filename
     ex.rungapFile = fileNameStart + '.rungap.json'
+    ex.fitFile = fileNameStart + '.fit'
     ex.metadataFile = filename.split('/')[-1]
 
-    ex.type = data['activityType']['sourceName']
+    ex.type = data['activityType']['sourceName'].title()
 
     # Get the start time from file in UTC
     d = datetime.datetime.strptime(data['startTime']['time'],'%Y-%m-%dT%H:%M:%SZ')
@@ -386,6 +388,15 @@ def processExercise(filename):
         logger.error('<ERROR> Breakdown Workout by mile Unexpected Error')
         logger.error(sys.exc_info())
         # raise
+
+    if os.path.exists(srcDir + '/' + ex.fitFile):
+        lapsDf, pointsDf = fitParse.get_dataframes(srcDir + '/' + ex.fitFile)
+        # print('LAPS:')
+        # print(lapsDf)
+        ex.lapSplits = \
+          ExerciseInfo.wrkt_intrvl_from_dict(lapsDf.to_dict(orient='records'), 'lap')
+    # else:
+        # print('no LAPS fit file: ' + srcDir + '/' + ex.fitFile)
 
     try:
         intrvlSplitsDf = wrktSplits.breakDownWrkt( \
