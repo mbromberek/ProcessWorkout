@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from typing import Dict, Union, Optional,Tuple
 
 import pandas as pd
+import numpy as np
 
 import fitdecode
 
@@ -55,6 +56,7 @@ def get_fit_point_data(frame: fitdecode.records.FitDataMessage) -> Optional[Dict
     return data
 
 
+
 def get_dataframes(fname: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """Takes the path to a FIT file (as a string) and returns two Pandas
     DataFrames: one containing data about the laps, and one containing
@@ -100,6 +102,68 @@ def get_dataframes(fname: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
     points_df = pd.DataFrame(points_data, columns=POINTS_COLUMN_NAMES)
 
     return laps_df, points_df
+
+def normalize_laps_points(lapsDf, pointsDf):
+    # pointsDf = pd.read_pickle('files/points.pickle')
+    # lapsDf = pd.read_pickle('files/laps.pickle')
+    lapsDf['lap_nbr'] = lapsDf.index.values
+
+
+    # Join lap_nbr into points
+    laps_conditions = lapsDf['start_time'].tolist()
+    laps_choices = lapsDf.index.values.tolist()
+
+    point_lap_conditions = []
+    for i in range(len(laps_conditions)-1):
+        # print(i)
+        condition = pointsDf['timestamp'].ge(laps_conditions[i]) & pointsDf['timestamp'].lt(laps_conditions[i+1])
+        point_lap_conditions.append(condition)
+    point_lap_conditions.append(pointsDf['timestamp'].ge(laps_conditions[-1]))
+    point_events_df = pointsDf.copy()
+    point_events_df['lap_nbr'] = np.select(point_lap_conditions, laps_choices)
+
+
+    # point_events_df = pointsDf.merge(lapsDf[['start_time','lap_nbr']], how="left", left_on='timestamp', right_on='start_time', suffixes=('','_lap')).drop(columns=['start_time'])
+    # point_events_df.at[0,'lap_nbr'] = 1
+    # point_events_df['lap_nbr'].fillna(method='ffill', inplace=True)
+
+    # Calculate distance in miles from distance in meters
+    point_events_df['dist_mi'] = (point_events_df['distance'] / METERS_IN_KILOMETERS * MILES_IN_KILOMETERS)
+
+    # Get mile number
+    conditions = [
+        point_events_df['dist_mi'].lt(1),
+        point_events_df['dist_mi'].ge(1) & point_events_df['dist_mi'].lt(2),
+        point_events_df['dist_mi'].ge(2) & point_events_df['dist_mi'].lt(3),
+        point_events_df['dist_mi'].ge(3) & point_events_df['dist_mi'].lt(4),
+        point_events_df['dist_mi'].ge(4) & point_events_df['dist_mi'].lt(5),
+        point_events_df['dist_mi'].ge(5) & point_events_df['dist_mi'].lt(6),
+        point_events_df['dist_mi'].ge(6) & point_events_df['dist_mi'].lt(7),
+        point_events_df['dist_mi'].ge(7) & point_events_df['dist_mi'].lt(8),
+        point_events_df['dist_mi'].ge(8) & point_events_df['dist_mi'].lt(9),
+        point_events_df['dist_mi'].ge(9) & point_events_df['dist_mi'].lt(10),
+        point_events_df['dist_mi'].ge(10) & point_events_df['dist_mi'].lt(11),
+        point_events_df['dist_mi'].ge(11) & point_events_df['dist_mi'].lt(12),
+        point_events_df['dist_mi'].ge(12) & point_events_df['dist_mi'].lt(13)
+    ]
+    choices=[1,2,3,4,5,6,7,8,9,10,11,12,13]
+    point_events_df['mile_nbr'] = np.select(conditions, choices, default=0)
+
+    # View rows where mile_nbr == 2
+    # point_events_df[point_events_df['mile_nbr']==2]
+
+    # Get change in distance between rows
+    point_events_df['delta_dist_mi'] = point_events_df['dist_mi']-point_events_df['dist_mi'].shift(+1)
+    point_events_df['altitude_ft'] = point_events_df['altitude']*METERS_TO_FEET
+    point_events_df['delta_elevation'] = point_events_df['altitude_ft'] -point_events_df['altitude_ft'].shift(+1)
+
+
+    point_events_df['delta_dist_mi'].fillna(0, inplace=True)
+
+    # Get total seconds, not positive this is the right way
+    point_events_df['tot_dur_sec'] = point_events_df.index.values
+
+    return point_events_df
 
 if __name__ == '__main__':
 
