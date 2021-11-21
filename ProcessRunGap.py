@@ -396,13 +396,18 @@ def processExercise(filename):
 
     if os.path.exists(srcDir + '/' + ex.fitFile):
         lapsDf, pointsDf = fitParse.get_dataframes(srcDir + '/' + ex.fitFile)
-        # print('LAPS:')
-        # print(lapsDf)
-        ex.lapSplits = \
-          ExerciseInfo.wrkt_intrvl_from_dict(lapsDf.to_dict(orient='records'), 'lap')
-    # else:
-        # print('no LAPS fit file: ' + srcDir + '/' + ex.fitFile)
+        pointsEventsDf = fitParse.normalize_laps_points(lapsDf, pointsDf)
 
+        summaryLapDf = wrktSplits.summarizeWrktSplit(pointsEventsDf, summarizeBy='lap_nbr')
+        summaryMileDf = wrktSplits.summarizeWrktSplit(pointsEventsDf, summarizeBy='mile_nbr')
+
+        #needed since old process has interval instead of mile number so starts at 0
+        summaryMileDf['interval'] = summaryMileDf['interval'] -1
+
+        ex.lapSplits = \
+            ExerciseInfo.wrkt_intrvl_from_dict(summaryLapDf.to_dict(orient='records'), 'interval')
+        ex.mileSplits = \
+            ExerciseInfo.wrkt_intrvl_from_dict(summaryMileDf.to_dict(orient='records'), 'interval')
     try:
         intrvlSplitsDf = wrktSplits.breakDownWrkt( \
             srcDir, fName=ex.rungapFile, \

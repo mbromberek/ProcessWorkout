@@ -46,3 +46,23 @@ def calcTrngType(wrktSegments, wrktCat):
         return 'Tempo'
     else:
         return 'Workout'
+
+def summarizeWrktSplit(actv_df, summarizeBy):
+    # actv_df.rename(columns={'heart_rate': 'avg_hr'}, inplace=True)
+    actv_df['ele_up'] = actv_df[actv_df['delta_elevation']>0]['delta_elevation']
+    actv_df['ele_down'] = actv_df[actv_df['delta_elevation']<0]['delta_elevation']
+
+    df = actv_df.groupby([summarizeBy]).agg(
+        max_time=('tot_dur_sec','max')
+        , min_time=('tot_dur_sec', 'min')
+        , avg_hr=('heart_rate','mean')
+        , max_dist=('dist_mi','max')
+        , min_dist=('dist_mi','min')
+        , ele_up = ('ele_up','sum')
+        , ele_down = ('ele_down','sum')
+    )
+    df['dur_sec'] = df['max_time'] - df['min_time']
+    df['dist_mi'] =  df['max_dist'] - df['min_dist']
+    df['interval'] = df.index.values
+
+    return df
