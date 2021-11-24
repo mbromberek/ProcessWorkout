@@ -4,6 +4,7 @@ Copyright (c) 2020, Mike Bromberek
 All rights reserved.
 '''
 # First party classes
+import os
 import logging
 import logging.config
 
@@ -30,7 +31,10 @@ def breakDownWrkt(dirName, fName = '', splitBy='segment'):
     if fName == '':
         data = fao.get_workout_data(dirName)
     else:
-        data = fao.get_workout_data_from_file(dirName + '/' + fName)
+        if os.path.exists(dirName + '/' + fName):
+            data = fao.get_workout_data_from_file(dirName + '/' + fName)
+        else:
+            return
 
     actv_df = rgNorm.normalize_activity(data)
     df = rgNorm.group_actv(actv_df, splitBy)

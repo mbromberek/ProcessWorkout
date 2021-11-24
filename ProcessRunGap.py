@@ -352,7 +352,7 @@ def processExercise(filename):
                 srcDir, fName=ex.rungapFile, \
                 splitBy=exBrkdn['split_type'] \
             )
-            if ex.category == 'Training':
+            if ex.category == 'Training' and ex.wrktSegments != None:
                 wrkt_summary = wrktSum.calcWrktSummary(ex.wrktSegments, ex.category)
 
                 ex.warmUpTotDistMi = wrkt_summary['warm_up']['dist_mi']
