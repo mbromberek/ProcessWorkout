@@ -24,8 +24,6 @@ class Workout_interval:
         return self.interval_order < other.interval_order
 
     def from_df_dict(self, data, break_type):
-        print(data)
-
         self.break_type = break_type
         self.interval_order = data['interval']
         self.dur_sec = int(data['dur_sec'])
@@ -33,6 +31,8 @@ class Workout_interval:
         self.hr = int(data['avg_hr'])
         self.ele_up = float(data['ele_up'])
         self.ele_down = float(data['ele_down'])
+        if 'interval_desc' in data:
+            self.interval_desc = data['interval_desc']
 
     def to_dict(self):
         data = {
