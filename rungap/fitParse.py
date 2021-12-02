@@ -43,10 +43,10 @@ def get_fit_point_data(frame: fitdecode.records.FitDataMessage) -> Optional[Dict
     if (frame.has_field('position_lat') and frame.has_field('position_long') ) and frame.get_value('position_lat') != None and frame.get_value('position_long') != None:
         data['latitude'] = frame.get_value('position_lat') / ((2**32) / 360)
         data['longitude'] = frame.get_value('position_long') / ((2**32) / 360)
-    else:
+    # else:
         # Frame does not have any latitude or longitude data. We will ignore these frames in order to keep things
         # simple, as we did when parsing the TCX file.
-        return None
+        # return None
 
     # print(frame.fields)
     for field in POINTS_COLUMN_NAMES[3:]:
