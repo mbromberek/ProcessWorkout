@@ -120,10 +120,6 @@ def breakupNotes(rec):
         d['clothes'] = ''
 
     d['notes'] = rec[endMatchPos:].strip()
-    logger.debug('Weather Start:' + weatherStart)
-    logger.debug('Weather End:' + weatherEnd)
-    logger.debug('Clothes:' + d['clothes'])
-    logger.debug('Notes:' + d['notes'])
 
     d['weatherStart'] = splitWeather(weatherStart)
     d['weatherEnd'] = splitWeather(weatherEnd)
