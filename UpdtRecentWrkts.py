@@ -106,6 +106,7 @@ def breakupNotes(rec):
         endMatchPos = max(endMatchPos, matchWeather.end(0))
     else:
         d['weatherStart'] = ''
+        weatherStart = ''
     matchWeatherEnd = re.search(weatherEndPattern, rec, flags=re.IGNORECASE)
     if matchWeatherEnd:
         weatherEnd = matchWeatherEnd.group(0).strip()
