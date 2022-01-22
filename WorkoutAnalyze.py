@@ -194,15 +194,11 @@ def main(argv):
 
     fao.extract_files(filename, tempDir)
 
-    # TODO Check if should process JSON file or FIT file
     if fao.file_with_ext(tempDir, ext='fit') != '':
         logger.info('fit file exists')
         fitFile = fao.file_with_ext(tempDir, ext='fit')
         lapsDf, pointsDf = fitParse.get_dataframes(tempDir + '/' + fitFile)
-        # fao.save_df(lapsDf, outDir,'lapsdf', frmt=['csv','pickle'])
-        # fao.save_df(pointsDf, outDir,'pointsdf', frmt=['csv','pickle'])
         actv_df = fitParse.normalize_laps_points(lapsDf, pointsDf)
-        # exit(0)
     elif fao.file_with_ext(tempDir, ext='rungap.json') != '':
         logger.info('Rungap JSON file')
         data = fao.get_workout_data(tempDir)
@@ -211,9 +207,8 @@ def main(argv):
         logger.info('No file to process')
         exit(1)
 
-    # if customSplit:
-    #     cust_splits_df = custSplits(actv_df, tempDir)
-    #     fao.save_df(cust_splits_df, outDir,'custom_split', frmt=['csv','pickle'])
+    # Always save the activity dataframe
+    fao.save_df(actv_df, outDir,'activity', frmt=['csv','pickle'])
 
     '''
     Group activities by different splits
@@ -230,9 +225,6 @@ def main(argv):
     '''
     for split in splitOptions:
         fao.save_df(splitDict[split], outDir, split + '_split', frmt=['csv','pickle'])
-
-    # Always save the activity dataframe
-    fao.save_df(actv_df, outDir,'activity', frmt=['csv','pickle'])
 
     fao.clean_dir(tempDir)
 
