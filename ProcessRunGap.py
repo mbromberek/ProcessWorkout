@@ -400,6 +400,7 @@ def processExercise(filename):
 
         summaryLapDf = wrktSplits.summarizeWrktSplit(pointsEventsDf, summarizeBy='lap')
         summaryMileDf = wrktSplits.summarizeWrktSplit(pointsEventsDf, summarizeBy='mile')
+        summaryResumeDf = wrktSplits.summarizeWrktSplit(pointsEventsDf, summarizeBy='resume')
 
         if ex.category == 'Training' and summaryLapDf.shape[0] >=3:
             summaryLapDf.loc[summaryLapDf.index[0],'interval_desc'] = 'Warm Up'
@@ -414,6 +415,8 @@ def processExercise(filename):
             ExerciseInfo.wrkt_intrvl_from_dict(summaryLapDf.to_dict(orient='records'), 'interval')
         ex.mileSplits = \
             ExerciseInfo.wrkt_intrvl_from_dict(summaryMileDf.to_dict(orient='records'), 'interval')
+        ex.pauseSplits = \
+            ExerciseInfo.wrkt_intrvl_from_dict(summaryResumeDf.to_dict(orient='records'), 'interval')
     try:
         intrvlSplitsDf = wrktSplits.breakDownWrkt( \
             srcDir, fName=ex.rungapFile, \
