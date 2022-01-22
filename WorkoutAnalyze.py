@@ -205,7 +205,7 @@ def main(argv):
         actv_df = rgNorm.normalize_activity(data)
     else:
         logger.info('No file to process')
-        exit(1)
+        sys.exit(-1)
 
     # Always save the activity dataframe
     fao.save_df(actv_df, outDir,'activity', frmt=['csv','pickle'])
