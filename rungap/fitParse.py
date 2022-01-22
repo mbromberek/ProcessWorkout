@@ -127,33 +127,38 @@ def normalize_laps_points(lapsDf, pointsDf):
     # point_events_df.at[0,'lap'] = 1
     # point_events_df['lap'].fillna(method='ffill', inplace=True)
 
-    # Calculate distance in miles from distance in meters
-    point_events_df['dist_mi'] = (point_events_df['distance'] / METERS_IN_KILOMETERS * MILES_IN_KILOMETERS)
+    # Calculate distance in miles and kilometers from distance in meters
+    point_events_df.rename(columns={'distance':'dist_m'}, inplace=True)
+    point_events_df['dist_mi'] = (point_events_df['dist_m'] / METERS_IN_KILOMETERS * MILES_IN_KILOMETERS)
+    point_events_df['dist_km'] = (point_events_df['dist_m'] / METERS_IN_KILOMETERS)
 
     # Get mile number
-    conditions = [
-        point_events_df['dist_mi'].lt(1),
-        point_events_df['dist_mi'].ge(1) & point_events_df['dist_mi'].lt(2),
-        point_events_df['dist_mi'].ge(2) & point_events_df['dist_mi'].lt(3),
-        point_events_df['dist_mi'].ge(3) & point_events_df['dist_mi'].lt(4),
-        point_events_df['dist_mi'].ge(4) & point_events_df['dist_mi'].lt(5),
-        point_events_df['dist_mi'].ge(5) & point_events_df['dist_mi'].lt(6),
-        point_events_df['dist_mi'].ge(6) & point_events_df['dist_mi'].lt(7),
-        point_events_df['dist_mi'].ge(7) & point_events_df['dist_mi'].lt(8),
-        point_events_df['dist_mi'].ge(8) & point_events_df['dist_mi'].lt(9),
-        point_events_df['dist_mi'].ge(9) & point_events_df['dist_mi'].lt(10),
-        point_events_df['dist_mi'].ge(10) & point_events_df['dist_mi'].lt(11),
-        point_events_df['dist_mi'].ge(11) & point_events_df['dist_mi'].lt(12),
-        point_events_df['dist_mi'].ge(12) & point_events_df['dist_mi'].lt(13)
-    ]
-    choices=[1,2,3,4,5,6,7,8,9,10,11,12,13]
+    MAX_MILE_NBR = 500
+    i = 1
+    conditions = [point_events_df['dist_mi'].lt(i)]
+    choices = [i]
+    while i <= MAX_MILE_NBR:
+        conditions.append(point_events_df['dist_mi'].ge(i) & point_events_df['dist_mi'].lt(i+1))
+        choices.append(i+1)
+        i=i+1
     point_events_df['mile'] = np.select(conditions, choices, default=0)
+
+    # Get Kilometer number
+    i = 1
+    conditions = [point_events_df['dist_km'].lt(i)]
+    choices = [i]
+    while i <= MAX_MILE_NBR:
+        conditions.append(point_events_df['dist_km'].ge(i) & point_events_df['dist_km'].lt(i+1))
+        choices.append(i+1)
+        i=i+1
+    point_events_df['kilometer'] = np.select(conditions, choices, default=0)
 
     # View rows where mile == 2
     # point_events_df[point_events_df['mile']==2]
 
     # Get change in distance between rows
     point_events_df['delta_dist_mi'] = point_events_df['dist_mi']-point_events_df['dist_mi'].shift(+1)
+    point_events_df['delta_dist_km'] = point_events_df['dist_km']-point_events_df['dist_km'].shift(+1)
     point_events_df['altitude_ft'] = point_events_df['altitude']*METERS_TO_FEET
     point_events_df['delta_ele_ft'] = point_events_df['altitude_ft'] -point_events_df['altitude_ft'].shift(+1)
 
