@@ -47,6 +47,14 @@ def get_workout_data(curr_dir):
                 break
     return data
 
+def file_with_ext(curr_dir, ext):
+    extRegex = re.compile(r'(.' + ext + ')$')
+    for filename in os.listdir(curr_dir):
+        if extRegex.search(filename):
+            return filename
+    return ''
+
+
 def get_workout_data_from_file(fNamePath):
     """
     Parses passed files and loads that json data to a Dictionary.
@@ -56,7 +64,6 @@ def get_workout_data_from_file(fNamePath):
     with open(fNamePath) as data_file:
         data = json.load(data_file)
     return data
-
 
 def extract_files(fname, dest_dir, src_dir=''):
     """

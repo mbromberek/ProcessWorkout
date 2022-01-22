@@ -31,15 +31,15 @@ def group_actv(df, group_by_field):
     '''
 
     df_edit = df.copy()
-    df_edit['ele_up'] = df[df['ele_ft_delta']>0]['ele_ft_delta']
-    df_edit['ele_down'] = df[df['ele_ft_delta']<0]['ele_ft_delta']
+    df_edit['ele_up'] = df[df['delta_ele_ft']>0]['delta_ele_ft']
+    df_edit['ele_down'] = df[df['delta_ele_ft']<0]['delta_ele_ft']
 
     grouped_df = (df_edit.groupby([group_by_field])
         .agg(max_time=('dur_sec', 'max')
              , avg_hr = ('hr', 'mean')
              , ele_up = ('ele_up','sum')
              , ele_down = ('ele_down','sum')
-             , sum_ele = ('ele_ft_delta','sum')
+             , sum_ele = ('delta_ele_ft','sum')
              , max_dist = ('dist_mi','max')
         )
         .reset_index()
@@ -349,7 +349,7 @@ def add_splits(actv_orig, evnt_orig):
     activity_clean = add_intervals_to_activity(actv_orig, [
         {'evnt_df': mile_events, 'new_field':'mile', 'evnt_field': 'interval_nbr'}
         , {'evnt_df': km_events, 'new_field':'kilometer', 'evnt_field': 'interval_nbr'}
-        , {'evnt_df': marker_events, 'new_field':'segment', 'evnt_field': 'interval_nbr'}
+        , {'evnt_df': marker_events, 'new_field':'lap', 'evnt_field': 'interval_nbr'}
         , {'evnt_df': pause_resume_events, 'new_field':'pause_resume', 'evnt_field': 'type'}
         , {'evnt_df': pause_resume_events, 'new_field':'pause_resume_section', 'evnt_field': 'switch_id'}
     ])
@@ -418,7 +418,7 @@ def calc_values(actv_orig):
 
     # Get elevation change, only first record has na so replace it with zero
     activity_clean['ele_ft'] = activity_clean['ele_meters'] * METERS_TO_FEET
-    activity_clean['ele_ft_delta'] = activity_clean['ele_ft'].diff().fillna(0)
+    activity_clean['delta_ele_ft'] = activity_clean['ele_ft'].diff().fillna(0)
 
     return activity_clean
 
@@ -444,14 +444,14 @@ def rm_unneeded_cols(actv_orig):
     # Change typs of columns
     actv_df['mile'] = actv_df['mile'].astype('int64')
     actv_df['kilometer'] = actv_df['kilometer'].astype('int64')
-    actv_df['segment'] = actv_df['segment'].astype('int64')
+    actv_df['lap'] = actv_df['lap'].astype('int64')
     actv_df['resume'] = actv_df['resume'].astype('int64')
     actv_df['dur_sec'] = actv_df['dur_sec'].astype('int64')
 
     # Rearrange columns
     actv_df = actv_df[['date_time', 'dist_mi', 'dur_sec', 'dur_str'
-        , 'avg_pace', 'mile','kilometer','segment','resume'
-        , 'hr', 'ele_ft', 'ele_ft_delta'
+        , 'avg_pace', 'mile','kilometer','lap','resume'
+        , 'hr', 'ele_ft', 'delta_ele_ft'
         , 'dist_meters'
     ]]
     #, 'runcad'

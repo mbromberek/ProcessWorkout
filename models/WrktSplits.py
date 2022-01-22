@@ -16,9 +16,9 @@ import pandas as pd
 import dao.files as fao
 import rungap.normWrkt as rgNorm
 
-def breakDownWrkt(dirName, fName = '', splitBy='segment'):
+def breakDownWrkt(dirName, fName = '', splitBy='lap'):
     '''
-    WrktSplits.breakDownWrkt(dirName=<class 'str'>, splitBy='segment')
+    WrktSplits.breakDownWrkt(dirName=<class 'str'>, splitBy='lap')
 
     Takes passed in directory from dirName to get workout data
     normalizes the workout data
@@ -26,7 +26,7 @@ def breakDownWrkt(dirName, fName = '', splitBy='segment'):
     returns a List of Dictionary values for the workout based on the splitBy
 
     Parameters: dirName: directory with workout files to process
-                splitBy: str{'segment','mile','kilometer','resume'}
+                splitBy: str{'lap','mile','kilometer','resume'}
     '''
     if fName == '':
         data = fao.get_workout_data(dirName)
@@ -52,14 +52,14 @@ def calcTrngType(wrktSegments, wrktCat):
         return 'Workout'
 
 def summarizeWrktSplit(actv_df, summarizeBy):
-    # actv_df.rename(columns={'heart_rate': 'avg_hr'}, inplace=True)
-    actv_df['ele_up'] = actv_df[actv_df['delta_elevation']>0]['delta_elevation']
-    actv_df['ele_down'] = actv_df[actv_df['delta_elevation']<0]['delta_elevation']
+    # actv_df.rename(columns={'hr': 'avg_hr'}, inplace=True)
+    actv_df['ele_up'] = actv_df[actv_df['delta_ele_ft']>0]['delta_ele_ft']
+    actv_df['ele_down'] = actv_df[actv_df['delta_ele_ft']<0]['delta_ele_ft']
 
     df = actv_df.groupby([summarizeBy]).agg(
-        max_time=('tot_dur_sec','max')
-        , min_time=('tot_dur_sec', 'min')
-        , avg_hr=('heart_rate','mean')
+        max_time=('dur_sec','max')
+        , min_time=('dur_sec', 'min')
+        , avg_hr=('hr','mean')
         , max_dist=('dist_mi','max')
         , min_dist=('dist_mi','min')
         , ele_up = ('ele_up','sum')

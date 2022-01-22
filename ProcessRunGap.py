@@ -398,8 +398,8 @@ def processExercise(filename):
         lapsDf, pointsDf = fitParse.get_dataframes(srcDir + '/' + ex.fitFile)
         pointsEventsDf = fitParse.normalize_laps_points(lapsDf, pointsDf)
 
-        summaryLapDf = wrktSplits.summarizeWrktSplit(pointsEventsDf, summarizeBy='lap_nbr')
-        summaryMileDf = wrktSplits.summarizeWrktSplit(pointsEventsDf, summarizeBy='mile_nbr')
+        summaryLapDf = wrktSplits.summarizeWrktSplit(pointsEventsDf, summarizeBy='lap')
+        summaryMileDf = wrktSplits.summarizeWrktSplit(pointsEventsDf, summarizeBy='mile')
 
         if ex.category == 'Training' and summaryLapDf.shape[0] >=3:
             summaryLapDf.loc[summaryLapDf.index[0],'interval_desc'] = 'Warm Up'
@@ -417,11 +417,11 @@ def processExercise(filename):
     try:
         intrvlSplitsDf = wrktSplits.breakDownWrkt( \
             srcDir, fName=ex.rungapFile, \
-            splitBy='segment' \
+            splitBy='lap' \
         )
         if intrvlSplitsDf.shape[0] >1:
             ex.intrvlSplits = \
-              ExerciseInfo.wrkt_intrvl_from_dict(intrvlSplitsDf.to_dict(orient='records'), 'segment')
+              ExerciseInfo.wrkt_intrvl_from_dict(intrvlSplitsDf.to_dict(orient='records'), 'lap')
     except:
         logger.error('<ERROR> Breakdown Workout by segment Unexpected Error')
         logger.error(sys.exc_info())

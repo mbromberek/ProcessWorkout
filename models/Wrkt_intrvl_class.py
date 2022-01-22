@@ -1,13 +1,13 @@
 
 
 class Workout_interval:
-    # pause | segment | mile | kilometer | custom
+    # pause | segment | lap | mile | kilometer | custom
     break_type = ''
     interval_order = 0
     interval_desc = None
     dur_sec = 0
     dist_mi = 0
-    hr = None
+    hear_rate = None
     ele_up = None
     ele_down = None
     notes = None
@@ -28,7 +28,7 @@ class Workout_interval:
         self.interval_order = data['interval']
         self.dur_sec = int(data['dur_sec'])
         self.dist_mi = float(data['dist_mi'])
-        self.hr = int(data['avg_hr'])
+        self.hear_rate = int(data['avg_hr'])
         self.ele_up = float(data['ele_up'])
         self.ele_down = float(data['ele_down'])
         if 'interval_desc' in data:
@@ -43,8 +43,8 @@ class Workout_interval:
         }
         if self.interval_desc != None:
             data['interval_desc'] = self.interval_desc
-        if self.hr != None:
-            data['hr'] = str(self.hr)
+        if self.hear_rate != None:
+            data['hr'] = str(self.hear_rate)
         if self.ele_up != None:
             data['ele_up'] = str(self.ele_up)
         if self.ele_down != None:

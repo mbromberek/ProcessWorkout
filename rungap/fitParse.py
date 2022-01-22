@@ -106,10 +106,10 @@ def get_dataframes(fname: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
 def normalize_laps_points(lapsDf, pointsDf):
     # pointsDf = pd.read_pickle('files/points.pickle')
     # lapsDf = pd.read_pickle('files/laps.pickle')
-    lapsDf['lap_nbr'] = lapsDf.index.values
+    lapsDf['lap'] = lapsDf.index.values
 
 
-    # Join lap_nbr into points
+    # Join lap into points
     laps_conditions = lapsDf['start_time'].tolist()
     laps_choices = lapsDf.index.values.tolist()
 
@@ -120,12 +120,12 @@ def normalize_laps_points(lapsDf, pointsDf):
         point_lap_conditions.append(condition)
     point_lap_conditions.append(pointsDf['timestamp'].ge(laps_conditions[-1]))
     point_events_df = pointsDf.copy()
-    point_events_df['lap_nbr'] = np.select(point_lap_conditions, laps_choices)
+    point_events_df['lap'] = np.select(point_lap_conditions, laps_choices)
 
 
-    # point_events_df = pointsDf.merge(lapsDf[['start_time','lap_nbr']], how="left", left_on='timestamp', right_on='start_time', suffixes=('','_lap')).drop(columns=['start_time'])
-    # point_events_df.at[0,'lap_nbr'] = 1
-    # point_events_df['lap_nbr'].fillna(method='ffill', inplace=True)
+    # point_events_df = pointsDf.merge(lapsDf[['start_time','lap']], how="left", left_on='timestamp', right_on='start_time', suffixes=('','_lap')).drop(columns=['start_time'])
+    # point_events_df.at[0,'lap'] = 1
+    # point_events_df['lap'].fillna(method='ffill', inplace=True)
 
     # Calculate distance in miles from distance in meters
     point_events_df['dist_mi'] = (point_events_df['distance'] / METERS_IN_KILOMETERS * MILES_IN_KILOMETERS)
@@ -147,21 +147,23 @@ def normalize_laps_points(lapsDf, pointsDf):
         point_events_df['dist_mi'].ge(12) & point_events_df['dist_mi'].lt(13)
     ]
     choices=[1,2,3,4,5,6,7,8,9,10,11,12,13]
-    point_events_df['mile_nbr'] = np.select(conditions, choices, default=0)
+    point_events_df['mile'] = np.select(conditions, choices, default=0)
 
-    # View rows where mile_nbr == 2
-    # point_events_df[point_events_df['mile_nbr']==2]
+    # View rows where mile == 2
+    # point_events_df[point_events_df['mile']==2]
 
     # Get change in distance between rows
     point_events_df['delta_dist_mi'] = point_events_df['dist_mi']-point_events_df['dist_mi'].shift(+1)
     point_events_df['altitude_ft'] = point_events_df['altitude']*METERS_TO_FEET
-    point_events_df['delta_elevation'] = point_events_df['altitude_ft'] -point_events_df['altitude_ft'].shift(+1)
+    point_events_df['delta_ele_ft'] = point_events_df['altitude_ft'] -point_events_df['altitude_ft'].shift(+1)
 
 
     point_events_df['delta_dist_mi'].fillna(0, inplace=True)
 
     # Get total seconds, not positive this is the right way
-    point_events_df['tot_dur_sec'] = point_events_df.index.values
+    point_events_df['dur_sec'] = point_events_df.index.values
+
+    point_events_df.rename(columns={'heart_rate':'hr'}, inplace=True)
 
     return point_events_df
 

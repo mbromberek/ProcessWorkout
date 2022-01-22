@@ -24,6 +24,7 @@ import dao.files as fao
 import util.timeConv as tc
 import util.WrktSummary as wrktSum
 import rungap.normWrkt as rgNorm
+import rungap.fitParse as fitParse
 
 # tempDir = '/tmp/' #default to /tmp
 logging.config.fileConfig('logging.conf')
@@ -34,7 +35,7 @@ def summarizeWrkoutSegments(segments_df):
     '''
     Get summary of Workout and write it to logs
     '''
-    wrkt_summary = wrktSum.calcWrktSummary(segments_df.rename(columns={'segment': 'interval'}, inplace=False))
+    wrkt_summary = wrktSum.calcWrktSummary(segments_df.rename(columns={'lap': 'interval'}, inplace=False))
     logger.info('Workout Stats:')
     logger.info('Warm Up: ' \
         + wrkt_summary['warm_up']['dur_str'] + ' total, ' \
@@ -58,7 +59,7 @@ def summarizeWrkoutSegments(segments_df):
         + str(wrkt_summary['cool_down']['ele_down']) + ' ele down' \
     )
 
-    # wrkt_sum_frmla = wrktSum.calcWrktSumFrmla(segments_df.rename(columns={'segment': 'interval'}, inplace=False))
+    # wrkt_sum_frmla = wrktSum.calcWrktSumFrmla(segments_df.rename(columns={'lap': 'interval'}, inplace=False))
     return wrkt_summary
 
 
@@ -132,10 +133,10 @@ def getSplitOptions(arg):
     splitArgs = arg.lower().split(',')
     for split in splitArgs:
         if split == 'all':
-            splitOptions.extend(['mile','segment','resume','kilometer'])
+            splitOptions.extend(['mile','lap','resume','kilometer'])
         elif split == 'pause':
             splitOptions.append('resume')
-        elif split in ('custom','mile','segment','kilometer'):
+        elif split in ('custom','mile','lap','kilometer'):
             splitOptions.append(split)
         else:
             print("Invalid split argument: " + split)
@@ -193,9 +194,22 @@ def main(argv):
 
     fao.extract_files(filename, tempDir)
 
-    data = fao.get_workout_data(tempDir)
-
-    actv_df = rgNorm.normalize_activity(data)
+    # TODO Check if should process JSON file or FIT file
+    if fao.file_with_ext(tempDir, ext='fit') != '':
+        logger.info('fit file exists')
+        fitFile = fao.file_with_ext(tempDir, ext='fit')
+        lapsDf, pointsDf = fitParse.get_dataframes(tempDir + '/' + fitFile)
+        # fao.save_df(lapsDf, outDir,'lapsdf', frmt=['csv','pickle'])
+        # fao.save_df(pointsDf, outDir,'pointsdf', frmt=['csv','pickle'])
+        actv_df = fitParse.normalize_laps_points(lapsDf, pointsDf)
+        # exit(0)
+    elif fao.file_with_ext(tempDir, ext='rungap.json') != '':
+        logger.info('Rungap JSON file')
+        data = fao.get_workout_data(tempDir)
+        actv_df = rgNorm.normalize_activity(data)
+    else:
+        logger.info('No file to process')
+        exit(1)
 
     # if customSplit:
     #     cust_splits_df = custSplits(actv_df, tempDir)
@@ -222,8 +236,8 @@ def main(argv):
 
     fao.clean_dir(tempDir)
 
-    if 'segment' in splitOptions:
-        summarizeWrkoutSegments(splitDict['segment'])
+    if 'lap' in splitOptions:
+        summarizeWrkoutSegments(splitDict['lap'])
 
     logger.info('WorkoutAnalyze End')
 
