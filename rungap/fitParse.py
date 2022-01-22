@@ -1,9 +1,19 @@
+#!/usr/bin/env python
+# coding: utf-8
+'''
+BSD 3-Clause License
+Copyright (c) 2020, Mike Bromberek
+All rights reserved.
+'''
+
+# First party classes
 from datetime import datetime, timedelta
 from typing import Dict, Union, Optional,Tuple
+import math
 
+# 3rd party classes
 import pandas as pd
 import numpy as np
-
 import fitdecode
 
 # The names of the columns we will use in our points DataFrame. For the data we will be getting
@@ -171,11 +181,11 @@ def normalize_laps_points(lapsDf, pointsDf):
     point_events_df['delta_dist_km'].fillna(0, inplace=True)
 
     # Get mile number
-    MAX_MILE_NBR = 500
+    # MAX_MILE_NBR = 500
     i = 1
     conditions = [point_events_df['dist_mi'].lt(i)]
     choices = [i]
-    while i <= MAX_MILE_NBR:
+    while i <= math.ceil(point_events_df['dist_mi'].max()):
         conditions.append(point_events_df['dist_mi'].ge(i) & point_events_df['dist_mi'].lt(i+1))
         choices.append(i+1)
         i=i+1
@@ -185,7 +195,7 @@ def normalize_laps_points(lapsDf, pointsDf):
     i = 1
     conditions = [point_events_df['dist_km'].lt(i)]
     choices = [i]
-    while i <= MAX_MILE_NBR:
+    while i <= math.ceil(point_events_df['dist_km'].max()):
         conditions.append(point_events_df['dist_km'].ge(i) & point_events_df['dist_km'].lt(i+1))
         choices.append(i+1)
         i=i+1
