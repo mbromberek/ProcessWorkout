@@ -18,6 +18,8 @@ LAPS_COLUMN_NAMES = ['number', 'start_time', 'total_distance',
 MILES_IN_KILOMETERS = 0.621371
 METERS_IN_KILOMETERS = 1000
 METERS_TO_FEET = 3.28084
+ONE_SECOND = timedelta(0,1) # days, seconds
+
 
 def get_fit_lap_data(frame: fitdecode.records.FitDataMessage) -> Dict[str, Union[float, datetime, timedelta, int]]:
     """Extract some data from a FIT frame representing a lap and return
@@ -103,6 +105,30 @@ def get_dataframes(fname: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
 
     return laps_df, points_df
 
+def get_pause_sections(df):
+    """
+    Get the rows where a pause ends based on them having a delta_timestamp > 1 second
+    Reindex the pause dataframe to get which pause section each is from
+    Merge the pause section back into the passed dataframe and return it.
+    """
+    point_events_df = df.copy()
+
+    # Create dataframe of sections just have pause
+    pause_df = point_events_df.loc[point_events_df['delta_timestamp'] >ONE_SECOND]
+    pause_df.reset_index(inplace=True, drop=True)
+    pause_df['pause_section'] = pause_df.index.values+2
+
+    pause_conditions = pause_df['timestamp'].tolist()
+    pause_choices = [1]
+    pause_choices.extend(pause_df['pause_section'].tolist())
+    point_pause_conditions = [point_events_df['timestamp'].lt(pause_df['timestamp'].iloc[0])]
+    for i in range(pause_df.shape[0] -1):
+        condition = point_events_df['timestamp'].ge(pause_conditions[i]) & point_events_df['timestamp'].lt(pause_conditions[i+1])
+        point_pause_conditions.append(condition)
+    point_pause_conditions.append(point_events_df['timestamp'].ge(pause_conditions[-1]))
+    point_events_df['resume'] = np.select(point_pause_conditions, pause_choices)
+    return point_events_df
+
 def normalize_laps_points(lapsDf, pointsDf):
     # pointsDf = pd.read_pickle('files/points.pickle')
     # lapsDf = pd.read_pickle('files/laps.pickle')
@@ -127,10 +153,22 @@ def normalize_laps_points(lapsDf, pointsDf):
     # point_events_df.at[0,'lap'] = 1
     # point_events_df['lap'].fillna(method='ffill', inplace=True)
 
+    point_events_df['altitude_ft'] = point_events_df['altitude']*METERS_TO_FEET
+
     # Calculate distance in miles and kilometers from distance in meters
     point_events_df.rename(columns={'distance':'dist_m'}, inplace=True)
     point_events_df['dist_mi'] = (point_events_df['dist_m'] / METERS_IN_KILOMETERS * MILES_IN_KILOMETERS)
     point_events_df['dist_km'] = (point_events_df['dist_m'] / METERS_IN_KILOMETERS)
+
+    # Get change in distance between rows
+    point_events_df['delta_dist_mi'] = point_events_df['dist_mi']-point_events_df['dist_mi'].shift(+1)
+    point_events_df['delta_dist_km'] = point_events_df['dist_km']-point_events_df['dist_km'].shift(+1)
+    point_events_df['delta_ele_ft'] = point_events_df['altitude_ft'] -point_events_df['altitude_ft'].shift(+1)
+
+    point_events_df['delta_timestamp'] = point_events_df['timestamp']-point_events_df['timestamp'].shift(+1)
+
+    point_events_df['delta_dist_mi'].fillna(0, inplace=True)
+    point_events_df['delta_dist_km'].fillna(0, inplace=True)
 
     # Get mile number
     MAX_MILE_NBR = 500
@@ -153,17 +191,10 @@ def normalize_laps_points(lapsDf, pointsDf):
         i=i+1
     point_events_df['kilometer'] = np.select(conditions, choices, default=0)
 
+    point_events_df = get_pause_sections(point_events_df)
+
     # View rows where mile == 2
     # point_events_df[point_events_df['mile']==2]
-
-    # Get change in distance between rows
-    point_events_df['delta_dist_mi'] = point_events_df['dist_mi']-point_events_df['dist_mi'].shift(+1)
-    point_events_df['delta_dist_km'] = point_events_df['dist_km']-point_events_df['dist_km'].shift(+1)
-    point_events_df['altitude_ft'] = point_events_df['altitude']*METERS_TO_FEET
-    point_events_df['delta_ele_ft'] = point_events_df['altitude_ft'] -point_events_df['altitude_ft'].shift(+1)
-
-
-    point_events_df['delta_dist_mi'].fillna(0, inplace=True)
 
     # Get total seconds, not positive this is the right way
     point_events_df['dur_sec'] = point_events_df.index.values
