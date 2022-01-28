@@ -131,6 +131,11 @@ def get_pause_sections(df):
     pause_conditions = pause_df['timestamp'].tolist()
     pause_choices = [1]
     pause_choices.extend(pause_df['pause_section'].tolist())
+    if pause_df.shape[0] <1:
+        # There were no pauses during workout
+        # Set whole workout to first resume section
+        point_events_df['resume'] = 1
+        return point_events_df
     point_pause_conditions = [point_events_df['timestamp'].lt(pause_df['timestamp'].iloc[0])]
     for i in range(pause_df.shape[0] -1):
         condition = point_events_df['timestamp'].ge(pause_conditions[i]) & point_events_df['timestamp'].lt(pause_conditions[i+1])
