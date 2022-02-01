@@ -35,5 +35,8 @@ def create_json(wrktLst, wsConfig):
     logger.info('Create Result: ' + str(r))
     if r.status_code == 400:
         logger.info(r.json())
+    if r.status_code == 201:
+        logger.debug(r.json())
+        
 
     return r
