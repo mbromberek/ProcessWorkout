@@ -38,6 +38,7 @@ import ws.createWrktFromBrkdn as createWrktBrkdn
 import UpdtRecentWrkts as updtRecentWrkts
 import dao.exerciseSheet as exSheetDao
 import ws.createWrkt as createWrkt
+import ws.updateWrkt as updateWrkt
 import rungap.fitParse as fitParse
 
 config = configparser.ConfigParser()
@@ -499,7 +500,18 @@ def saveExToDb(exLst, wsConfig):
         logger.info('Saving to Database turned off')
 
 def saveExToSite(exLst, wsConfig):
-    createWrkt.create(exLst, wsConfig)
+    dateTimeSheetFormat = '%Y-%m-%dT%H:%M:%S'
+    createWrktResp = createWrkt.create(exLst, wsConfig)
+    if createWrktResp.status_code == 201:
+        # If create workout was successful upload workout file
+        createWrktJson = createWrktResp.json()
+        for wrkt in createWrktJson:
+            # logger.debug('Create Workout {}: {}'.format(wrkt['id'],wrkt['wrkt_dttm']))
+            for ex in exLst:
+                exStrtTmStr = ex.startTime.strftime(dateTimeSheetFormat) + 'Z'
+                # logger.debug('Exercise: ' + exStrtTmStr)
+                if exStrtTmStr == wrkt['wrkt_dttm']:
+                    updateWrkt.uploadFile(wrkt['id'], ex, wsConfig, config['rungap']['monitor_dir'])
 
 def cleanProcessedFile(exLst, monitorDir, tempDir):
     '''

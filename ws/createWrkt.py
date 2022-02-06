@@ -36,7 +36,6 @@ def create_json(wrktLst, wsConfig):
     if r.status_code == 400:
         logger.info(r.json())
     if r.status_code == 201:
-        logger.debug(r.json())
-        
+        logger.info("Create Workout Successful")
 
     return r

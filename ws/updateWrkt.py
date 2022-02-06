@@ -53,3 +53,22 @@ def getWrktId(dttm_str, wsConfig):
         return data[0]['id']
     else:
         return None
+
+def uploadFile(wrkt_id, ex, wsConfig, monitorDir):
+    fileToUpload = ex.metadataFile.split('.')[0] + '.zip'
+    fileToUploadPath = os.path.join(monitorDir,fileToUpload)
+    logger.debug(fileToUploadPath)
+
+    server = wsConfig['server']
+    port = wsConfig['port']
+    token = wsConfig['token']
+
+    files = {'file': open(fileToUploadPath,'rb')}
+    values = {'workout_id': wrkt_id}
+    # r = requests.post(url, files=files, data=values)
+    r = requests.put(server + ':' + port + '/api/generate_workout', headers={'Authorization':'Bearer ' + token}, verify=wsConfig['verifyCert'] == 'Y', files=files, data=values)
+
+    if r.status_code == 400:
+        logger.info('Error with uploadFile')
+
+    return r
