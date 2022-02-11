@@ -1,3 +1,7 @@
+# 3rd party classes
+import numpy as np
+import pandas as pd
+
 
 
 class Workout_interval:
@@ -28,7 +32,8 @@ class Workout_interval:
         self.interval_order = data['interval']
         self.dur_sec = int(data['dur_sec'])
         self.dist_mi = float(data['dist_mi'])
-        self.hear_rate = int(data['avg_hr'])
+        self.hear_rate = int(0 if np.isnan(data['avg_hr']) else data['avg_hr'])
+        # self.hear_rate = int(0 if data['avg_hr'] == np.nan else data['avg_hr'])
         self.ele_up = float(data['ele_up'])
         self.ele_down = float(data['ele_down'])
         if 'interval_desc' in data:
