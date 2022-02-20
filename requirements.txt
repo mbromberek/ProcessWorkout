@@ -4,6 +4,7 @@ charset-normalizer==2.0.7
 configparser==5.0.2
 fitdecode==0.10.0
 idna==3.3
+NormalizeWorkout @ git+https://github.com/mbromberek/NormalizeWorkout.git@874ec2ac7b18902d8d7677d2539214ce2c1e1a65
 numpy==1.21.3
 pandas==1.3.4
 psycopg2-binary==2.9.1

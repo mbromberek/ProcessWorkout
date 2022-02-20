@@ -23,8 +23,9 @@ import pandas as pd
 import dao.files as fao
 import util.timeConv as tc
 import util.WrktSummary as wrktSum
-import rungap.normWrkt as rgNorm
-import rungap.fitParse as fitParse
+import NormalizeWorkout.parse.fitParse as fitParse
+import NormalizeWorkout.parse.rungapParse as rgNorm
+import NormalizeWorkout.WrktSplits as splits
 
 # tempDir = '/tmp/' #default to /tmp
 logging.config.fileConfig('logging.conf')
@@ -105,7 +106,7 @@ def custSplits(actv_df, tempDir):
     actv_cust_df['custom'].fillna(method='ffill', inplace=True)
 
     # 9) Group using custom column
-    return rgNorm.group_actv(actv_cust_df, 'custom')
+    return splits.group_actv(actv_cust_df, 'custom')
 
 
 
@@ -218,7 +219,7 @@ def main(argv):
         if split == 'custom':
             splitDict['custom'] = custSplits(actv_df, tempDir)
         else:
-            splitDict[split] = rgNorm.group_actv(actv_df, split)
+            splitDict[split] = splits.group_actv(actv_df, split)
 
     '''
     # Export data frames to files for review

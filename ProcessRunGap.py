@@ -39,7 +39,7 @@ import UpdtRecentWrkts as updtRecentWrkts
 import dao.exerciseSheet as exSheetDao
 import ws.createWrkt as createWrkt
 import ws.updateWrkt as updateWrkt
-import rungap.fitParse as fitParse
+import NormalizeWorkout.parse.fitParse as fitParse
 
 config = configparser.ConfigParser()
 logging.config.fileConfig('logging.conf')
