@@ -35,7 +35,7 @@ def breakDownWrkt(dirName, fName = '', splitBy='lap'):
         if os.path.exists(dirName + '/' + fName):
             data = fao.get_workout_data_from_file(dirName + '/' + fName)
         else:
-            return
+            return None
 
     actv_df = rgNorm.normalize_activity(data)
     df = splits.group_actv(actv_df, splitBy)
