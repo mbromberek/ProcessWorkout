@@ -65,6 +65,8 @@ def summarizeWrktSplit(actv_df, summarizeBy):
         , min_dist=('dist_mi','min')
         , ele_up = ('ele_up','sum')
         , ele_down = ('ele_down','sum')
+        , lat = ('latitude', 'last')
+        , lon = ('longitude', 'last')
     )
     df['dur_sec'] = df['max_time'] - df['min_time']
     df['dist_mi'] =  df['max_dist'] - df['min_dist']

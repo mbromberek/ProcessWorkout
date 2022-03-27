@@ -15,6 +15,8 @@ class Workout_interval:
     ele_up = None
     ele_down = None
     notes = None
+    lat = None
+    lon = None
 
     def __init__(self):
         self.dur_sec = 0
@@ -36,6 +38,10 @@ class Workout_interval:
         # self.hear_rate = int(0 if data['avg_hr'] == np.nan else data['avg_hr'])
         self.ele_up = float(data['ele_up'])
         self.ele_down = float(data['ele_down'])
+        if 'lat' in data:
+            self.lat = data['lat']
+        if 'lon' in data:
+            self.lon = data['lon']
         if 'interval_desc' in data:
             self.interval_desc = data['interval_desc']
 
@@ -56,5 +62,9 @@ class Workout_interval:
             data['ele_down'] = str(self.ele_down)
         if self.notes != None:
             data['notes'] = self.notes
+        if self.lat != None:
+            data['lat'] = self.lat
+        if self.lon != None:
+            data['lon'] = self.lon
 
         return data
