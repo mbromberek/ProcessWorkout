@@ -62,9 +62,9 @@ class Workout_interval:
             data['ele_down'] = str(self.ele_down)
         if self.notes != None:
             data['notes'] = self.notes
-        if self.lat != None:
+        if self.lat != None and not (np.isnan(self.lat)):
             data['lat'] = self.lat
-        if self.lon != None:
+        if self.lon != None and not (np.isnan(self.lon)):
             data['lon'] = self.lon
 
         return data

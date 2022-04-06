@@ -27,7 +27,7 @@ def create_json(wrktLst, wsConfig):
     server = wsConfig['server']
     port = wsConfig['port']
     token = wsConfig['token']
-
+    logger.debug('create_json')
     logger.debug(wrktLst)
 
     # Call webservice
