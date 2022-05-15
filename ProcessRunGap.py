@@ -670,8 +670,10 @@ def process_workouts():
                 server_ex_lst.append(ex)
 
         logger.info('\ngenerate Dictionary for updating Sheet')
+        server_ex_lst_create = []
         # Update spreadsheet
         for ex in server_ex_lst:
+            match_found = False
             ex_dict = ex.to_psite_dict(dateTimeFormat='%m/%d/%Y %H:%M:%S')
             ex_dict['etype'] = ex_dict['type']
             ex_dict['dur_str'] = ex.dur_str()
@@ -681,6 +683,7 @@ def process_workouts():
             for ex_sheet in sheet_wrkt_lst:
                 logger.info('exercise from sheet: ' + str(ex_sheet['wrkt_dt']))
                 if ex_sheet['wrkt_dt'] == ex_dict['wrkt_dttm']:
+                    match_found = True
                     # logger.info('update exercise: ' + str(ex_dict['wrkt_dttm']))
                     try:
                         scpt.call('updateExercise', ex_sheet['rowVal'], ex_dict)
@@ -689,8 +692,19 @@ def process_workouts():
                         logger.error(sys.exc_info())
                         raise
                     break
+            #TODO if no match is found add to create list for sheet
+            if not match_found:
+                server_ex_lst_create.append(ex_dict)
+        #TODO add workouts from create list
+        for server_ex_create in server_ex_lst_create:
+            try:
+                scpt.call('addExercise', server_ex_create['wrkt_dttm'], server_ex_create['etype'], server_ex_create['dur_str'], server_ex_create['dist_mi'], 'mile', server_ex_create['hr'], server_ex_create['cal_burn'], server_ex_create['notes'], '', server_ex_create['gear'], server_ex_create['category'], server_ex_create['elevation'])
+            except:
+                logger.error('addExercise Unexpected Error')
+                logger.error(sys.exc_info())
+                raise
 
-    # Process new files
+    # TODO Process new files
     # Create workout on server
     # Use JSON that came back from server to update spreadsheet
 
