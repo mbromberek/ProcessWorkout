@@ -109,6 +109,11 @@ class ExerciseInfo:
         if self.userNotes != '':
             newNotes.append(self.userNotes)
         return ''.join(newNotes)
+    def combinedCategory(self):
+        if self.training_type != '':
+            return self.category + ' - ' + self.training_type
+        else:
+            return self.category
 
     @staticmethod
     def breakupElevation(ele):
@@ -348,6 +353,8 @@ class ExerciseInfo:
             self.gear = data['gear']
         if 'category' in data:
             self.category = data['category']
+        if 'training_type' in data:
+            self.training_type = data['training_type']
         if 'elevation' in data:
             d = self.breakupElevation(data['elevation'])
             self.elevationGain = float(d['ele_up'])
