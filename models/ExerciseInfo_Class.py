@@ -11,6 +11,7 @@ from datetime import datetime
 from Weather_Class import WeatherInfo
 from Wrkt_intrvl_class import Workout_interval
 import util.timeConv as tc
+import util.dt_conv as dt_conv
 
 METERS_TO_FEET = 3.28084
 
@@ -300,15 +301,27 @@ class ExerciseInfo:
         return wrkt
 
     def from_dict(self, data):
-        dateTimeSheetFormat = '%m/%d/%Y %H:%M:%S'
-        self.startTime = datetime.strptime(data['wrkt_dt'], dateTimeSheetFormat)
+        # dateTimeSheetFormat = '%m/%d/%Y %H:%M:%S'
+        # dateTimeServerFormat = '%Y-%m-%dT%H:%M:%SZ'
+        if 'wrkt_dt' in data:
+            dttm = data['wrkt_dt']
+        elif 'wrkt_dttm' in data:
+            dttm = data['wrkt_dttm']
+        self.startTime = dt_conv.get_date(dttm)
         if 'wrkt_typ' in data:
             self.type = data['wrkt_typ']
+        if 'type' in data:
+            self.type = data['type']
         if 'tot_tm' in data:
             self.durTot = data['tot_tm']
             self.totTmSec = tc.time_str_to_sec(self.durTot)
+        if 'dur_sec' in data:
+            self.totTmSec = data['dur_sec']
+            self.durTot =             tc.formatNumbersTime(*tc.breakTimeFromSeconds(self.totTmSec))
         if 'dist' in data:
             self.distTot = data['dist']
+        if 'dist_mi' in data:
+            self.distTot = data['dist_mi']
         if 'hr' in data:
             self.avgHeartRate = data['hr']
         if 'cal_burn' in data:
