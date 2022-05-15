@@ -120,6 +120,9 @@ class ExerciseInfo:
             d['ele_down'] = float(ele.split('↑')[1].split('↓')[0])
         return d
 
+    def dur_str(self):
+        return tc.formatNumbersTime(*tc.breakTimeFromSeconds(self.totTmSec))
+
     def to_dict(self):
         dateTimeSheetFormat = '%m/%d/%Y %H:%M:%S'
         wrkt = {}

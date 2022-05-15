@@ -338,6 +338,58 @@ on generateWrktTable(sheetNm, tblNm, wrktData, wrktSumFrmla)
 	
 end generateWrktTable
 
+on updateWrkt(wrkt)
+	set exerciseDateOrder to "desc"
+	tell application "Numbers"
+		activate
+		set theApp to its name
+		set docNamePath to p2Cloud & theApp & ":Documents:" & docName
+		open file (docNamePath)
+		tell document docName
+			tell sheet "Exercise"
+				tell table "Exercise"
+					set rowCt to row count
+					set firstRow to header row count + 1
+					set lastRow to rowCt - footer row count
+					set updateRow to -1
+					
+					if exerciseDateOrder = "desc" then
+						add row above row firstRow
+					end if
+					
+					repeat with i from firstRow to lastRow
+						set dateVal to value of cell 1 of row i
+						log (dateVal)
+						if (dateVal = missing value) then
+							set updateRow to i
+							exit repeat
+						end if
+					end repeat
+					--Add data to this row
+					if (updateRow = -1) then
+						add row below row lastRow
+						set updateRow to lastRow + 1
+					end if
+					tell row updateRow
+						set value of cell DATE_COL to (wrkt_dttm of wrkt)
+						set value of cell TYPE_COL to (eType of wrkt)
+						set value of cell DUR_COL to (dur_str of wrkt)
+						set value of cell DIST_COL to (dist_mi of wrkt)
+						set value of cell HR_COL to (hr of wrkt)
+						set value of cell CAL_COL to (cal_burn of wrkt)
+						set value of cell NOTES_COL to (notes of wrkt)
+						set value of cell GEAR_COL to (gear of wrkt)
+						set value of cell CATEGORY_COL to (category of wrkt)
+						set value of cell ELEVATION_COL to (elevation of wrkt)
+					end tell
+				end tell
+			end tell
+			
+			save
+		end tell
+	end tell
+end updateWrkt
+
 my initialize("Exercise 2017 test.numbers")
 --set wrktData to {{interval:0, dur_str:"0h 5m 1s", dist_mi:0.65, pace_str:"0h 7m 45s"}, {interval:1, dur_str:"0h 17m 47s", dist_mi:2.37, pace_str:"0h 7m 30s"}, {interval:2, dur_str:"0h 16m 27s", dist_mi:2.29, pace_str:"0h 7m 11s"}, {interval:3, dur_str:"0h 5m 53s", dist_mi:0.7, pace_str:"0h 8m 27s"}}
 --set wrktFrmla to {wrkt_tot:{distance:"=sum(B:B)", dur_str:"=sum(C:C)"}}
