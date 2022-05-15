@@ -675,14 +675,19 @@ def process_workouts():
             ex_dict = ex.to_psite_dict(dateTimeFormat='%m/%d/%Y %H:%M:%S')
             ex_dict['etype'] = ex_dict['type']
             ex_dict['dur_str'] = ex.dur_str()
+            logger.info('exercise from server: ' + str(ex_dict['wrkt_dttm']))
 
-            logger.info(ex_dict)
-            try:
-                scpt.call('updateWrkt',ex_dict)
-            except:
-                logger.error('updateWrkt Unexpected Error')
-                logger.error(sys.exc_info())
-                raise
+            for ex_sheet in sheet_wrkt_lst:
+                logger.info('exercise from sheet: ' + str(ex_sheet['wrkt_dt']))
+                if ex_sheet['wrkt_dt'] == ex_dict['wrkt_dttm']:
+                    logger.info('update exercise: ' + str(ex_dict['wrkt_dttm']))
+                    try:
+                        scpt.call('updateExercise', ex_sheet['rowVal'], ex_dict)
+                    except:
+                        logger.error('updateExercise Unexpected Error')
+                        logger.error(sys.exc_info())
+                        raise
+                    break
 
     # Process new files
     # Create workout on server
