@@ -56,6 +56,7 @@ def getRecentWrkts(scpt, nbrRows):
     for exSheet in exSheetLst:
         wrkt = {}
         exSheet['dateVal'] = tc.adjustAppleNumbersTimeForDst(exSheet['dateVal'])
+        wrkt['wrkt_dttm'] = exSheet['dateVal']
         wrkt['wrkt_dt'] = exSheet['dateVal'].strftime(dateTimeSheetFormat)
         wrkt['wrkt_typ'] = exSheet['typeVal']
         h,m,s = tc.breakTimeFromSeconds(exSheet['durationVal'])
@@ -76,5 +77,5 @@ def getRecentWrkts(scpt, nbrRows):
         wrkt['elevation'] = exSheet['eleVal']
         wrktLst.append(wrkt)
 
-    wrktLst.sort(key=lambda x: x['wrkt_dt'], reverse=False)
+    wrktLst.sort(key=lambda x: x['wrkt_dttm'], reverse=False)
     return wrktLst
