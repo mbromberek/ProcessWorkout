@@ -39,6 +39,7 @@ import UpdtRecentWrkts as updtRecentWrkts
 import dao.exerciseSheet as exSheetDao
 import ws.createWrkt as createWrkt
 import ws.updateWrkt as updateWrkt
+import ws.getWrkt as getWrkt
 import NormalizeWorkout.parse.fitParse as fitParse
 
 config = configparser.ConfigParser()
@@ -48,6 +49,7 @@ createWrktSheet.logger = logger
 createWrktBrkdn.logger = logger
 exSheetDao.logger = logger
 createWrkt.logger = logger
+getWrkt.logger = logger
 
 METERS_TO_FEET = 3.28084
 
@@ -622,5 +624,58 @@ def main():
 
     logger.info('End ProcessRunGap')
 
+def process_workouts():
+    logger.info('Start ProcessRunGap')
+
+    # Get config details
+    progDir = os.path.dirname(os.path.abspath(__file__))
+    config.read(progDir + "/config.txt")
+
+    sheetName = config['applescript']['sheet_name']
+
+    runGapConfigs = config['rungap']
+    monitorDir = runGapConfigs['monitor_dir']
+    tempDir = runGapConfigs['temp_dir']
+
+    scpt = exSheetDao.initializeAppleScriptFunc( os.path.join(config['applescript']['script_path'], config['applescript']['script_name']), sheetName)
+
+    # logger.debug('monitorDir:' + monitorDir)
+    # logger.debug('tempDir: ' + tempDir)
+    # logger.debug('Monitor Directory Contents:')
+    # logger.debug(os.listdir(monitorDir))
+
+    if (config['update_workouts']['process_with_new'] == 'Y'):
+        # Get last N records from spreadsheet
+        sheet_wrkt_lst = exSheetDao.getRecentWrkts(scpt, config['update_workouts']['nbr_records'])
+        # Get earliest workout date from returned records
+        earliest_dt = sheet_wrkt_lst[0]['wrkt_dttm']
+
+        # Get all workouts >= earliest workout date
+        server_wrkt_json = getWrkt.get_wrkt(earliest_dt, config['webservices'])
+        # TODO need to check for if there is a next to loop through reading
+        #   server_wrkt_json['_links']['next']
+        server_wrkt_json_lst = server_wrkt_json['items']
+        server_ex_lst = []
+        for server_wrkt in server_wrkt_json_lst:
+            logger.info(str(server_wrkt['wrkt_dttm']))
+            ex = ExerciseInfo()
+            ex.from_dict(server_wrkt)
+            if ex.startTime < earliest_dt:
+                logger.info('Skip record for date {} since it is before {}'.format(str(ex.startTime), str(earliest_dt)))
+            else:
+                logger.info('Will process ' + str(ex))
+                logger.info('Distance: {}, Duration: {} seconds, {}'.format(ex.distTot, ex.totTmSec, ex.durTot))
+                server_ex_lst.append(ex)
+
+        # Update spreadsheet
+
+    # Process new files
+    # Create workout on server
+    # Use JSON that came back from server to update spreadsheet
+
+    logger.info('End ProcessRunGap')
+
+
 if __name__ == '__main__':
-    main()
+    # main()
+    process_workouts()
