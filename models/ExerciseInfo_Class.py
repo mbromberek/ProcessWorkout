@@ -98,6 +98,17 @@ class ExerciseInfo:
 
     def elevationChange(self):
         return '{0:.{1}f}'.format(self.elevationGain,1) + '↑\n' + '{0:.{1}f}'.format(self.elevationLoss,1) + '↓'
+    def combinedNotes(self):
+        newNotes = []
+        if self.startWeather.temp != -999:
+            newNotes.append(self.startWeather.generateWeatherUserNotes(position='Start'))
+        if self.endWeather.temp != -999:
+            newNotes.append(self.endWeather.generateWeatherUserNotes(position='End'))
+        if self.clothes != '':
+            newNotes.append(self.clothes + '\n')
+        if self.userNotes != '':
+            newNotes.append(self.userNotes)
+        return ''.join(newNotes)
 
     @staticmethod
     def breakupElevation(ele):
@@ -187,10 +198,10 @@ class ExerciseInfo:
             wrkt['intrvl']['avg_ele_up'] = self.intvlAvgEleUp
             wrkt['intrvl']['avg_ele_down'] = self.intvlAvgEleDown
 
-    def to_psite_dict(self):
-        dateTimeSheetFormat = '%Y-%m-%dT%H:%M:%SZ'
+    def to_psite_dict(self, dateTimeFormat='%Y-%m-%dT%H:%M:%SZ'):
+        # dateTimeSheetFormat = '%Y-%m-%dT%H:%M:%SZ'
         wrkt = {}
-        wrkt['wrkt_dttm'] = self.startTime.strftime(dateTimeSheetFormat)
+        wrkt['wrkt_dttm'] = self.startTime.strftime(dateTimeFormat)
         if self.type != '':
             wrkt['type'] = self.type
         if self.totTmSec >0:
@@ -214,7 +225,7 @@ class ExerciseInfo:
             if self.startWeather.summary != '':
                 wrkt['wethr_start']['wethr_cond'] = self.startWeather.summary
             if self.startWeather.time != '':
-                wrkt['wethr_start']['tm'] = self.startWeather.time.strftime(dateTimeSheetFormat)
+                wrkt['wethr_start']['tm'] = self.startWeather.time.strftime(dateTimeFormat)
             if self.startWeather.dewPoint != '':
                 wrkt['wethr_start']['dew_point'] = self.startWeather.dewPoint
 
@@ -233,7 +244,7 @@ class ExerciseInfo:
             if self.endWeather.summary != '':
                 wrkt['wethr_end']['wethr_cond'] = self.endWeather.summary
             if self.endWeather.time != '':
-                wrkt['wethr_end']['tm'] = self.endWeather.time.strftime(dateTimeSheetFormat)
+                wrkt['wethr_end']['tm'] = self.endWeather.time.strftime(dateTimeFormat)
             if self.endWeather.dewPoint != '':
                 wrkt['wethr_end']['dew_point'] = self.endWeather.dewPoint
 
@@ -251,6 +262,8 @@ class ExerciseInfo:
             wrkt['ele_up'] = '{0:.{1}f}'.format(self.elevationGain,1)
         if self.elevationLoss != '':
             wrkt['ele_down'] = '{0:.{1}f}'.format(self.elevationLoss,1)
+        wrkt['elevation'] = self.elevationChange()
+
         if self.originLoc != '':
             wrkt['originLoc'] = self.originLoc
         if self.category != '':
@@ -319,9 +332,9 @@ class ExerciseInfo:
             self.totTmSec = data['dur_sec']
             self.durTot =             tc.formatNumbersTime(*tc.breakTimeFromSeconds(self.totTmSec))
         if 'dist' in data:
-            self.distTot = data['dist']
+            self.distTot = float(data['dist'])
         if 'dist_mi' in data:
-            self.distTot = data['dist_mi']
+            self.distTot = float(data['dist_mi'])
         if 'hr' in data:
             self.avgHeartRate = data['hr']
         if 'cal_burn' in data:
@@ -334,13 +347,19 @@ class ExerciseInfo:
             self.category = data['category']
         if 'elevation' in data:
             d = self.breakupElevation(data['elevation'])
-            self.elevationGain = d['ele_up']
-            self.elevationLoss = d['ele_down']
+            self.elevationGain = float(d['ele_up'])
+            self.elevationLoss = float(d['ele_down'])
         else:
             if 'ele_up' in data:
-                self.elevationGain = data['ele_up']
+                self.elevationGain = float(data['ele_up'])
             if 'ele_down' in data:
-                self.elevationGain = data['ele_down']
+                self.elevationLoss = float(data['ele_down'])
+        if 'clothes' in data:
+            self.clothes = data['clothes']
+        if 'weather_start' in data:
+            self.startWeather.from_dict(data['weather_start'])
+        if 'weather_end' in data:
+            self.endWeather.from_dict(data['weather_end'])
 
     @staticmethod
     def wrkt_intrvl_from_dict(data, break_type):

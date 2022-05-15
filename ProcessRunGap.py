@@ -137,6 +137,7 @@ def getWrktWeather(ex, data):
     ex.endWeather = getWeather(ex.endLat, ex.endLon, ex.endTime)
     ex.endWeather.position = 'End'
 
+    #TODO change to use Weather_class.generateWeatherUserNotes
     ex.userNotes = ex.userNotes + generateWeatherUserNotes(ex.startWeather)
     ex.userNotes = ex.userNotes + generateWeatherUserNotes(ex.endWeather)
 
@@ -664,10 +665,16 @@ def process_workouts():
                 logger.info('Skip record for date {} since it is before {}'.format(str(ex.startTime), str(earliest_dt)))
             else:
                 logger.info('Will process ' + str(ex))
-                logger.info('Distance: {}, Duration: {} seconds, {}'.format(ex.distTot, ex.totTmSec, ex.durTot))
+                logger.info('Distance: {}, Duration: {} seconds, {}'.format(str(ex.distTot), ex.totTmSec, ex.durTot))
+                ex.userNotes = ex.combinedNotes()
                 server_ex_lst.append(ex)
 
+        logger.info('\ngenerate Dictionary for updating Sheet')
         # Update spreadsheet
+        for ex in server_ex_lst:
+            ex_dict = ex.to_psite_dict(dateTimeFormat='%m/%d/%Y %H:%M:%S')
+            logger.info(ex_dict)
+            break
 
     # Process new files
     # Create workout on server
