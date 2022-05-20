@@ -321,6 +321,15 @@ class ExerciseInfo:
 
         return wrkt
 
+    @staticmethod
+    def ex_lst_from_dict(ex_dict_lst):
+        ex_lst = []
+        for ex_dict in ex_dict_lst:
+            ex = ExerciseInfo()
+            ex.from_dict(ex_dict)
+            ex_lst.append(ex)
+        return ex_lst
+
     def from_dict(self, data):
         # dateTimeSheetFormat = '%m/%d/%Y %H:%M:%S'
         # dateTimeServerFormat = '%Y-%m-%dT%H:%M:%SZ'
@@ -348,7 +357,7 @@ class ExerciseInfo:
         if 'cal_burn' in data:
             self.calTot = data['cal_burn']
         if 'notes' in data:
-            self.userNotes = data['notes']
+            self.userNotes = data['notes'] if data['notes'] != None else ''
         if 'gear' in data:
             self.gear = data['gear'] if data['gear'] != None else ''
         if 'category' in data:
