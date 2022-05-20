@@ -28,6 +28,7 @@ from ExerciseInfo_Class import ExerciseInfo
 from Weather_Class import WeatherInfo
 import ws.updateWrkt as updateWrkt
 import ws.createWrkt as createWrkt
+import ws.getWrkt as getWrkt
 
 config = configparser.ConfigParser()
 logging.config.fileConfig('logging.conf')
@@ -36,6 +37,8 @@ createWrktSheet.logger = logger
 exSheetDao.logger = logger
 updateWrkt.logger = logger
 createWrkt.logger = logger
+getWrkt.logger = logger
+
 
 def processUpdates(scpt, nbrRows, wsConfig):
     '''
@@ -171,6 +174,70 @@ def splitWeather(wethrStr, keySuffix=''):
             wethrDict['temp' + keySuffix] = wethrLst[0].strip()
 
     return wethrDict
+
+def sheetFromServer(scpt, nbrRows, config):
+    # Get last N records from spreadsheet
+    sheet_wrkt_lst = exSheetDao.getRecentWrkts(scpt, nbrRows)
+    # Get earliest workout date from returned records
+    earliest_dt = sheet_wrkt_lst[0]['wrkt_dttm']
+
+    # Get all workouts >= earliest workout date
+    server_wrkt_json = getWrkt.get_wrkt(earliest_dt, config['webservices'])
+    # TODO need to check for if there is a next to loop through reading
+    #   server_wrkt_json['_links']['next']
+    server_wrkt_json_lst = server_wrkt_json['items']
+    server_ex_lst = []
+    for server_wrkt in server_wrkt_json_lst:
+        logger.info(str(server_wrkt['wrkt_dttm']))
+        ex = ExerciseInfo()
+        ex.from_dict(server_wrkt)
+        if ex.startTime < earliest_dt:
+            logger.info('Skip record for date {} since it is before {}'.format(str(ex.startTime), str(earliest_dt)))
+        else:
+            logger.info('Will process ' + str(ex))
+            logger.info('Distance: {}, Duration: {} seconds, {}'.format(str(ex.distTot), ex.totTmSec, ex.durTot))
+            ex.userNotes = ex.combinedNotes()
+            server_ex_lst.append(ex)
+
+    logger.info('\ngenerate Dictionary for updating Sheet')
+    server_ex_lst_create = []
+    # Update spreadsheet
+    for ex_server in server_ex_lst:
+        logger.info('exercise from server: ' + str(ex_server.startTime))
+        match_found = False
+        ex_dict = ex_server.to_psite_dict(dateTimeFormat='%m/%d/%Y %H:%M:%S')
+        ex_dict['etype'] = ex_dict['type']
+        # ex_dict['wrkt_dt'] = ex_dict['wrkt_dttm']
+        ex_dict['dur_str'] = ex_server.dur_str(forceHr=True)
+        ex_dict['category'] = ex_server.combinedCategory()
+
+        for ex_sheet_dict in sheet_wrkt_lst:
+            logger.info('exercise from sheet: ' + str(ex_sheet_dict['wrkt_dttm']))
+            # ex_sheet = ExerciseInfo()
+            # ex_sheet.from_dict(ex_sheet_dict)
+            # if ex_sheet.startTime == ex_server.startTime:
+            if ex_sheet_dict['wrkt_dt'] == ex_dict['wrkt_dttm']:
+                match_found = True
+                ex_sheet_dict['hr'] = int(ex_sheet_dict['hr'])
+                ex_sheet_dict['cal_burn'] = int(ex_sheet_dict['cal_burn'])
+                #TODO should setup a compare to check if anything changed?
+                diff = exSheetDao.getDiffWrktDict(ex_sheet_dict, ex_dict)
+                # diff = ex_sheet.compareFields(ex_server)
+                if diff != 'No Differences':
+                    logger.info('Differences: {}'.format(diff))
+                    exSheetDao.updateRows(scpt, ex_sheet_dict['rowVal'], ex_dict)
+                break
+        if not match_found:
+            server_ex_lst_create.append(ex_dict)
+
+    # Add workouts that are not on sheet
+    for server_ex_create in server_ex_lst_create:
+        try:
+            scpt.call('addExercise', server_ex_create['wrkt_dttm'], server_ex_create['etype'], server_ex_create['dur_str'], server_ex_create['dist_mi'], 'mile', server_ex_create['hr'], server_ex_create['cal_burn'], server_ex_create['notes'], '', server_ex_create['gear'], server_ex_create['category'], server_ex_create['elevation'])
+        except:
+            logger.error('addExercise Unexpected Error')
+            logger.error(sys.exc_info())
+            raise
 
 
 def main():
