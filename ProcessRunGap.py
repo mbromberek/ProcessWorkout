@@ -340,8 +340,9 @@ def processExercise(filename):
 
     exBrkdn = getWrktBrkdnConfig(ex.category)
 
-    if ex.gear == '':
-        ex.gear = determineGear(ex)
+    # Want to leave gear empty so server will determine it
+    # if ex.gear == '':
+    #     ex.gear = determineGear(ex)
 
     # Pull data for getting weather
     if 'displayPath' in data:
@@ -459,11 +460,17 @@ def saveExToSheet(exLst, scpt):
     for ex in exLst:
         startDateTime = ex.startTime.strftime(dateTimeSheetFormat)
         distance = "%.2f" % ex.distTot
-        duration = tc.formatNumbersTime(ex.hourTot, ex.minTot, ex.secTot)
+        if ex.durTot != '':
+            duration = ex.durTot
+        else:
+            duration = tc.formatNumbersTime(ex.hourTot, ex.minTot, ex.secTot)
+        if ex.userNotes == '':
+            ex.userNotes = ex.combinedNotes()
         exBrkdn = getWrktBrkdnConfig(ex.category)
         logger.debug('Exercise startDateTime:' + str(startDateTime))
         logger.debug('dist:' + distance + ' ' + str(ex.distTot))
         logger.debug('duration:' + str(duration))
+        logger.debug('notes: ' + str(ex.userNotes))
 
         try:
             scpt.call('addExercise',ex.eDate, ex.type, duration, distance, ex.distUnit, ex.avgHeartRate, ex.calTot, ex.userNotes, startDateTime, ex.gear, ex.category, ex.elevationChange())
@@ -513,6 +520,7 @@ def saveExToSite(exLst, wsConfig):
                 # logger.debug('Exercise: ' + exStrtTmStr)
                 if exStrtTmStr == wrkt['wrkt_dttm']:
                     updateWrkt.uploadFile(wrkt['id'], ex, wsConfig, config['rungap']['monitor_dir'])
+        return createWrktResp.json()
 
 def cleanProcessedFile(exLst, monitorDir, tempDir):
     '''
@@ -649,9 +657,17 @@ def process_workouts():
 
     # TODO Process new files
     # Get Worktouts from files
+    uncompressMonitorToTemp(monitorDir, tempDir)
+    filesToProcess = getFiles(tempDir)
+    newExLst = processExercises(filesToProcess)
 
     # Create workout on server
-    # Use JSON that came back from server to update spreadsheet
+    if len(newExLst) > 0:
+        wrkt_dict_lst = saveExToSite(newExLst, config['webservices'])
+        logger.debug(str(wrkt_dict_lst))
+        # Use JSON that came back from server to update spreadsheet
+        exLst = ExerciseInfo.ex_lst_from_dict(wrkt_dict_lst)
+        saveExToSheet(exLst, scpt)
 
     logger.info('End ProcessRunGap')
 
