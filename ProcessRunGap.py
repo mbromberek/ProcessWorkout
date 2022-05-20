@@ -667,6 +667,15 @@ def process_workouts():
         # Use JSON that came back from server to update spreadsheet
         exLst = ExerciseInfo.ex_lst_from_dict(wrkt_dict_lst)
         saveExToSheet(exLst, scpt)
+        cleanProcessedFile(newExLst, monitorDir, tempDir)
+
+    hostKeepOpenLst = config['applescript']['keep_sheet_open_on'].split(',')
+    logger.info(str(hostKeepOpenLst))
+    logger.info(platform.node())
+
+    if (config['applescript']['close_sheet'] == 'Y' \
+    and platform.node() not in hostKeepOpenLst):
+        scpt.call('closeSheet')
 
     logger.info('End ProcessRunGap')
 
