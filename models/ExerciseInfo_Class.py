@@ -104,13 +104,13 @@ class ExerciseInfo:
             newNotes.append(self.startWeather.generateWeatherUserNotes(position='Start'))
         if self.endWeather.temp != -999:
             newNotes.append(self.endWeather.generateWeatherUserNotes(position='End'))
-        if self.clothes != '':
+        if self.clothes != '' and self.clothes != None:
             newNotes.append(self.clothes + '\n')
-        if self.userNotes != '':
+        if self.userNotes != '' and self.userNotes != None:
             newNotes.append(self.userNotes)
         return ''.join(newNotes)
     def combinedCategory(self):
-        if self.training_type != '':
+        if self.training_type != '' and self.training_type != None and self.category != None:
             return self.category + ' - ' + self.training_type
         else:
             return self.category
