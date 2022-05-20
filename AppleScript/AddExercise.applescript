@@ -50,6 +50,7 @@ on addExercise(eDate, eType, eTime, eDistance, eDistanceUnit, eHeartRate, eCal, 
 						set updateRow to lastRow + 1
 					end if
 					tell row updateRow
+						--set height to 70
 						set eDateTime to eDate & " " & eStartTime
 						set value of cell DATE_COL to eDateTime
 						set value of cell TYPE_COL to eType
