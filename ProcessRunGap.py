@@ -470,7 +470,6 @@ def saveExToSheet(exLst, scpt):
         logger.debug('Exercise startDateTime:' + str(startDateTime))
         logger.debug('dist:' + distance + ' ' + str(ex.distTot))
         logger.debug('duration:' + str(duration))
-        logger.debug('notes: ' + str(ex.userNotes))
 
         try:
             scpt.call('addExercise',ex.eDate, ex.type, duration, distance, ex.distUnit, ex.avgHeartRate, ex.calTot, ex.userNotes, startDateTime, ex.gear, ex.category, ex.elevationChange())

@@ -357,7 +357,8 @@ class ExerciseInfo:
         if 'cal_burn' in data:
             self.calTot = data['cal_burn']
         if 'notes' in data:
-            self.userNotes = data['notes'] if data['notes'] != None else ''
+            # Remove \r from notes field so new lines only take one line in sheet
+            self.userNotes = data['notes'].replace('\r','') if data['notes'] != None else ''
         if 'gear' in data:
             self.gear = data['gear'] if data['gear'] != None else ''
         if 'category' in data:
