@@ -125,8 +125,8 @@ class ExerciseInfo:
             d['ele_down'] = float(ele.split('↑')[1].split('↓')[0])
         return d
 
-    def dur_str(self):
-        return tc.formatNumbersTime(*tc.breakTimeFromSeconds(self.totTmSec))
+    def dur_str(self, forceHr=False):
+        return tc.formatNumbersTime(*tc.breakTimeFromSeconds(self.totTmSec), forceHr)
 
     def to_dict(self):
         dateTimeSheetFormat = '%m/%d/%Y %H:%M:%S'
@@ -262,8 +262,8 @@ class ExerciseInfo:
             wrkt['cal_burn'] = self.calTot
         if self.userNotes != '':
             wrkt['notes'] = self.userNotes
-        if self.gear != '':
-            wrkt['gear'] = self.gear
+        # if self.gear != '':
+        wrkt['gear'] = self.gear
         if self.category != '':
             wrkt['category'] = self.category
         if self.elevationGain != '':
@@ -350,7 +350,7 @@ class ExerciseInfo:
         if 'notes' in data:
             self.userNotes = data['notes']
         if 'gear' in data:
-            self.gear = data['gear']
+            self.gear = data['gear'] if data['gear'] != None else ''
         if 'category' in data:
             self.category = data['category']
         if 'training_type' in data:
@@ -380,3 +380,11 @@ class ExerciseInfo:
             splt.from_df_dict(segment, break_type)
             splt_lst.append(splt)
         return splt_lst
+
+    def compareFields(self, ex_2):
+        serverCompareFields = ['startTime', 'distTot', 'durTot', 'calTot', 'avgHeartRate', 'userNotes', 'gear', 'category', 'training_type', 'elevationGain', 'elevationLoss']
+        for field in compareFields:
+            if getattr(self, field) != getattr(ex_2, field):
+                return 'Field {} is different between self ({}) and new ({})'.format(field, str(getattr(self, field)), str(getattr(ex_2, field)))
+
+        return 'No Differences'

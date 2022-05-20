@@ -672,30 +672,35 @@ def process_workouts():
         logger.info('\ngenerate Dictionary for updating Sheet')
         server_ex_lst_create = []
         # Update spreadsheet
-        for ex in server_ex_lst:
+        for ex_server in server_ex_lst:
+            logger.info('exercise from server: ' + str(ex_server.startTime))
             match_found = False
-            ex_dict = ex.to_psite_dict(dateTimeFormat='%m/%d/%Y %H:%M:%S')
+            ex_dict = ex_server.to_psite_dict(dateTimeFormat='%m/%d/%Y %H:%M:%S')
             ex_dict['etype'] = ex_dict['type']
-            ex_dict['dur_str'] = ex.dur_str()
-            ex_dict['category'] = ex.combinedCategory()
-            # logger.info('exercise from server: ' + str(ex_dict['wrkt_dttm']))
+            # ex_dict['wrkt_dt'] = ex_dict['wrkt_dttm']
+            ex_dict['dur_str'] = ex_server.dur_str(forceHr=True)
+            ex_dict['category'] = ex_server.combinedCategory()
 
-            for ex_sheet in sheet_wrkt_lst:
-                logger.info('exercise from sheet: ' + str(ex_sheet['wrkt_dt']))
-                if ex_sheet['wrkt_dt'] == ex_dict['wrkt_dttm']:
+            for ex_sheet_dict in sheet_wrkt_lst:
+                logger.info('exercise from sheet: ' + str(ex_sheet_dict['wrkt_dttm']))
+                # ex_sheet = ExerciseInfo()
+                # ex_sheet.from_dict(ex_sheet_dict)
+                # if ex_sheet.startTime == ex_server.startTime:
+                if ex_sheet_dict['wrkt_dt'] == ex_dict['wrkt_dttm']:
                     match_found = True
-                    # logger.info('update exercise: ' + str(ex_dict['wrkt_dttm']))
-                    try:
-                        scpt.call('updateExercise', ex_sheet['rowVal'], ex_dict)
-                    except:
-                        logger.error('updateExercise Unexpected Error')
-                        logger.error(sys.exc_info())
-                        raise
+                    ex_sheet_dict['hr'] = int(ex_sheet_dict['hr'])
+                    ex_sheet_dict['cal_burn'] = int(ex_sheet_dict['cal_burn'])
+                    #TODO should setup a compare to check if anything changed?
+                    diff = exSheetDao.getDiffWrktDict(ex_sheet_dict, ex_dict)
+                    # diff = ex_sheet.compareFields(ex_server)
+                    if diff != 'No Differences':
+                        logger.info('Differences: {}'.format(diff))
+                        exSheetDao.updateRows(scpt, ex_sheet_dict['rowVal'], ex_dict)
                     break
-            #TODO if no match is found add to create list for sheet
             if not match_found:
                 server_ex_lst_create.append(ex_dict)
-        #TODO add workouts from create list
+
+        # Add workouts that are not on sheet
         for server_ex_create in server_ex_lst_create:
             try:
                 scpt.call('addExercise', server_ex_create['wrkt_dttm'], server_ex_create['etype'], server_ex_create['dur_str'], server_ex_create['dist_mi'], 'mile', server_ex_create['hr'], server_ex_create['cal_burn'], server_ex_create['notes'], '', server_ex_create['gear'], server_ex_create['category'], server_ex_create['elevation'])

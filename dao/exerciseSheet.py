@@ -80,3 +80,20 @@ def getRecentWrkts(scpt, nbrRows):
 
     wrktLst.sort(key=lambda x: x['wrkt_dttm'], reverse=False)
     return wrktLst
+
+def updateRows(scpt, row_nbr, ex_dict):
+    try:
+        scpt.call('updateExercise', row_nbr, ex_dict)
+    except:
+        logger.error('updateExercise Unexpected Error')
+        logger.error(sys.exc_info())
+        raise
+
+def getDiffWrktDict(sheet_wrkt, server_wrkt):
+    sheetCompareFields = ['wrkt_dt', 'wrkt_typ', 'tot_tm', 'dist', 'hr', 'cal_burn', 'notes', 'gear', 'category', 'elevation']
+    serverCompareFields = ['wrkt_dttm', 'type', 'dur_str', 'dist_mi', 'hr', 'cal_burn', 'notes', 'gear', 'category', 'elevation']
+    for field_nbr in range(0, len(serverCompareFields)):
+        if str(sheet_wrkt[sheetCompareFields[field_nbr]]) != str(server_wrkt[serverCompareFields[field_nbr]]):
+            return 'Field {} is different between sheet ({}) and server ({})'.format(serverCompareFields[field_nbr], str(sheet_wrkt[sheetCompareFields[field_nbr]]), str(server_wrkt[serverCompareFields[field_nbr]]))
+
+    return 'No Differences'
