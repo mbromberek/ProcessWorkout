@@ -70,9 +70,12 @@ def seconds_to_time_str(actv, time_field, time_format = ':'):
 def breakTimeFromSeconds(totTimeSec):
     if totTimeSec is None or math.isnan(totTimeSec):
         totTimeSec = 0
-    hourTot = math.floor(totTimeSec/60/60)
-    minTot = math.floor((totTimeSec/60/60 - hourTot) * 60)
-    secTot = math.floor(((totTimeSec/60/60 - hourTot) * 60 - minTot) *60)
+
+    hourTot = math.floor(totTimeSec / SECONDS_IN_HOUR)
+    minTot = math.floor((totTimeSec % SECONDS_IN_HOUR) / SECONDS_IN_MINUTE)
+    secTot = round((totTimeSec % SECONDS_IN_HOUR) % SECONDS_IN_MINUTE)
+
+
     return hourTot, minTot, secTot
 def formatNumbersTime(h, m, s, forceHr=False):
     '''
