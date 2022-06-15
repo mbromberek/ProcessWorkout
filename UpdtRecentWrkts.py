@@ -190,6 +190,8 @@ def sheetFromServer(scpt, nbrRows, config):
     for server_wrkt in server_wrkt_json_lst:
         logger.info(str(server_wrkt['wrkt_dttm']))
         ex = ExerciseInfo()
+        ex.startWeather = WeatherInfo()
+        ex.endWeather = WeatherInfo()
         ex.from_dict(server_wrkt)
         if ex.startTime < earliest_dt:
             logger.info('Skip record for date {} since it is before {}'.format(str(ex.startTime), str(earliest_dt)))
