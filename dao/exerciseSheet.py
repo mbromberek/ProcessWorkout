@@ -93,6 +93,11 @@ def getDiffWrktDict(sheet_wrkt, server_wrkt):
     sheetCompareFields = ['wrkt_dt', 'wrkt_typ', 'tot_tm', 'dist', 'hr', 'cal_burn', 'notes', 'gear', 'category', 'elevation']
     serverCompareFields = ['wrkt_dttm', 'type', 'dur_str', 'dist_mi', 'hr', 'cal_burn', 'notes', 'gear', 'category', 'elevation']
     for field_nbr in range(0, len(serverCompareFields)):
+        if sheetCompareFields[field_nbr] not in sheet_wrkt:
+            sheet_wrkt[sheetCompareFields[field_nbr]] = ''
+        if serverCompareFields[field_nbr] not in server_wrkt:
+            server_wrkt[serverCompareFields[field_nbr]] = ''
+
         if str(sheet_wrkt[sheetCompareFields[field_nbr]]) != str(server_wrkt[serverCompareFields[field_nbr]]):
             return 'Field {} is different between sheet ({}) and server ({})'.format(serverCompareFields[field_nbr], str(sheet_wrkt[sheetCompareFields[field_nbr]]), str(server_wrkt[serverCompareFields[field_nbr]]))
 

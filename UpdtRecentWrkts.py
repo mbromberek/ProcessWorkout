@@ -222,7 +222,6 @@ def sheetFromServer(scpt, nbrRows, config):
                 match_found = True
                 ex_sheet_dict['hr'] = int(ex_sheet_dict['hr'])
                 ex_sheet_dict['cal_burn'] = int(ex_sheet_dict['cal_burn'])
-                #TODO should setup a compare to check if anything changed?
                 diff = exSheetDao.getDiffWrktDict(ex_sheet_dict, ex_dict)
                 # diff = ex_sheet.compareFields(ex_server)
                 if diff != 'No Differences':
