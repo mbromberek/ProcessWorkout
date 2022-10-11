@@ -141,7 +141,11 @@ def getWrktWeather(ex, data):
     ex.endWeather = getWeather(ex.endLat, ex.endLon, ex.endTime)
     ex.endWeather.position = 'End'
 
-    logger.info(getWeatherApi(ex.startLat, ex.startLon, roundHour(ex.startTime)))
+    logger.info(ex.startWeather.generateWeatherUserNotes('DarkSkyStart: '))
+    logger.info(getWeatherApi(ex.startLat, ex.startLon, roundHour(ex.startTime)).generateWeatherUserNotes('WeatherStart: '))
+
+    logger.info(ex.endWeather.generateWeatherUserNotes('DarkSkyEnd: '))
+    logger.info(getWeatherApi(ex.endLat, ex.endLon, roundHour(ex.endTime)).generateWeatherUserNotes('WeatherEnd: '))
 
     #TODO change to use Weather_class.generateWeatherUserNotes
     ex.userNotes = ex.userNotes + generateWeatherUserNotes(ex.startWeather)
@@ -202,7 +206,7 @@ def getWeatherApi(lat, lon, dttm):
     w.windChill = weatherHistory['windchill_f']
     w.lat = lat
     w.lon = lon
-    w.tm = weatherHistory['time']
+    w.time = weatherHistory['time']
 
     if (config['weather_api']['save_weather'] == 'Y'):
         with open('/tmp/weatherData' + w.tm.strftime('%Y%m%dT%H%M%S') + '.txt', 'w') as outfile:

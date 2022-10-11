@@ -17,6 +17,8 @@ class WeatherInfo:
     time = ''
     dewPoint = ''
     position = ''
+    windDegree = ''
+    windChill = ''
 
 
     # def __init__(self):
