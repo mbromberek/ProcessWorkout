@@ -141,11 +141,15 @@ def getWrktWeather(ex, data):
     ex.endWeather = getWeather(ex.endLat, ex.endLon, ex.endTime)
     ex.endWeather.position = 'End'
 
-    logger.info(ex.startWeather.generateWeatherUserNotes('DarkSkyStart: '))
-    logger.info(getWeatherApi(ex.startLat, ex.startLon, roundHour(ex.startTime)).generateWeatherUserNotes('WeatherStart: '))
-
-    logger.info(ex.endWeather.generateWeatherUserNotes('DarkSkyEnd: '))
-    logger.info(getWeatherApi(ex.endLat, ex.endLon, roundHour(ex.endTime)).generateWeatherUserNotes('WeatherEnd: '))
+    f = open('/tmp/weatherData' + ex.startTime.strftime('%Y%m') + '.txt', 'a')
+    f.write('Start Time:' + ex.startTime.strftime('%Y-%m-%dT%H:%M:%S') + '\n')
+    f.write('Lat: ' + str(ex.startLat) + ' Lon: ' + str(ex.startLon) + '\n')
+    f.write(ex.startWeather.generateWeatherUserNotes('DarkSkyStart: '))
+    f.write(getWeatherApi(ex.startLat, ex.startLon, roundHour(ex.startTime)).generateWeatherUserNotes('WeatherStart: '))
+    f.write(ex.endWeather.generateWeatherUserNotes('DarkSkyEnd: '))
+    f.write(getWeatherApi(ex.endLat, ex.endLon, roundHour(ex.endTime)).generateWeatherUserNotes('WeatherEnd: '))
+    f.write('End Time:' + ex.startTime.strftime('%Y-%m-%dT%H:%M:%S') + '\n')
+    f.close()
 
     #TODO change to use Weather_class.generateWeatherUserNotes
     ex.userNotes = ex.userNotes + generateWeatherUserNotes(ex.startWeather)
