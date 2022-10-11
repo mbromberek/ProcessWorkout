@@ -111,6 +111,12 @@ def apiCall(url):
     data = r.json()
     return data
 
+def weatherApiCall(url, token):
+    r = requests.get(url, headers={'key':token}, verify=True)
+
+    data = r.json()
+    return data
+
 def getWrktWeather(ex, data):
     '''
     Get weather data using passed in data
@@ -134,6 +140,8 @@ def getWrktWeather(ex, data):
     ex.startWeather.position = 'Start'
     ex.endWeather = getWeather(ex.endLat, ex.endLon, ex.endTime)
     ex.endWeather.position = 'End'
+
+    logger.info(getWeatherApi(ex.startLat, ex.startLon, roundHour(ex.startTime)))
 
     #TODO change to use Weather_class.generateWeatherUserNotes
     ex.userNotes = ex.userNotes + generateWeatherUserNotes(ex.startWeather)
@@ -171,6 +179,41 @@ def getWeather(lat, lon, tm):
             json.dump(weatherData, outfile)
 
     return w
+
+def getWeatherApi(lat, lon, dttm):
+    baseURL = config['weather_api']['base_url']
+    key = config['weather_api']['key']
+    loc = str(lat) + ',' + str(lon)
+
+    url = baseURL + '/history.json' + '?q=' + loc + '&dt=' + dttm.strftime('%Y-%m-%d') + '&hour=' + dttm.strftime('%H')
+
+    w = WeatherInfo()
+    weatherData = weatherApiCall(url, key)
+    logger.info(weatherData)
+    weatherHistory = weatherData['forecast']['forecastday'][0]['hour'][0]
+    w.temp = weatherHistory['temp_f']
+    w.apparentTemp = weatherHistory['feelslike_f']
+    w.humidity = weatherHistory['humidity']
+    w.windSpeed = weatherHistory['wind_mph']
+    w.summary = weatherHistory['condition']['text']
+    w.windGust = weatherHistory['gust_mph']
+    w.dewPoint = weatherHistory['dewpoint_f']
+    w.windDegree = weatherHistory['wind_degree']
+    w.windChill = weatherHistory['windchill_f']
+    w.lat = lat
+    w.lon = lon
+    w.tm = weatherHistory['time']
+
+    if (config['weather_api']['save_weather'] == 'Y'):
+        with open('/tmp/weatherData' + w.tm.strftime('%Y%m%dT%H%M%S') + '.txt', 'w') as outfile:
+            json.dump(weatherData, outfile)
+
+    return w
+
+def roundHour(dttm):
+    # Rounds to nearest hour by adding a timedelta hour if minute >= 30
+    return (dttm.replace(second=0, microsecond=0, minute=0, hour=dttm.hour)
+               +datetime.timedelta(hours=dttm.minute//30))
 
 def generateWeatherUserNotes(w):
     """
