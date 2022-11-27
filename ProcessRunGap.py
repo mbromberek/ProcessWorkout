@@ -460,7 +460,7 @@ def processExercise(filename):
         if ex.category == 'Training' and summaryLapDf.shape[0] >=3:
             summaryLapDf.loc[summaryLapDf.index[0],'interval_desc'] = 'Warm Up'
             summaryLapDf.loc[summaryLapDf.index[-1],'interval_desc'] = 'Cool Down'
-            summaryLapDf['interval'] = summaryLapDf['interval'] -1
+            summaryLapDf['interval'] = summaryLapDf['interval'] 
             summaryLapDf['interval_desc'].fillna('', inplace=True)
 
         #needed since old process has interval instead of mile number so starts at 0
