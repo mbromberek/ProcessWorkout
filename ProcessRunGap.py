@@ -384,7 +384,7 @@ def processExercise(filename):
     if 'elevationGain' in data:
         ex.elevationGain = data['elevationGain']
         ex.elevationLoss = data['elevationLoss']
-        if ex.source == 'Coros':
+        if ex.source.upper() == 'COROS':
             ex.elevationGain = ex.elevationGain * METERS_TO_FEET
             ex.elevationLoss = ex.elevationLoss * METERS_TO_FEET
 
