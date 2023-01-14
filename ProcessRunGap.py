@@ -192,7 +192,7 @@ def getWeather(lat, lon, tm):
             json.dump(weatherData, outfile)
 
     return w
-
+'''
 def getWeatherApi(lat, lon, dttm):
     baseURL = config['weather_api']['base_url']
     key = config['weather_api']['key']
@@ -222,7 +222,7 @@ def getWeatherApi(lat, lon, dttm):
             json.dump(weatherData, outfile)
 
     return w
-
+'''
 def get_weatherkit(lat, lon, dttm):
     weatherConfig = config['weather_kit']
     baseURL = weatherConfig['base_url']
@@ -250,7 +250,7 @@ def get_weatherkit(lat, lon, dttm):
     w.apparentTemp = WeatherInfo.c2F(weatherHistory['temperatureApparent'])
     w.humidity = weatherHistory['humidity'] *100
     w.windSpeed = weatherHistory['windSpeed']
-    w.summary = weatherHistory['conditionCode'] #TODO split words by camel case
+    w.summary = add_space_in_camelCase(weatherHistory['conditionCode'])
     w.windGust = weatherHistory['windGust']
     w.dewPoint = WeatherInfo.c2F(weatherHistory['temperatureDewPoint'])
     w.lat = lat
@@ -270,6 +270,15 @@ def round_hour(dttm):
 
 def toUTC(dttm):
     return dttm.astimezone(ZoneInfo(key='UTC'))
+
+def add_space_in_camelCase(s):
+    new_string=""
+    for i in s:
+        if(i.isupper()):
+            new_string+=" "+i
+        else:
+            new_string+=i
+    return new_string
 
 def generateWeatherUserNotes(w):
     """
