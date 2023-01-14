@@ -72,3 +72,17 @@ class WeatherInfo:
             txtLst.append(' degrees. ')
         txtLst.append('\n')
         return ''.join(txtLst)
+    
+    @staticmethod
+    def c2F(temp):
+        '''
+        Convert Celsius to Fahrenheit
+        '''
+        return (temp * 9/5) +32
+
+    @staticmethod
+    def f2C(temp):
+        '''
+        Convert Fahrenheit to Celsius
+        '''
+        return (temp -32) * 5/9

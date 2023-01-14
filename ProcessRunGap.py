@@ -12,6 +12,7 @@ import os,glob,shutil, platform
 import sys
 import re
 import datetime
+from zoneinfo import ZoneInfo
 import math
 import configparser
 import requests # For API call
@@ -112,7 +113,7 @@ def apiCall(url):
     return data
 
 def weatherApiCall(url, token):
-    r = requests.get(url, headers={'key':token}, verify=True)
+    r = requests.get(url, headers={'Authorization':'Bearer ' + token}, verify=True)
 
     data = r.json()
     return data
@@ -125,7 +126,8 @@ def getWrktWeather(ex, data):
     laps = data['laps']
     exPath = data['displayPath']
 
-    lastLapStart = datetime.datetime.strptime(laps[-1]['startTime'] ,'%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=datetime.timezone.utc).astimezone(tz=None)
+    lastLapStart = datetime.datetime.strptime(laps[-1]['startTime'] ,'%Y-%m-%dT%H:%M:%SZ')\
+        .replace(tzinfo=datetime.timezone.utc).astimezone(tz=ZoneInfo(ex.timeZone))
     lastLapDuration = laps[-1]['duration']
     lastLapEnd = lastLapStart + datetime.timedelta(seconds=lastLapDuration)
     ex.endTime = lastLapEnd
@@ -136,9 +138,11 @@ def getWrktWeather(ex, data):
     ex.endLat = exPath[-1]['lat']
     ex.endLon = exPath[-1]['lon']
 
-    ex.startWeather = getWeather(ex.startLat, ex.startLon, ex.startTime)
+    # ex.startWeather = getWeather(ex.startLat, ex.startLon, ex.startTime)
+    ex.startWeather = get_weatherkit(ex.startLat, ex.startLon, ex.startTime)
     ex.startWeather.position = 'Start'
-    ex.endWeather = getWeather(ex.endLat, ex.endLon, ex.endTime)
+    # ex.endWeather = getWeather(ex.endLat, ex.endLon, ex.endTime)
+    ex.endWeather = get_weatherkit(ex.endLat, ex.endLon, ex.endTime)
     ex.endWeather.position = 'End'
 
     if config['weather_details']['log_details'] == 'Y':
@@ -219,10 +223,53 @@ def getWeatherApi(lat, lon, dttm):
 
     return w
 
-def roundHour(dttm):
+def get_weatherkit(lat, lon, dttm):
+    weatherConfig = config['weather_kit']
+    baseURL = weatherConfig['base_url']
+    language = weatherConfig['language']
+    key = weatherConfig['key']
+    # loc = str(lat) + ',' + str(lon)
+    dttm_local_round = round_hour(dttm)
+    dttm_start = toUTC(dttm_local_round)
+    dttm_end = dttm_start + datetime.timedelta(seconds=1)
+
+    urlParms = 'hourlyStart=' + dttm_start.strftime('%Y-%m-%dT%H:%M:%SZ') + \
+        '&hourlyEnd=' + dttm_end.strftime('%Y-%m-%dT%H:%M:%SZ') + \
+        '&dataSets=' + weatherConfig['dataSets'] + \
+        '&countryCode=' + weatherConfig['countryCode']
+    url = baseURL + '/' + weatherConfig['language'] + '/' + str(lat) + '/' + str(lon) + \
+        '?' + urlParms
+    logger.debug('WeatherKit URL: ' + url)
+
+    w = WeatherInfo()
+    weatherData = weatherApiCall(url, key)
+    logger.debug(weatherData)
+    
+    weatherHistory = weatherData['forecastHourly']['hours'][0]
+    w.temp = WeatherInfo.c2F(weatherHistory['temperature'])
+    w.apparentTemp = WeatherInfo.c2F(weatherHistory['temperatureApparent'])
+    w.humidity = weatherHistory['humidity'] *100
+    w.windSpeed = weatherHistory['windSpeed']
+    w.summary = weatherHistory['conditionCode'] #TODO split words by camel case
+    w.windGust = weatherHistory['windGust']
+    w.dewPoint = WeatherInfo.c2F(weatherHistory['temperatureDewPoint'])
+    w.lat = lat
+    w.lon = lon
+    w.time = dttm_local_round
+
+    if (weatherConfig['save_weather'] == 'Y'):
+        with open('/tmp/weatherData' + w.tm.strftime('%Y%m%dT%H%M%S') + '.txt', 'w') as outfile:
+            json.dump(weatherData, outfile)
+
+    return w
+
+def round_hour(dttm):
     # Rounds to nearest hour by adding a timedelta hour if minute >= 30
     return (dttm.replace(second=0, microsecond=0, minute=0, hour=dttm.hour)
                +datetime.timedelta(hours=dttm.minute//30))
+
+def toUTC(dttm):
+    return dttm.astimezone(ZoneInfo(key='UTC'))
 
 def generateWeatherUserNotes(w):
     """
@@ -361,8 +408,11 @@ def processExercise(filename):
     # Get the start time from file in UTC
     d = datetime.datetime.strptime(data['startTime']['time'],'%Y-%m-%dT%H:%M:%SZ')
     # Convert start time to current time zone
-    sTime = d.replace(tzinfo=datetime.timezone.utc).astimezone(tz=None)
+    sTime = d.replace(tzinfo=datetime.timezone.utc).astimezone(tz=ZoneInfo(key=data['startTime']['timeZone']))
+
     ex.startTime = sTime
+    ex.timeZone = data['startTime']['timeZone']
+    logger.debug(ex.startTime.strftime('%Y-%m-%d %H:%M:%S %Z%z'))
 
     MILES_IN_KILOMETERS = 0.621371
     METERS_IN_KILOMETERS = 1000

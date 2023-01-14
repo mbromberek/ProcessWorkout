@@ -19,6 +19,7 @@ class ExerciseInfo:
     eDate = ''
     type = ''
     startTime = ''
+    timeZone = ''
     endTime = ''
     distTot = ''
     distUnit = ''
