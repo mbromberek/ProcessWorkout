@@ -133,6 +133,7 @@ class ExerciseInfo:
         dateTimeSheetFormat = '%m/%d/%Y %H:%M:%S'
         wrkt = {}
         wrkt['wrkt_dt'] = self.eDate + ' ' + self.startTime.strftime(dateTimeSheetFormat)
+        wrkt['time_zone'] = self.timeZone
         wrkt['wrkt_typ'] = self.type
         wrkt['tot_tm'] = tc.formatNumbersTime(self.hourTot, self.minTot, self.secTot)
         wrkt['tot_tm_sec'] = self.totTmSec
@@ -211,6 +212,7 @@ class ExerciseInfo:
         # dateTimeSheetFormat = '%Y-%m-%dT%H:%M:%SZ'
         wrkt = {}
         wrkt['wrkt_dttm'] = self.startTime.strftime(dateTimeFormat)
+        wrkt['time_zone'] = self.timeZone
         if self.type != '':
             wrkt['type'] = self.type
         if self.totTmSec >0:
