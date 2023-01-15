@@ -271,14 +271,14 @@ def round_hour(dttm):
 def toUTC(dttm):
     return dttm.astimezone(ZoneInfo(key='UTC'))
 
-def add_space_in_camelCase(s):
+def add_space_in_camelCase(str):
     new_string=""
-    for i in s:
-        if(i.isupper()):
-            new_string+=" "+i
+    for s in str:
+        if s.isupper():
+            new_string += ' ' + s
         else:
-            new_string+=i
-    return new_string
+            new_string += s
+    return new_string.strip()
 
 def generateWeatherUserNotes(w):
     """
