@@ -15,7 +15,10 @@ def get_wrkt(dttm, wsConfig):
     logger.info('get_wrkt: ' + str(dttm))
     dateApiFormat = '%Y-%m-%d'
     dt_str = datetime.strftime(dttm, dateApiFormat)
-    r = requests.get(wsConfig['server'] + ':' + wsConfig['port'] + '/api/workouts/since/' + dt_str, headers={'Authorization':'Bearer ' + wsConfig['token']}, verify=wsConfig['verifyCert'] == 'Y')
+    r = requests.get(wsConfig['server'] + ':' + wsConfig['port'] + '/api/workouts/?' + \
+        'strt_dt=' + dt_str, \
+        headers={'Authorization':'Bearer ' + wsConfig['token']}, \
+        verify=wsConfig['verifyCert'] == 'Y')
     if r.status_code == 200:
         data = r.json()
         return data
