@@ -156,9 +156,8 @@ def getWrktWeather(ex, data):
         f.write('End Time:' + ex.startTime.strftime('%Y-%m-%dT%H:%M:%S') + '\n')
         f.close()
 
-    #TODO change to use Weather_class.generateWeatherUserNotes
-    ex.userNotes = ex.userNotes + generateWeatherUserNotes(ex.startWeather)
-    ex.userNotes = ex.userNotes + generateWeatherUserNotes(ex.endWeather)
+    ex.userNotes = ex.userNotes + ex.startWeather.generateWeatherUserNotes()
+    ex.userNotes = ex.userNotes + ex.endWeather.generateWeatherUserNotes()
 
     return ex
 
@@ -279,28 +278,6 @@ def add_space_in_camelCase(str):
         else:
             new_string += s
     return new_string.strip()
-
-def generateWeatherUserNotes(w):
-    """
-    Generates notes for User Notes field of Exercise spreadsheet.
-    Puts all the text into an array that is joined into the returned string.
-    """
-    txtLst = []
-    txtLst.append(w.position)
-    txtLst.append(': {0:.{1}f}'.format(w.temp,0))
-    txtLst.append(' degrees ')
-    txtLst.append(w.summary)
-    txtLst.append(', ')
-    txtLst.append('{0:.{1}f}'.format(w.humidity,0))
-    txtLst.append(' percent humidity, wind speed ')
-    txtLst.append('{0:.{1}f}'.format(w.windSpeed,2))
-    txtLst.append(' mph, wind gust ')
-    txtLst.append('{0:.{1}f}'.format(w.windGust,2))
-    txtLst.append('mph, feels like ')
-    txtLst.append('{0:.{1}f}'.format(w.apparentTemp,0))
-    txtLst.append(' degrees. ')
-    txtLst.append('\n')
-    return ''.join(txtLst)
 
 def generateBrkdnUserNotes(ex):
     '''
