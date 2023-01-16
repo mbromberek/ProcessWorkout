@@ -391,14 +391,18 @@ def processExercise(filename):
 
     ex.type = data['activityType']['sourceName'].title()
 
+    ex.timeZone = data['startTime'].get('timeZone',\
+        config['wrkt_analyze']['default_time_zone'])
+    logger.debug('TimeZone: ' + ex.timeZone)
+    logger.debug('Read in start time: ' + data['startTime']['time'])
     # Get the start time from file in UTC
     d = datetime.datetime.strptime(data['startTime']['time'],'%Y-%m-%dT%H:%M:%SZ')
     # Convert start time to current time zone
-    sTime = d.replace(tzinfo=datetime.timezone.utc).astimezone(tz=ZoneInfo(key=data['startTime']['timeZone']))
+    sTime = d.replace(tzinfo=datetime.timezone.utc).astimezone(tz=ZoneInfo(key=ex.timeZone))
 
     ex.startTime = sTime
-    ex.timeZone = data['startTime']['timeZone']
-    logger.debug(ex.startTime.strftime('%Y-%m-%d %H:%M:%S %Z%z'))
+
+    logger.debug('Workout start time: ' + ex.startTime.strftime('%Y-%m-%d %H:%M:%S %Z%z'))
 
     MILES_IN_KILOMETERS = 0.621371
     METERS_IN_KILOMETERS = 1000
