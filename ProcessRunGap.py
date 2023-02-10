@@ -52,6 +52,8 @@ createWrkt.logger = logger
 
 METERS_TO_FEET = 3.28084
 
+HOME_DIR = os.path.expanduser('~')
+
 def determineGear(ex):
     '''
     determines gear based on the type of workout and if workout is a Run it looks at the category to determine shoes.
@@ -610,7 +612,7 @@ def saveExToSite(exLst, wsConfig):
                 exStrtTmStr = ex.startTime.strftime(dateTimeSheetFormat) + 'Z'
                 # logger.debug('Exercise: ' + exStrtTmStr)
                 if exStrtTmStr == wrkt['wrkt_dttm']:
-                    updateWrkt.uploadFile(wrkt['id'], ex, wsConfig, config['rungap']['monitor_dir'])
+                    updateWrkt.uploadFile(wrkt['id'], ex, wsConfig, os.path.join(HOME_DIR, config['rungap']['monitor_dir']))
         return createWrktResp.json()
 
 def cleanProcessedFile(exLst, monitorDir, tempDir):
@@ -635,7 +637,7 @@ def cleanProcessedFile(exLst, monitorDir, tempDir):
         # print ('fileNameStart:' + fileNameStart)
         if (config['rungap']['backup_files'] == 'Y'):
             for fl in glob.glob(monitorDir + fileNameStart + '*'):
-                shutil.copy(fl, config['rungap']['backup_dir'])
+                shutil.copy(fl, os.path.join(HOME_DIR, config['rungap']['backup_dir']))
         if (config['rungap']['remove_files'] == 'Y'):
             for fl in glob.glob(monitorDir + fileNameStart + '*'):
                 os.remove(fl)
@@ -681,10 +683,10 @@ def main():
     sheetName = config['applescript']['sheet_name']
 
     runGapConfigs = config['rungap']
-    monitorDir = runGapConfigs['monitor_dir']
-    tempDir = runGapConfigs['temp_dir']
+    monitorDir = os.path.join(HOME_DIR, runGapConfigs['monitor_dir'])
+    tempDir = os.path.join(HOME_DIR, runGapConfigs['temp_dir']) 
 
-    scpt = exSheetDao.initializeAppleScriptFunc( os.path.join(config['applescript']['script_path'], config['applescript']['script_name']), sheetName)
+    scpt = exSheetDao.initializeAppleScriptFunc( os.path.join(os.getenv('code'), config['applescript']['script_path'], config['applescript']['script_name']), sheetName)
 
     if (config['rungap']['print_data'] == 'Y'):
         logger.debug('monitorDir:' + monitorDir)
@@ -733,10 +735,10 @@ def process_workouts():
     sheetName = config['applescript']['sheet_name']
 
     runGapConfigs = config['rungap']
-    monitorDir = runGapConfigs['monitor_dir']
-    tempDir = runGapConfigs['temp_dir']
+    monitorDir = os.path.join(HOME_DIR, runGapConfigs['monitor_dir'])
+    tempDir = os.path.join(HOME_DIR, runGapConfigs['temp_dir']) 
 
-    scpt = exSheetDao.initializeAppleScriptFunc( os.path.join(config['applescript']['script_path'], config['applescript']['script_name']), sheetName)
+    scpt = exSheetDao.initializeAppleScriptFunc( os.path.join(os.getenv('code'), config['applescript']['script_path'], config['applescript']['script_name']), sheetName)
 
     # logger.debug('monitorDir:' + monitorDir)
     # logger.debug('tempDir: ' + tempDir)

@@ -30,6 +30,7 @@ import NormalizeWorkout.WrktSplits as splits
 # tempDir = '/tmp/' #default to /tmp
 logging.config.fileConfig('logging.conf')
 logger = logging.getLogger()
+HOME_DIR = os.path.expanduser('~')
 
 
 def summarizeWrkoutSegments(segments_df):
@@ -161,8 +162,8 @@ def main(argv):
 
     logger.info('WorkoutAnalyze Start')
 
-    tempDir = config['wrkt_analyze_inputs']['temp_dir']
-    outDir = config['wrkt_analyze_outputs']['dir']
+    tempDir = os.path.join(HOME_DIR, config['wrkt_analyze_inputs']['temp_dir'])
+    outDir = os.path.join(HOME_DIR, config['wrkt_analyze_outputs']['dir'])
 
     customSplit = False
     splitOptions = []
@@ -189,7 +190,7 @@ def main(argv):
         splitOptions = config['wrkt_analyze']['dflt_split_opt'].split(',')
 
     if filename == '':
-        filename = os.path.join(config['rungap']['backup_dir'], fao.getLatestFile(config['rungap']['backup_dir']))
+        filename = os.path.join(HOME_DIR, config['rungap']['backup_dir'], fao.getLatestFile(config['rungap']['backup_dir']))
     logger.info('Input file: ' + filename)
     logger.info('Split arguments: ' + str(splitOptions))
 

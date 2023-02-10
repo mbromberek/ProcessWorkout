@@ -255,7 +255,7 @@ def main():
 
     sheetName = config['applescript']['sheet_name']
 
-    scpt = exSheetDao.initializeAppleScriptFunc( os.path.join(config['applescript']['script_path'], config['applescript']['script_name']), sheetName)
+    scpt = exSheetDao.initializeAppleScriptFunc( os.path.join(os.getenv('code'), config['applescript']['script_path'], config['applescript']['script_name']), sheetName)
 
     result = processUpdates(scpt, config['update_workouts']['nbr_records'], config['webservices'])
 
