@@ -212,6 +212,8 @@ def sheetFromServer(scpt, nbrRows, config):
         # ex_dict['wrkt_dt'] = ex_dict['wrkt_dttm']
         ex_dict['dur_str'] = ex_server.dur_str(forceHr=True)
         ex_dict['category'] = ex_server.combinedCategory()
+        if 'notes' not in ex_dict:
+            ex_dict['notes'] = ''
 
         for ex_sheet_dict in sheet_wrkt_lst:
             logger.info('exercise from sheet: ' + str(ex_sheet_dict['wrkt_dttm']))
