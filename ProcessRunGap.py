@@ -116,6 +116,14 @@ def apiCall(url):
 
 def weatherApiCall(url, token):
     r = requests.get(url, headers={'Authorization':'Bearer ' + token}, verify=True)
+    logger.debug(r)
+    if r.status_code == 404:
+        logger.error('Something went wrong with get weather')
+        logger.debug('Response URL: ' + r.url)
+        logger.debug('Response Status: ' + str(r.status_code))
+        logger.debug('Response Reason: ' + r.reason)
+        logger.debug('Response Text: ' + r.text)
+
 
     data = r.json()
     return data
@@ -203,7 +211,7 @@ def get_weatherkit(lat, lon, dttm):
     # loc = str(lat) + ',' + str(lon)
     dttm_local_round = round_hour(dttm)
     dttm_start = toUTC(dttm_local_round)
-    dttm_end = dttm_start + datetime.timedelta(seconds=1)
+    dttm_end = dttm_start + datetime.timedelta(hours=1,seconds=1)
 
     urlParms = 'hourlyStart=' + dttm_start.strftime('%Y-%m-%dT%H:%M:%SZ') + \
         '&hourlyEnd=' + dttm_end.strftime('%Y-%m-%dT%H:%M:%SZ') + \
