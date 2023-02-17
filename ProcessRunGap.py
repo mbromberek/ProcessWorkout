@@ -193,37 +193,8 @@ def getWeather(lat, lon, tm):
             json.dump(weatherData, outfile)
 
     return w
-'''
-def getWeatherApi(lat, lon, dttm):
-    baseURL = config['weather_api']['base_url']
-    key = config['weather_api']['key']
-    loc = str(lat) + ',' + str(lon)
 
-    url = baseURL + '/history.json' + '?q=' + loc + '&dt=' + dttm.strftime('%Y-%m-%d') + '&hour=' + dttm.strftime('%H')
 
-    w = WeatherInfo()
-    weatherData = weatherApiCall(url, key)
-    logger.info(weatherData)
-    weatherHistory = weatherData['forecast']['forecastday'][0]['hour'][0]
-    w.temp = weatherHistory['temp_f']
-    w.apparentTemp = weatherHistory['feelslike_f']
-    w.humidity = weatherHistory['humidity']
-    w.windSpeed = weatherHistory['wind_mph']
-    w.summary = weatherHistory['condition']['text']
-    w.windGust = weatherHistory['gust_mph']
-    w.dewPoint = weatherHistory['dewpoint_f']
-    w.windDegree = weatherHistory['wind_degree']
-    w.windChill = weatherHistory['windchill_f']
-    w.lat = lat
-    w.lon = lon
-    w.time = weatherHistory['time']
-
-    if (config['weather_api']['save_weather'] == 'Y'):
-        with open('/tmp/weatherData' + w.tm.strftime('%Y%m%dT%H%M%S') + '.txt', 'w') as outfile:
-            json.dump(weatherData, outfile)
-
-    return w
-'''
 def get_weatherkit(lat, lon, dttm):
     weatherConfig = config['weather_kit']
     baseURL = weatherConfig['base_url']
