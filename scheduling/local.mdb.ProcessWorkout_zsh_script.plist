@@ -6,7 +6,7 @@
 		<string>local.mdb.ProcessWorkout</string>
 		
 		<key>Program</key>		
-<string>/Users/mikeyb/Dropbox/code/python/ProcessWorkout/scheduling/Run_ProcessRunGap.zsh</string>
+<string>/Users/mikeyb/code/python/ProcessWorkout/scheduling/Run_ProcessRunGap.zsh</string>
 
 		<key>WatchPaths</key>
 		<array>

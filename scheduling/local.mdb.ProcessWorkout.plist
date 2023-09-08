@@ -10,7 +10,7 @@
 		<key>ProgramArguments</key>		
 		<array>
 			<string>osascript</string>
-			<string>/Users/mikeyb/Dropbox/code/python/ProcessWorkout/scheduling/Run_ProcessRunGap_TEST.scpt</string>
+			<string>/Users/mikeyb/code/python/ProcessWorkout/scheduling/Run_ProcessRunGap_TEST.scpt</string>
 		</array>
 
 		<key>WatchPaths</key>
