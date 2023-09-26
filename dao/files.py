@@ -28,7 +28,7 @@ def get_workout_data(curr_dir):
 
     for filename in os.listdir(curr_dir):
         if jsonFileRegex.search(filename):
-            with open(curr_dir + filename) as data_file:
+            with open(os.path.join(curr_dir, filename)) as data_file:
                 data = json.load(data_file)
                 break
     return data

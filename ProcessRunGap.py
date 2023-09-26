@@ -23,7 +23,7 @@ import logging.config
 
 # 3rd party classes
 import applescript
-import pandas
+import pandas as pd
 
 # Custom Classes
 sys.path.insert(1, 'models') # Add to sys.path the directory with custom classes
@@ -41,6 +41,7 @@ import dao.exerciseSheet as exSheetDao
 import ws.createWrkt as createWrkt
 import ws.updateWrkt as updateWrkt
 import NormalizeWorkout.parse.fitParse as fitParse
+import NormalizeWorkout.parse.hkParse as hkNorm
 
 config = configparser.ConfigParser()
 logging.config.fileConfig('logging.conf')
@@ -470,10 +471,20 @@ def processExercise(filename):
         logger.error(sys.exc_info())
         # raise
 
+    pointsEventsDf = pd.DataFrame()
     if os.path.exists(srcDir + '/' + ex.fitFile):
         lapsDf, pointsDf = fitParse.get_dataframes(srcDir + '/' + ex.fitFile)
         pointsEventsDf = fitParse.normalize_laps_points(lapsDf, pointsDf)
+    elif fao.file_with_ext(srcDir, ext='rungap.json') != '':
+        logger.info('Rungap JSON file')
+        data = fao.get_workout_data(srcDir)
+        pointsEventsDf, pause_times_df = hkNorm.normalize_activity(data)
+        print(pointsEventsDf.info())
+    else:
+        logger.info('No file to process')
+        # sys.exit(-1)
 
+    if not pointsEventsDf.empty:
         summaryLapDf = wrktSplits.summarizeWrktSplit(pointsEventsDf, summarizeBy='lap')
         summaryMileDf = wrktSplits.summarizeWrktSplit(pointsEventsDf, summarizeBy='mile')
         summaryResumeDf = wrktSplits.summarizeWrktSplit(pointsEventsDf, summarizeBy='resume')
