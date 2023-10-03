@@ -10,7 +10,7 @@ idna==3.4
 markdown-it-py==3.0.0
 mdurl==0.1.2
 multidict==6.0.4
-NormalizeWorkout @ git+https://github.com/mbromberek/NormalizeWorkout.git@874ec2ac7b18902d8d7677d2539214ce2c1e1a65
+git+https://github.com/mbromberek/NormalizeWorkout.git
 numpy==1.25.2
 pandas==2.0.3
 psycopg2-binary==2.9.7
@@ -176,4 +176,4 @@ requests-toolbelt==1.0.0
 rich==13.5.2
 six==1.16.0
 tzdata==2023.3
-urllib3==2.0.4
+urllib3==2.0.6
