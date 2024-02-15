@@ -356,7 +356,10 @@ class ExerciseInfo:
         if 'dist' in data:
             self.distTot = float(data['dist'])
         if 'dist_mi' in data:
-            self.distTot = float(data['dist_mi'])
+            if data['dist_mi'] != None:
+                self.distTot = float(data['dist_mi'])
+            else:
+                self.distTot = 0
         if 'hr' in data:
             self.avgHeartRate = data['hr']
         if 'cal_burn' in data:

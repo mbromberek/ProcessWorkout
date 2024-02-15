@@ -55,6 +55,8 @@ METERS_TO_FEET = 3.28084
 
 HOME_DIR = os.path.expanduser('~')
 
+endurance_types = {'Running','Indoor Running','Cycling','Indoor Cycling','Swimming','Indoor Swimming'}
+
 def determineGear(ex):
     '''
     determines gear based on the type of workout and if workout is a Run it looks at the category to determine shoes.
@@ -372,6 +374,9 @@ def processExercise(filename):
     ex.metadataFile = filename.split('/')[-1]
 
     ex.type = data['activityType']['sourceName'].title()
+    logger.info(ex.type)
+    if ex.type == 'Strength Training':
+        print('Strength Training')
 
     ex.timeZone = data['startTime'].get('timeZone',\
         config['wrkt_analyze']['default_time_zone'])
@@ -421,6 +426,9 @@ def processExercise(filename):
     # Pull data for getting weather
     if 'displayPath' in data:
         ex = getWrktWeather(ex, data)
+    
+    if ex.type == 'Strength Training':
+        return ex
 
     # Break Down Workout
     if exBrkdn is not None and exBrkdn['generate_table'] == 'Y':
@@ -542,6 +550,8 @@ def saveExToSheet(exLst, scpt):
     dateTimeSheetFormat = '%m/%d/%Y %H:%M:%S'
 
     for ex in exLst:
+        if ex.type not in endurance_types:
+            continue
         startDateTime = ex.startTime.strftime(dateTimeSheetFormat)
         distance = "%.2f" % ex.distTot
         if ex.durTot != '':
@@ -592,6 +602,7 @@ def saveExToDb(exLst, wsConfig):
 
 def saveExToSite(exLst, wsConfig):
     dateTimeSheetFormat = '%Y-%m-%dT%H:%M:%S'
+
     createWrktResp = createWrkt.create(exLst, wsConfig)
     if createWrktResp.status_code == 201:
         # If create workout was successful upload workout file
@@ -601,7 +612,7 @@ def saveExToSite(exLst, wsConfig):
             for ex in exLst:
                 exStrtTmStr = ex.startTime.strftime(dateTimeSheetFormat) + 'Z'
                 # logger.debug('Exercise: ' + exStrtTmStr)
-                if exStrtTmStr == wrkt['wrkt_dttm']:
+                if exStrtTmStr == wrkt['wrkt_dttm'] and ex.type in endurance_types:
                     updateWrkt.uploadFile(wrkt['id'], ex, wsConfig, os.path.join(HOME_DIR, config['rungap']['monitor_dir']))
         return createWrktResp.json()
 
