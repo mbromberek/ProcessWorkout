@@ -16,7 +16,8 @@ def get_wrkt(dttm, wsConfig):
     dateApiFormat = '%Y-%m-%d'
     dt_str = datetime.strftime(dttm, dateApiFormat)
     r = requests.get(wsConfig['server'] + ':' + wsConfig['port'] + '/api/workouts/?' + \
-        'strt_dt=' + dt_str, \
+        'strt_dt=' + dt_str+ \
+        '&type=endurance', \
         headers={'Authorization':'Bearer ' + wsConfig['token']}, \
         verify=wsConfig['verifyCert'] == 'Y')
     if r.status_code == 200:

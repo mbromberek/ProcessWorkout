@@ -219,6 +219,8 @@ class ExerciseInfo:
             wrkt['dur_sec'] = str(round(self.totTmSec))
         if self.distTot >0:
             wrkt['dist_mi'] = str(round(self.distTot, 2))
+        if self.userNotes != '':
+            wrkt['notes'] = self.userNotes
 
         if self.startWeather.temp != -999:
             wrkt['wethr_start'] = {}

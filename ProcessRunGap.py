@@ -104,7 +104,8 @@ def determineCategory(ex):
                     cat = dayCat.split(',')[-1]
             else:
                 cat = dayCat
-
+    elif ex.type == 'Strength Training':
+        cat = 'Training'
     else:
         cat = 'Easy'
     return cat
@@ -376,7 +377,8 @@ def processExercise(filename):
     ex.type = data['activityType']['sourceName'].title()
     logger.info(ex.type)
     if ex.type == 'Strength Training':
-        print('Strength Training')
+        ex.training_type = data['title']
+        ex.userNotes = data['note']
 
     ex.timeZone = data['startTime'].get('timeZone',\
         config['wrkt_analyze']['default_time_zone'])
