@@ -303,25 +303,26 @@ class ExerciseInfo:
         if self.intvlTotEleDown >0:
             wrkt['intrvl_tot_ele_down'] = '{0:.{1}f}'.format(self.intvlTotEleDown*METERS_TO_FEET,1)
 
+        wrkt['intervals'] = {}
         if len(self.mileSplits) >0:
-            wrkt['mile_splits'] = []
+            wrkt['intervals']['mile'] = []
             for splt in self.mileSplits:
-                wrkt['mile_splits'].append(splt.to_dict())
+                wrkt['intervals']['mile'].append(splt.to_dict())
 
         if len(self.intrvlSplits) >0:
-            wrkt['interval_splits'] = []
+            wrkt['intervals']['segment'] = []
             for splt in self.intrvlSplits:
-                wrkt['interval_splits'].append(splt.to_dict())
+                wrkt['intervals']['segment'].append(splt.to_dict())
 
         if len(self.lapSplits) >0:
-            wrkt['lap_splits'] = []
+            wrkt['intervals']['lap'] = []
             for splt in self.lapSplits:
-                wrkt['lap_splits'].append(splt.to_dict())
+                wrkt['intervals']['lap'].append(splt.to_dict())
 
         if len(self.pauseSplits) >0:
-            wrkt['pause_splits'] = []
+            wrkt['intervals']['resume'] = []
             for splt in self.pauseSplits:
-                wrkt['pause_splits'].append(splt.to_dict())
+                wrkt['intervals']['resume'].append(splt.to_dict())
 
 
         return wrkt
