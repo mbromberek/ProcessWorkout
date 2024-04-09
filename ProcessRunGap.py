@@ -603,7 +603,8 @@ def saveExToDb(exLst, wsConfig):
         logger.info('Saving to Database turned off')
 
 def saveExToSite(exLst, wsConfig):
-    dateTimeSheetFormat = '%Y-%m-%dT%H:%M:%S'
+    # dateTimeSheetFormat = '%Y-%m-%dT%H:%M:%S'
+    dateTimeSheetFormat = '%Y-%m-%d %H:%M:%S'
 
     createWrktResp = createWrkt.create(exLst, wsConfig)
     if createWrktResp.status_code == 201:
@@ -612,7 +613,8 @@ def saveExToSite(exLst, wsConfig):
         for wrkt in createWrktJson:
             # logger.debug('Create Workout {}: {}'.format(wrkt['id'],wrkt['wrkt_dttm']))
             for ex in exLst:
-                exStrtTmStr = ex.startTime.strftime(dateTimeSheetFormat) + 'Z'
+                # exStrtTmStr = ex.startTime.strftime(dateTimeSheetFormat) + 'Z'
+                exStrtTmStr = ex.startTime.strftime(dateTimeSheetFormat)
                 # logger.debug('Exercise: ' + exStrtTmStr)
                 if exStrtTmStr == wrkt['wrkt_dttm'] and ex.type in endurance_types:
                     updateWrkt.uploadFile(wrkt['id'], ex, wsConfig, os.path.join(HOME_DIR, config['rungap']['monitor_dir']))
