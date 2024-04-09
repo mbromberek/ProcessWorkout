@@ -10,7 +10,7 @@ All rights reserved.
 from datetime import datetime
 
 def get_date(s_date):
-    date_patterns = ['%Y-%m-%dT%H:%M:%SZ', '%Y-%m-%d', '%m/%d/%Y %H:%M:%S']
+    date_patterns = ['%Y-%m-%dT%H:%M:%SZ', '%Y-%m-%d %H:%M:%S', '%Y-%m-%d', '%m/%d/%Y %H:%M:%S']
 
     for pattern in date_patterns:
         try:
