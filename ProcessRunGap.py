@@ -374,8 +374,12 @@ def processExercise(filename):
     ex.fitFile = fileNameStart + '.fit'
     ex.metadataFile = filename.split('/')[-1]
 
-    ex.type = data['activityType']['sourceName'].title()
-    logger.info(ex.type)
+    origType = data['activityType']['sourceName'].title()
+    if origType == 'Road Biking':
+        ex.type = 'Cycling'
+    else:
+        ex.type = data['activityType']['sourceName'].title()
+    logger.info('Workout Type:' + origType + ' mapped to ' + ex.type)
     if ex.type == 'Strength Training':
         ex.training_type = data['title']
         ex.userNotes = data['note']
