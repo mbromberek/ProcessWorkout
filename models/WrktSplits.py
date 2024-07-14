@@ -14,7 +14,8 @@ import pandas as pd
 
 # custom classes
 import dao.files as fao
-import NormalizeWorkout.parse.rungapParse as rgNorm
+# import NormalizeWorkout.parse.rungapParse as rgNorm
+import NormalizeWorkout.parse.hkParse as hkNorm
 import NormalizeWorkout.WrktSplits as splits
 
 def breakDownWrkt(dirName, fName = '', splitBy='lap'):
@@ -37,7 +38,7 @@ def breakDownWrkt(dirName, fName = '', splitBy='lap'):
         else:
             return None
 
-    actv_df = rgNorm.normalize_activity(data)
+    actv_df, pause_times_df = hkNorm.normalize_activity(data)
     df = splits.group_actv(actv_df, splitBy)
     df.rename(columns={splitBy: 'interval'}, inplace=True)
     return df
