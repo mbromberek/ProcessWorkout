@@ -1,4 +1,4 @@
-certifi==2024.6.2
+certifi==2024.7.4
 chardet==5.2.0
 charset-normalizer==3.3.2
 commonmark==0.9.1
@@ -10,7 +10,7 @@ markdown-it-py==3.0.0
 mdurl==0.1.2
 git+https://github.com/mbromberek/NormalizeWorkout.git
 multidict==6.0.5
-numpy==1.26.4
+numpy==2.0.0
 pandas==2.2.2
 psycopg2-binary==2.9.9
 py-applescript==1.0.3
@@ -179,4 +179,4 @@ requests-toolbelt==1.0.0
 rich==13.7.1
 six==1.16.0
 tzdata==2024.1
-urllib3==2.2.1
+urllib3==2.2.2
