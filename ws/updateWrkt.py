@@ -70,5 +70,7 @@ def uploadFile(wrkt_id, ex, wsConfig, monitorDir):
 
     if r.status_code == 400:
         logger.info('Error with uploadFile')
+    if r.status_code == 401:
+        logger.error('Unauthorized Access')
 
     return r

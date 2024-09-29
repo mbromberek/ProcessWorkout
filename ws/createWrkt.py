@@ -38,5 +38,7 @@ def create_json(wrktLst, wsConfig):
         logger.info(r.json())
     if r.status_code == 201:
         logger.info("Create Workout Successful")
+    if r.status_code == 401:
+        logger.error('Unauthorized Access')
 
     return r

@@ -23,5 +23,8 @@ def get_wrkt(dttm, wsConfig):
     if r.status_code == 200:
         data = r.json()
         return data
+    elif r.status_code == 401:
+        logger.error('Unauthorized Access')
+        return r.json()
     else:
         return None

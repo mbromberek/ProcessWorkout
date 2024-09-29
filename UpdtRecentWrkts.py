@@ -183,8 +183,11 @@ def sheetFromServer(scpt, nbrRows, config):
 
     # Get all workouts >= earliest workout date
     server_wrkt_json = getWrkt.get_wrkt(earliest_dt, config['webservices'])
-    # TODO need to check for if there is a next to loop through reading
-    #   server_wrkt_json['_links']['next']
+    
+    if 'error' in server_wrkt_json:
+        logger.error(server_wrkt_json['error'])
+        raise Exception(server_wrkt_json['error'])
+
     server_wrkt_json_lst = server_wrkt_json['items']
     server_ex_lst = []
     for server_wrkt in server_wrkt_json_lst:

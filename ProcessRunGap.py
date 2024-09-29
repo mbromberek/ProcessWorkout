@@ -120,7 +120,7 @@ def apiCall(url):
 
 def weatherApiCall(url, token):
     r = requests.get(url, headers={'Authorization':'Bearer ' + token}, verify=True)
-    logger.debug(r)
+    logger.info(r)
     if r.status_code == 404:
         logger.error('Something went wrong with get weather')
         logger.debug('Response URL: ' + r.url)
