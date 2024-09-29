@@ -121,13 +121,13 @@ def apiCall(url):
 def weatherApiCall(url, token):
     r = requests.get(url, headers={'Authorization':'Bearer ' + token}, verify=True)
     logger.info(r)
-    if r.status_code == 404:
+    if r.status_code == 404 or r.status_code == 500:
         logger.error('Something went wrong with get weather')
-        logger.debug('Response URL: ' + r.url)
-        logger.debug('Response Status: ' + str(r.status_code))
-        logger.debug('Response Reason: ' + r.reason)
-        logger.debug('Response Text: ' + r.text)
-
+        logger.error('Response URL: ' + r.url)
+        logger.error('Response Status: ' + str(r.status_code))
+        logger.error('Response Reason: ' + r.reason)
+        logger.error('Response Text: ' + r.text)
+        return ''
 
     data = r.json()
     return data
@@ -228,6 +228,11 @@ def get_weatherkit(lat, lon, dttm):
     w = WeatherInfo()
     weatherData = weatherApiCall(url, key)
     logger.debug(weatherData)
+    if weatherData == '':
+        if weatherConfig['fail_on_no_weather'] == 'Y':
+            raise Exception('Could not get workout weather')
+        else:
+            return w
     
     weatherHistory = weatherData['forecastHourly']['hours'][0]
     w.temp = WeatherInfo.c2F(weatherHistory['temperature'])
