@@ -9,12 +9,12 @@ idna==3.10
 markdown-it-py==3.0.0
 mdurl==0.1.2
 git+https://github.com/mbromberek/NormalizeWorkout.git
-multidict==6.4.4
+multidict==6.5.1
 numpy==2.2.6
 pandas==2.3.0
 psycopg2-binary==2.9.10
 py-applescript==1.0.3
-Pygments==2.19.1
+Pygments==2.19.2
 pyobjc==11.1
 pyobjc-core==11.1
 pyobjc-framework-Accessibility==11.1
@@ -185,4 +185,4 @@ rich==14.0.0
 six==1.17.0
 typing_extensions==4.14.0
 tzdata==2025.2
-urllib3==2.4.0
+urllib3==2.5.0
