@@ -25,19 +25,19 @@ class WeatherInfo:
     #     self.temp = -999
 
     def from_dict(self, data):
-        if 'temp' in data and data['temp'] != 'None':
+        if 'temp' in data and data['temp'] != 'None' and data['temp'] != '':
             self.temp = float(data['temp'])
-        if 'temp_feels_like' in data and data['temp_feels_like'] != 'None':
+        if 'temp_feels_like' in data and data['temp_feels_like'] != 'None' and data['temp_feels_like'] != '':
             self.apparentTemp = float(data['temp_feels_like'])
-        if 'hmdty' in data and data['hmdty'] != 'None':
+        if 'hmdty' in data and data['hmdty'] != 'None' and data['hmdty'] != '':
             self.humidity = float(data['hmdty'])
-        if 'wind_speed' in data and data['wind_speed'] != 'None':
+        if 'wind_speed' in data and data['wind_speed'] != 'None' and data['wind_speed'] != '':
             self.windSpeed = float(data['wind_speed'])
-        if 'wind_gust' in data and data['wind_gust'] != 'None':
+        if 'wind_gust' in data and data['wind_gust'] != 'None' and data['wind_gust'] != '':
             self.windGust = float(data['wind_gust'])
         if 'wethr_cond' in data and data['wethr_cond'] != None:
             self.summary = data['wethr_cond']
-        if 'dew_point' in data and data['dew_point'] != 'None':
+        if 'dew_point' in data and data['dew_point'] != 'None' and data['dew_point'] != '':
             self.dewPoint = float(data['dew_point'])
 
     def generateWeatherUserNotes(self, position=''):
