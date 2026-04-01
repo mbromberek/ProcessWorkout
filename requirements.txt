@@ -1,6 +1,6 @@
-certifi==2026.1.4
-chardet==5.2.0
-charset-normalizer==3.4.4
+certifi==2026.2.25
+chardet==7.4.0.post2
+charset-normalizer==3.4.6
 commonmark==0.9.1
 configparser==7.2.0
 defusedxml==0.7.1
@@ -8,13 +8,13 @@ fitdecode==0.11.0
 idna==3.11
 markdown-it-py==4.0.0
 mdurl==0.1.2
-multidict==6.7.0
+multidict==6.7.1
 NormalizeWorkout @ git+https://github.com/mbromberek/NormalizeWorkout.git@c3bbc9df6ad30a97fb7cfc55c5401ccc2890621b
 numpy==2.2.6
 pandas==2.3.3
 psycopg2-binary==2.9.11
 py-applescript==1.0.3
-Pygments==2.19.2
+Pygments==2.20.0
 pyobjc==12.1
 pyobjc-core==12.1
 pyobjc-framework-Accessibility==12.1
@@ -181,10 +181,10 @@ pyobjc-framework-Vision==12.1
 pyobjc-framework-WebKit==12.1
 PySocks==1.7.1
 python-dateutil==2.9.0.post0
-pytz==2025.2
-requests==2.32.5
+pytz==2026.1.post1
+requests==2.33.1
 requests-toolbelt==1.0.0
-rich==14.2.0
+rich==14.3.3
 six==1.17.0
 typing_extensions==4.15.0
 tzdata==2025.3
